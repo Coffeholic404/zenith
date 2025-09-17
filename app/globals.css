@@ -1,0 +1,399 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap');
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap');
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+*{
+  direction: rtl !important;
+}
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%; /* Default blue */
+    --primary-foreground: 210 40% 98%;
+
+    --sidebar-icon-clr: 252, 71%, 67%, 1;
+    --sidebar-grad-one: 151, 131, 230, 0.26;
+    --sidebar-grad-two: 197, 123, 216, 0.26;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --subtext: 250, 4%, 69%, 1;
+    --main-bg: 240, 100%, 98%, 1;
+    --user-welcom-clr: 220, 9%, 46%, 1;
+    --user-email-clr: 221, 39%, 11%, 1;
+
+    --radius: 0.5rem;
+
+    /* Sidebar variables */
+    --sidebar-width: 16rem;
+    --sidebar-width-collapsed: 4rem;
+  }
+
+  /* Color themes */
+  .theme-blue {
+    --primary: 210 100% 50%;
+    --primary-foreground: 210 40% 98%;
+    --ring: 210 100% 35%;
+  }
+
+  .theme-yellow {
+    --primary: 41 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --ring: 41 100% 35%;
+  }
+
+  .theme-green {
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 142 71% 35%;
+  }
+
+  .theme-purple {
+    --primary: 270 76% 53%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 270 76% 43%;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 10%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+
+  /* Dark mode color themes */
+  .dark.theme-blue {
+    --primary: 210 100% 50%;
+    --primary-foreground: 210 40% 98%;
+    --ring: 210 100% 40%;
+  }
+
+  .dark.theme-yellow {
+    --primary: 41 100% 60%;
+    --primary-foreground: 0 0% 0%;
+    --ring: 41 100% 45%;
+  }
+
+  .dark.theme-green {
+    --primary: 142 71% 55%;
+    --primary-foreground: 0 0% 0%;
+    --ring: 142 71% 45%;
+  }
+
+  .dark.theme-purple {
+    --primary: 270 76% 63%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 270 76% 53%;
+  }
+}
+*{
+  direction: rtl!important;
+}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    direction: rtl;
+  }
+}
+
+/* Modern UI Elements */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .glass {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.dark .card-hover:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+}
+
+/* Modern sidebar styling */
+.modern-sidebar {
+  background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--card)) 100%);
+  border-left: 1px solid hsl(var(--border));
+}
+
+.dark .modern-sidebar {
+  background: linear-gradient(180deg, hsl(222 47% 11%) 0%, hsl(222 47% 8%) 100%);
+}
+
+/* Modern header styling */
+.modern-header {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid hsl(var(--border));
+}
+
+.dark .modern-header {
+  background: rgba(22, 27, 34, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.05);
+}
+.modern-footer {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid hsl(var(--border));
+}
+
+.dark .modern-footer {
+  background: rgba(22, 27, 34, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.05);
+}
+/* RTL specific overrides - enhanced */
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Flip icons for RTL */
+.rtl .flip-in-rtl {
+  transform: scaleX(-1);
+}
+
+/* RTL form controls */
+.rtl .form-control {
+  text-align: right;
+}
+
+/* RTL tabs */
+.rtl .tabs-list {
+  flex-direction: row-reverse;
+}
+
+/* RTL dropdown menus */
+.rtl .dropdown-menu {
+  text-align: right;
+}
+
+/* RTL radio and checkbox positioning */
+.rtl [type="radio"],
+.rtl [type="checkbox"] {
+  margin-left: 0;
+  margin-right: -1.5em;
+}
+
+/* RTL input groups */
+.rtl .input-group > :not(:first-child) {
+  margin-left: 0;
+  margin-right: -1px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: var(--radius);
+  border-bottom-left-radius: var(--radius);
+}
+
+.rtl .input-group > :not(:last-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+}
+/* Subtle animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.8));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted) / 0.5);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* RTL specific overrides */
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Flip icons for RTL */
+.rtl .flip-in-rtl {
+  transform: scaleX(-1);
+}
+
+/* Sidebar RTL adjustments */
+[data-side="right"] {
+  right: 0;
+  left: auto !important;
+}
+
+/* Custom sidebar styles */
+.sidebar-wrapper {
+  width: var(--sidebar-width);
+  transition: width 0.2s ease;
+}
+
+.sidebar-wrapper[data-state="collapsed"] {
+  width: var(--sidebar-width-collapsed);
+}
+
+.sidebar-wrapper[data-state="collapsed"] .sidebar-item-text {
+  display: none;
+}
+
+.sidebar-wrapper[data-state="collapsed"] .sidebar-header-text {
+  display: none;
+}
+
+/* Fix for selected items to use primary color */
+/* [data-active="true"] {
+  background-color: hsl(var(--primary) / 0.5) !important;
+  color: hsl(var(--primary-foreground)) !important;
+} */
+
+.command-item[data-selected="true"] {
+  background-color: hsl(var(--primary) / 0.5) !important;
+  color: hsl(var(--primary-foreground)) !important;
+}
+
+.react-calendar__tile--active {
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+}
+
+.react-calendar__tile--now {
+  background-color: hsl(var(--primary) / 0.2) !important;
+}
+
+.dropdown-menu-item[data-highlighted] {
+  background-color: hsl(var(--primary) / 0.5) !important;
+  color: hsl(var(--primary-foreground)) !important;
+}
+
+/* Active menu item styling */
+[data-active="true"] {
+  background: linear-gradient(90deg, rgba(151, 131, 230, 0.26) 0%, rgba(197, 123, 216, 0.26) 100%) ;
+  /* border-right: 3px solid hsl(var(--primary)) !important; */
+  color: hsla(var(--sidebar-icon-clr)) !important;
+}
+
+.nocolorbg {
+  background-color: transparent !important;
+}
+
+/* [data-state=open] .sidebarmain {
+  background: linear-gradient(90deg, rgba(151, 131, 230, 0.26) 0%, rgba(197, 123, 216, 0.26) 100%) ;
+
+  color: hsla(var(--sidebar-icon-clr)) !important;
+} */
+
+
+
+tspan{
+  direction: ltr!important;
+}
+.recharts-tooltip-item-list{
+color: aliceblue !important;
+}
