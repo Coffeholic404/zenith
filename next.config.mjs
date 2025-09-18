@@ -20,9 +20,10 @@ const nextConfig = {
     BASIC_URL: process.env.NEXT_BASIC_URL
 },
   experimental: {
-    webpackBuildWorker: true,
-    parallelServerBuildTraces: true,
-    parallelServerCompiles: true,
+    // Disabled experimental features that may cause Netlify build issues
+    // webpackBuildWorker: true,
+    // parallelServerBuildTraces: true,
+    // parallelServerCompiles: true,
   },
 }
 
