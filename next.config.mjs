@@ -19,13 +19,17 @@ const nextConfig = {
   env: {
     BASIC_URL: process.env.NEXT_BASIC_URL,
   },
+  // Optimize build performance
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
   // Commented out experimental features that cause build issues on Netlify
   // experimental: {
   //   webpackBuildWorker: true,
   //   parallelServerBuildTraces: true,
   //   parallelServerCompiles: true,
   // },
-
 };
 
 mergeConfig(nextConfig, userConfig)
