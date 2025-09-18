@@ -5,6 +5,7 @@ import { BarChartComponent } from "@/components/charts/bar-chart"
 import { LineChartComponent } from "@/components/charts/line-chart"
 import { PieChartComponent } from "@/components/charts/pie-chart"
 import MiniCard from "@/components/pages/control/card"
+import Charts from "@/components/pages/control/charts"
 
 export default function Home() {
   return (
@@ -191,6 +192,7 @@ export default function Home() {
         </TabsContent>
       </Tabs> */}
       <MiniCard />
+      <Charts />
     </div>
   )
 }
