@@ -67,7 +67,6 @@
     "zod": "latest"
   },
   "devDependencies": {
-    "@svgr/webpack": "^8.1.0",
     "@types/node": "^22.18.6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
