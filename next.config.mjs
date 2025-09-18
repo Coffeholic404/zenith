@@ -20,7 +20,6 @@ const nextConfig = {
     BASIC_URL: process.env.NEXT_BASIC_URL,
   },
   // Optimize build performance
-  swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },

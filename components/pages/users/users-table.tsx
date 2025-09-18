@@ -4,7 +4,7 @@ import * as React from "react"
 import { PlusCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/data-table"
-import { columns } from "@/components/pages/users/users-columns"
+import { columns, userColumnsNames } from "@/components/pages/users/users-columns"
 import { UserFormModal } from "@/components/pages/users/user-form-modal"
 
 // بيانات تجريبية للجدول
@@ -102,7 +102,7 @@ export function UsersTable() {
           إضافة مستخدم جديد
         </Button>
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} columnsNames={userColumnsNames} />
       <UserFormModal open={isModalOpen} onOpenChange={setIsModalOpen} />
     </div>
   )

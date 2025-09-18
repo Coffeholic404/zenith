@@ -1,6 +1,6 @@
 "use client";
 import { Cairo } from "next/font/google";
-import "@/styles/globals.css";
+import "./globals.css";
 import ProviderAuth from "@/components/Provider/Provider";
 import { SessionProvider } from "next-auth/react";
 import { Provider } from "react-redux";
