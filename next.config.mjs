@@ -25,44 +25,6 @@ const nextConfig = {
     parallelServerCompiles: true,
   },
 
-  // 👇 Add SVGR config here
-  webpack(config, { isServer }) {
-    // Exclude svg from default file-loader
-    const fileLoaderRule = config.module.rules.find((rule) =>
-      rule.test?.test?.(".svg")
-    );
-    if (fileLoaderRule) {
-      fileLoaderRule.exclude = /\.svg$/i;
-    }
-
-    // Add custom rule for SVGR
-    config.module.rules.push(
-      {
-        test: /\.svg$/i,
-        issuer: /\.[jt]sx?$/,
-        resourceQuery: { not: [/url/] }, // exclude if imported with ?url
-        use: [
-          {
-            loader: "@svgr/webpack",
-            options: {
-              icon: true,
-              svgo: true,
-              svgoConfig: {
-                plugins: [{ removeViewBox: false }],
-              },
-            },
-          },
-        ],
-      },
-      {
-        test: /\.svg$/i,
-        resourceQuery: /url/, // import with '?url'
-        type: "asset/resource",
-      }
-    );
-
-    return config;
-  },
 };
 
 mergeConfig(nextConfig, userConfig)
