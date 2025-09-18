@@ -17,19 +17,14 @@ const nextConfig = {
     unoptimized: true,
   },
   env: {
-    BASIC_URL: process.env.NEXT_BASIC_URL,
+    BASIC_URL: process.env.NEXT_BASIC_URL
+},
+  experimental: {
+    webpackBuildWorker: true,
+    parallelServerBuildTraces: true,
+    parallelServerCompiles: true,
   },
-  // Optimize build performance
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
-  // Commented out experimental features that cause build issues on Netlify
-  // experimental: {
-  //   webpackBuildWorker: true,
-  //   parallelServerBuildTraces: true,
-  //   parallelServerCompiles: true,
-  // },
-};
+}
 
 mergeConfig(nextConfig, userConfig)
 
