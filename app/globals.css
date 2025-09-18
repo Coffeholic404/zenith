@@ -59,6 +59,13 @@
     --coures-clr: 24, 91%, 58%, 0.2;
     --student-clr: 252, 71%, 67%, 0.2;
     --employee-clr:346, 92%, 54%, 0.2;
+
+    /*text colors*/
+    --updates-clr: 0, 1%, 40%, 1;
+    --updates-btn-clr:252, 71%, 67%, 0.2;
+    --btn-txt-clr:252, 71%, 67%, 1;
+    --accident-btn-clr: 24, 91%, 58%, 0.2;
+    --accident-txt-clr: 0, 1%, 47%, 1;
   }
 
   /* Color themes */

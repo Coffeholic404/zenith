@@ -34,6 +34,11 @@ const config = {
         couresClr: "hsla(var(--coures-clr))",
         studentClr: "hsla(var(--student-clr))",
         employeeClr: "hsla(var(--employee-clr))",
+        updatesClr: "hsla(var(--updates-clr))",
+        updatesBtnClr: "hsla(var(--updates-btn-clr))",
+        btnTxtClr: "hsla(var(--btn-txt-clr))",
+        accidentBtnClr: "hsla(var(--accident-btn-clr))",
+        accidentTxtClr: "hsla(var(--accident-txt-clr))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
