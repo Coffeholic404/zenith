@@ -4,6 +4,7 @@ import { AreaChartComponent } from "@/components/charts/area-chart"
 import { BarChartComponent } from "@/components/charts/bar-chart"
 import { LineChartComponent } from "@/components/charts/line-chart"
 import { PieChartComponent } from "@/components/charts/pie-chart"
+import MiniCard from "@/components/pages/control/card"
 
 export default function Home() {
   return (
@@ -189,6 +190,7 @@ export default function Home() {
           </Card>
         </TabsContent>
       </Tabs> */}
+      <MiniCard />
     </div>
   )
 }

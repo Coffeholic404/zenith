@@ -30,6 +30,10 @@ const config = {
         mainBg: "hsla(var(--main-bg))",
         userWelcomClr: "hsla(var(--user-welcom-clr))",
         userEmailClr: "hsla(var(--user-email-clr))",
+        placesClr: "hsla(var(--places-clr))",
+        couresClr: "hsla(var(--coures-clr))",
+        studentClr: "hsla(var(--student-clr))",
+        employeeClr: "hsla(var(--employee-clr))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

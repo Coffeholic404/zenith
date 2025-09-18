@@ -53,6 +53,12 @@
     /* Sidebar variables */
     --sidebar-width: 16rem;
     --sidebar-width-collapsed: 4rem;
+
+    /* control page colors*/
+    --places-clr: 346, 92%, 54%, 0.12;
+    --coures-clr: 24, 91%, 58%, 0.2;
+    --student-clr: 252, 71%, 67%, 0.2;
+    --employee-clr:346, 92%, 54%, 0.2;
   }
 
   /* Color themes */
