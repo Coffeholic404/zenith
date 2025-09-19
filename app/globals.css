@@ -69,7 +69,7 @@
   }
 
   /* Color themes */
-  .theme-blue {
+  /* .theme-blue {
     --primary: 210 100% 50%;
     --primary-foreground: 210 40% 98%;
     --ring: 210 100% 35%;
@@ -121,10 +121,10 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-  }
+  } */
 
   /* Dark mode color themes */
-  .dark.theme-blue {
+  /* .dark.theme-blue {
     --primary: 210 100% 50%;
     --primary-foreground: 210 40% 98%;
     --ring: 210 100% 40%;
@@ -146,7 +146,7 @@
     --primary: 270 76% 63%;
     --primary-foreground: 0 0% 100%;
     --ring: 270 76% 53%;
-  }
+  } */
 }
 *{
   direction: rtl!important;
@@ -164,30 +164,30 @@
 }
 
 /* Modern UI Elements */
-.glass {
+/* .glass {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-}
+} */
 
-.dark .glass {
+/* .dark .glass {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.05);
-}
+} */
 
-.card-hover {
+/* .card-hover {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+} */
 
-.card-hover:hover {
+/* .card-hover:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-}
-
+} */
+/* 
 .dark .card-hover:hover {
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
-}
+} */
 
 /* Modern sidebar styling */
 .modern-sidebar {
@@ -195,9 +195,9 @@
   border-left: 1px solid hsl(var(--border));
 }
 
-.dark .modern-sidebar {
+/* .dark .modern-sidebar {
   background: linear-gradient(180deg, hsl(222 47% 11%) 0%, hsl(222 47% 8%) 100%);
-}
+} */
 
 /* Modern header styling */
 .modern-header {
