@@ -10,9 +10,9 @@ export default function MiniCard() {
 
     <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
 
-      <div className="flex gap-2 bg-white shadow p-3 rounded-md">
+      <div className="flex gap-2 bg-white shadow p-3 rounded-md group">
         <div className=" size-10 bg-placesClr rounded-md grid place-content-center">
-            <Image src={map} alt="map icon"/>
+            <Image src={map} alt="map icon" className=" group-hover:animate-pulse"/>
         </div>
         <div>
             <p className=" font-vazirmatn font-bold text-lg">6 مناطق</p>
@@ -20,9 +20,9 @@ export default function MiniCard() {
         </div>
       </div>
 
-      <div className="flex gap-2 bg-white shadow p-3 rounded-md">
+      <div className="flex gap-2 bg-white shadow p-3 rounded-md group">
         <div className=" size-10 bg-couresClr rounded-md grid place-content-center">
-            <Image src={diploma} alt="diploma icon"/>
+            <Image src={diploma} alt="diploma icon" className=" group-hover:animate-pulse"/>
         </div>
         <div>
             <p className=" font-vazirmatn font-bold text-lg">10 دورات</p>
@@ -30,9 +30,9 @@ export default function MiniCard() {
         </div>
       </div>
 
-      <div className="flex gap-2 bg-white shadow p-3 rounded-md">
+      <div className="flex gap-2 bg-white shadow p-3 rounded-md group">
         <div className=" size-10 bg-studentClr rounded-md grid place-content-center">
-            <Image src={student} alt="student icon"/>
+            <Image src={student} alt="student icon" className=" group-hover:animate-pulse"/>
         </div>
         <div>
             <p className=" font-vazirmatn font-bold text-lg">200 شخص</p>
@@ -40,9 +40,9 @@ export default function MiniCard() {
         </div>
       </div>
 
-      <div className="flex gap-2 bg-white shadow p-3 rounded-md">
+      <div className="flex gap-2 bg-white shadow p-3 rounded-md group">
         <div className=" size-10 bg-employeeClr rounded-md grid place-content-center">
-            <Image src={employee} alt="employee icon"/>
+            <Image src={employee} alt="employee icon" className=" group-hover:animate-pulse"/>
         </div>
         <div>
             <p className=" font-vazirmatn font-bold text-lg">70 شخص</p>
@@ -50,9 +50,9 @@ export default function MiniCard() {
         </div>
       </div>
 
-      <div className="flex gap-2 bg-white shadow p-3 rounded-md">
+      <div className="flex gap-2 bg-white shadow p-3 rounded-md group">
         <div className=" size-10 bg-couresClr rounded-md grid place-content-center">
-            <Image src={plane} alt="plane icon"/>
+            <Image src={plane} alt="plane icon" className=" group-hover:animate-pulse"/>
         </div>
         <div>
             <p className=" font-vazirmatn font-bold text-lg">80 قطعة</p>
