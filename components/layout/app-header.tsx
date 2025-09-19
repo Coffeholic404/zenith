@@ -29,7 +29,7 @@ export function AppHeader() {
           <input
             type="search"
             placeholder="بحث..."
-            className="h-11 lg:w-[441px] rounded-full bg-[hsla(244, 70%, 96%, 1)] px-4 text-sm border border-[hsla(0, 0%, 90%, 1)] focus:border-[hsla(244, 70%, 96%, 1)] focus:outline-none focus:ring-1 focus:ring-[hsla(244, 70%, 96%, 1)] "
+            className="h-11 lg:w-[441px] rounded-full bg-searchBg px-4 text-sm border border-searchBg focus:border-searchBg focus:outline-none focus:ring-1 focus:ring-blue-300 "
           />
         </div>
         <div className="w-full flex items-center justify-end gap-4">

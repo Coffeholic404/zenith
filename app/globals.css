@@ -50,6 +50,9 @@
 
     --radius: 0.5rem;
 
+    /*search input colors*/
+    --search-bg: 244, 70%, 96%, 1;
+
     /* Sidebar variables */
     --sidebar-width: 16rem;
     --sidebar-width-collapsed: 4rem;
@@ -66,6 +69,13 @@
     --btn-txt-clr:252, 71%, 67%, 1;
     --accident-btn-clr: 24, 91%, 58%, 0.2;
     --accident-txt-clr: 0, 1%, 47%, 1;
+
+    /*charts colors*/
+     --chart-1: 119, 65%, 69%, 1;
+    --chart-2: 54, 100%, 61%, 1;
+    --chart-3: 348, 92%, 85%, 1;
+    --chart-4: 349, 100%, 72%, 1;
+    --chart-5: 27 87% 67%;
   }
 
   /* Color themes */

@@ -28,6 +28,7 @@ const config = {
         subtext: "hsla(var(--subtext))",
         sidebaractive: "hsla(var(--sidebar-icon-clr))",
         mainBg: "hsla(var(--main-bg))",
+        searchBg: "hsla(var(--search-bg))",
         userWelcomClr: "hsla(var(--user-welcom-clr))",
         userEmailClr: "hsla(var(--user-email-clr))",
         placesClr: "hsla(var(--places-clr))",
