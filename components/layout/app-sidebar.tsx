@@ -61,7 +61,7 @@ const menuItems = [
         icon: ControlIcon,
       },
       {
-        title: "الاظافات",
+        title: "الاضافات",
         href: "/adds",
         icon: ClipboardIcon,
       }

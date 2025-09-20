@@ -1,7 +1,9 @@
+import TablePage from "../table-demo/page";
+
 export default function Page() {
   return (
     <div>
-      <h1>Adds</h1>
+      <TablePage />
     </div>
   );
 }

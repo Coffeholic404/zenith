@@ -14,8 +14,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, Filter, SlidersHorizontal } from "lucide-react";
-
+import { ChevronDown, Filter, SlidersHorizontal, Plus } from "lucide-react";
+import Image from "next/image";
+import searchIcon from "@/public/table/Magnifer.svg";
+import filterIcon from "@/public/table/Filter.svg";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -96,23 +98,121 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
   onExpandedChange: (updaterOrValue: React.SetStateAction<{}>) => {
     setExpanded(updaterOrValue);
     console.log("Updated expanded state:", updaterOrValue);
-  }
+  };
   return (
     <Card>
       <CardHeader></CardHeader>
       <CardContent>
         <div className="flex flex-col space-y-4">
-          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
-            <Input
-              placeholder="بحث ..."
-              value={
-                (table.getColumn("name")?.getFilterValue() as string) ?? ""
-              }
-              onChange={(event) =>
-                table.getColumn("name")?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm"
-            />
+          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 ">
+            <div className=" flex gap-2">
+              <div className=" relative">
+                <Image
+                  src={searchIcon}
+                  alt="magnifier icon"
+                  className=" absolute inset-y-2  start-2 flex items-center  pointer-events-none"
+                />
+                <Input
+                  id="search"
+                  placeholder="بحث ..."
+                  value={
+                    (table.getColumn("name")?.getFilterValue() as string) ?? ""
+                  }
+                  onChange={(event) =>
+                    table.getColumn("name")?.setFilterValue(event.target.value)
+                  }
+                  className=" bg-searchBg rounded-xl block w-full p-4 ps-10 min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
+                />
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className=" size-10 p-0 rounded-xl bg-searchBg">
+                    <Image src={filterIcon} alt="filter icon" className=" size-[22px]"/>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuCheckboxItem
+                    checked={(
+                      table.getColumn("status")?.getFilterValue() as
+                        | string[]
+                        | undefined
+                    )?.includes("نشط")}
+                    onCheckedChange={(value) => {
+                      const filterValues =
+                        (table
+                          .getColumn("status")
+                          ?.getFilterValue() as string[]) || [];
+                      if (value) {
+                        table
+                          .getColumn("status")
+                          ?.setFilterValue([...filterValues, "نشط"]);
+                      } else {
+                        table
+                          .getColumn("status")
+                          ?.setFilterValue(
+                            filterValues.filter((val) => val !== "نشط")
+                          );
+                      }
+                    }}
+                  >
+                    نشط
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={(
+                      table.getColumn("status")?.getFilterValue() as
+                        | string[]
+                        | undefined
+                    )?.includes("غير نشط")}
+                    onCheckedChange={(value) => {
+                      const filterValues =
+                        (table
+                          .getColumn("status")
+                          ?.getFilterValue() as string[]) || [];
+                      if (value) {
+                        table
+                          .getColumn("status")
+                          ?.setFilterValue([...filterValues, "غير نشط"]);
+                      } else {
+                        table
+                          .getColumn("status")
+                          ?.setFilterValue(
+                            filterValues.filter((val) => val !== "غير نشط")
+                          );
+                      }
+                    }}
+                  >
+                    غير نشط
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={(
+                      table.getColumn("status")?.getFilterValue() as
+                        | string[]
+                        | undefined
+                    )?.includes("معلق")}
+                    onCheckedChange={(value) => {
+                      const filterValues =
+                        (table
+                          .getColumn("status")
+                          ?.getFilterValue() as string[]) || [];
+                      if (value) {
+                        table
+                          .getColumn("status")
+                          ?.setFilterValue([...filterValues, "معلق"]);
+                      } else {
+                        table
+                          .getColumn("status")
+                          ?.setFilterValue(
+                            filterValues.filter((val) => val !== "معلق")
+                          );
+                      }
+                    }}
+                  >
+                    معلق
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
             <div className="flex items-center space-x-2 space-x-reverse rtl:space-x-reverse">
               {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -202,7 +302,7 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
                   </DropdownMenuCheckboxItem>
                 </DropdownMenuContent>
               </DropdownMenu> */}
-              <DropdownMenu>
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline">
                     <SlidersHorizontal className="ml-2 h-4 w-4" />
@@ -227,11 +327,15 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
                       </DropdownMenuCheckboxItem>
                     ))}
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
+              <Button className=" P-0 size-10 rounded-xl bg-btnTxtClr hover:bg-btnTxtClr hover:brightness-110">
+                  <Plus strokeWidth={4}/>
+              </Button>
             </div>
           </div>
-          <div className="rounded-md border">
-            <Table>
+
+          <div className="rounded-md ">
+            <Table >
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
@@ -270,7 +374,7 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
                         data-state={row.getIsSelected() && "selected"}
                         onClick={(e) => {
                           e.stopPropagation();
-                          
+
                           // Check if the row is already expanded
                           if (row.getIsExpanded()) {
                             row.toggleExpanded(false); // Collapse the row
@@ -294,7 +398,7 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
                           </TableCell>
                         ))}
                       </TableRow>
-                      {row.getIsExpanded() && expandedStatus && (
+                      {/* {row.getIsExpanded() && expandedStatus && (
                         <TableRow>
                           <TableCell
                             colSpan={columns.length}
@@ -303,7 +407,7 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
                             {row?.original?.email}
                           </TableCell>
                         </TableRow>
-                      )}
+                      )} */}
                     </React.Fragment>
                   ))
                 ) : (
@@ -319,6 +423,7 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
               </TableBody>
             </Table>
           </div>
+
           <div className="flex items-center justify-between space-x-2 space-x-reverse py-4 rtl:space-x-reverse">
             <div className="flex-1 text-sm text-muted-foreground">
               {table.getFilteredSelectedRowModel().rows.length > 0 && (

@@ -40,6 +40,7 @@ const config = {
         btnTxtClr: "hsla(var(--btn-txt-clr))",
         accidentBtnClr: "hsla(var(--accident-btn-clr))",
         accidentTxtClr: "hsla(var(--accident-txt-clr))",
+        placeholderClr: "hsla(var(--placeholder-clr))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
