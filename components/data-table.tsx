@@ -14,6 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { planes } from "@/components/pages/adds/adds-columns";
 import { ChevronDown, Filter, SlidersHorizontal, Plus } from "lucide-react";
 import Image from "next/image";
 import searchIcon from "@/public/table/Magnifer.svg";
@@ -51,7 +52,7 @@ interface DataTableProps<TData, TValue, TNames> {
   expandedStatus?: boolean;
 }
 
-export function DataTable<TData extends { email?: string }, TValue, TNames>({
+export function DataTable<TData extends { email?: string} | planes, TValue, TNames>({
   columns,
   data,
   columnsNames,
@@ -133,22 +134,22 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
                 <DropdownMenuContent align="end">
                   <DropdownMenuCheckboxItem
                     checked={(
-                      table.getColumn("status")?.getFilterValue() as
+                      table.getColumn("name")?.getFilterValue() as
                         | string[]
                         | undefined
                     )?.includes("نشط")}
                     onCheckedChange={(value) => {
                       const filterValues =
                         (table
-                          .getColumn("status")
+                          .getColumn("name")
                           ?.getFilterValue() as string[]) || [];
                       if (value) {
                         table
-                          .getColumn("status")
+                          .getColumn("name")
                           ?.setFilterValue([...filterValues, "نشط"]);
                       } else {
                         table
-                          .getColumn("status")
+                          .getColumn("name")
                           ?.setFilterValue(
                             filterValues.filter((val) => val !== "نشط")
                           );
@@ -159,22 +160,22 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
                   </DropdownMenuCheckboxItem>
                   <DropdownMenuCheckboxItem
                     checked={(
-                      table.getColumn("status")?.getFilterValue() as
+                      table.getColumn("name")?.getFilterValue() as
                         | string[]
                         | undefined
                     )?.includes("غير نشط")}
                     onCheckedChange={(value) => {
                       const filterValues =
                         (table
-                          .getColumn("status")
+                          .getColumn("name")
                           ?.getFilterValue() as string[]) || [];
                       if (value) {
                         table
-                          .getColumn("status")
+                          .getColumn("name")
                           ?.setFilterValue([...filterValues, "غير نشط"]);
                       } else {
                         table
-                          .getColumn("status")
+                          .getColumn("name")
                           ?.setFilterValue(
                             filterValues.filter((val) => val !== "غير نشط")
                           );
@@ -185,22 +186,22 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
                   </DropdownMenuCheckboxItem>
                   <DropdownMenuCheckboxItem
                     checked={(
-                      table.getColumn("status")?.getFilterValue() as
+                      table.getColumn("name")?.getFilterValue() as
                         | string[]
                         | undefined
                     )?.includes("معلق")}
                     onCheckedChange={(value) => {
                       const filterValues =
                         (table
-                          .getColumn("status")
+                          .getColumn("name")
                           ?.getFilterValue() as string[]) || [];
                       if (value) {
                         table
-                          .getColumn("status")
+                          .getColumn("name")
                           ?.setFilterValue([...filterValues, "معلق"]);
                       } else {
                         table
-                          .getColumn("status")
+                          .getColumn("name")
                           ?.setFilterValue(
                             filterValues.filter((val) => val !== "معلق")
                           );
@@ -336,12 +337,12 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
 
           <div className="rounded-md ">
             <Table >
-              <TableHeader>
+              <TableHeader className=" bg-searchBg ">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
+                  <TableRow key={headerGroup.id} className=" border-none">
                     {headerGroup.headers.map((header) => {
                       return (
-                        <TableHead key={header.id}>
+                        <TableHead key={header.id} className="first:rounded-s-lg last:rounded-e-lg last:text-left">
                           {header.isPlaceholder
                             ? null
                             : flexRender(
@@ -354,7 +355,7 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
                   </TableRow>
                 ))}
               </TableHeader>
-              <TableBody>
+              <TableBody className="">
                 {loading ? (
                   Array.from({ length: 5 }).map((_, index) => (
                     <TableRow key={index}>
@@ -371,6 +372,7 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
                   table.getRowModel().rows.map((row) => (
                     <React.Fragment key={row.id}>
                       <TableRow
+        
                         data-state={row.getIsSelected() && "selected"}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -385,12 +387,14 @@ export function DataTable<TData extends { email?: string }, TValue, TNames>({
                         }}
                         className={
                           expandedStatus
-                            ? "cursor-pointer hover:bg-muted/50"
-                            : ""
+                            ? "cursor-pointer hover:bg-muted/50 border-none"
+                            : "border-none text-tableRow"
                         }
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
+                          <TableCell
+                          className=" "
+                          key={cell.id}>
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()

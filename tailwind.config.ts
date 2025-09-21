@@ -41,6 +41,8 @@ const config = {
         accidentBtnClr: "hsla(var(--accident-btn-clr))",
         accidentTxtClr: "hsla(var(--accident-txt-clr))",
         placeholderClr: "hsla(var(--placeholder-clr))",
+        tableHeader: "hsla(var(--table-header))",
+        tableRow: "hsla(var(--table-row))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
