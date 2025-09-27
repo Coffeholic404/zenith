@@ -43,6 +43,7 @@ const config = {
         placeholderClr: "hsla(var(--placeholder-clr))",
         tableHeader: "hsla(var(--table-header))",
         tableRow: "hsla(var(--table-row))",
+        avatarClr: "hsla(var(--avatar-clr))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
