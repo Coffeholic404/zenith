@@ -139,15 +139,21 @@ export function AppSidebar() {
   return (
     <div
       className={cn(
-        "sidebar-wrapper border-2 overflow-hidden rounded-lg",
-        state === "collapsed" ? "w-16" : "w-64"
+        "sidebar-wrapper border-2 rounded-lg transition-all duration-300",
+        state === "collapsed" ? "w-16 overflow-hidden" : "w-64"
       )}
       data-state={state}
     >
       <Sidebar side="right" className="border-none">
-        <SidebarHeader className="flex items-center justify-between p-4">
+        <SidebarHeader className={cn(
+          "flex items-center p-4 transition-all duration-300",
+          state === "collapsed" ? "justify-center p-2  pb-[30px]" : "justify-between"
+        )}>
 
-          <div className="flex items-center gap-2 sidebar-header-text">
+          <div className={cn(
+            "flex items-center gap-2 sidebar-header-text transition-all duration-300",
+            state === "collapsed" && "hidden"
+          )}>
             <Image
             alt="zenith logo"
             src={logo}
@@ -161,7 +167,10 @@ export function AppSidebar() {
             </div>
           </div>
 
-          <SidebarTrigger>
+          <SidebarTrigger className={cn(
+            "transition-all duration-300",
+            state === "collapsed" ? "relative" : ""
+          )}>
             {state === "expanded" ? (
               <PanelLeft className="h-5 w-5" />
             ) : (
@@ -170,24 +179,41 @@ export function AppSidebar() {
           </SidebarTrigger>
         </SidebarHeader>
         <SidebarContent>
-        <SidebarMenu className=" ">
+        <SidebarMenu className="">
             {menuItems.map((item) => (
               <React.Fragment key={item.title}>
                 {item.subItems ? (
                   <Collapsible
-                    open={openCollapsibles[item.title]}
-                    onOpenChange={() => toggleCollapsible(item.title)}
+                    open={state === "collapsed" ? false : openCollapsibles[item.title]}
+                    onOpenChange={() => state !== "collapsed" && toggleCollapsible(item.title)}
                     className="w-full"
                   >
-                    <SidebarMenuItem className={cn(" w-[calc(100%-50px)]")}>
+                    <SidebarMenuItem className={cn(
+                      state === "collapsed" ? "w-full" : "w-[calc(100%-50px)]"
+                    )}>
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton 
-                          className="w-full" 
+                          className={cn(
+                            "w-full transition-all duration-300 flex items-center",
+                            state === "collapsed" ? "justify-center px-2 py-3" : "justify-start"
+                          )} 
                           tooltip={state === "collapsed" ? item.title : undefined}
                           isActive={isAnySubItemActive(item.subItems)}
                         >
-                          <item.icon className={cn("h-5 w-5", isAnySubItemActive(item.subItems) ? "text-sidebaractive" : "text-[#979797]")} />
-                          <span className={cn("sidebar-item-text mr-2 flex-1 rtl:mr-2 rtl:ml-0 font-normal text-base font-vazirmatn", isAnySubItemActive(item.subItems) ? "!text-sidebaractive" : "text-[#979797]")}>{item.title}</span>
+                          <div className={cn(
+                            "flex items-center",
+                            state === "collapsed" ? "justify-center" : "justify-start w-full"
+                          )}>
+                            <item.icon className={cn(
+                              "h-6 w-6 flex-shrink-0", 
+                              isAnySubItemActive(item.subItems) ? "text-sidebaractive" : "text-[#979797]"
+                            )} />
+                            <span className={cn(
+                              "sidebar-item-text mr-2 flex-1 rtl:mr-2 rtl:ml-0 font-normal text-base font-vazirmatn transition-all duration-300", 
+                              isAnySubItemActive(item.subItems) ? "!text-sidebaractive" : "text-[#979797]",
+                              state === "collapsed" && "hidden"
+                            )}>{item.title}</span>
+                          </div>
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                     </SidebarMenuItem>
@@ -213,10 +239,26 @@ export function AppSidebar() {
                       asChild
                       isActive={pathname === item.href}
                       tooltip={state === "collapsed" ? item.title : undefined}
+                      className={cn(
+                        "transition-all duration-300 flex items-center",
+                        state === "collapsed" ? "justify-center px-2 py-3" : "justify-start"
+                      )}
                     >
-                      <Link href={item.href || "#"} className="flex items-center">
-                        <item.icon className={cn("h-5 w-5", pathname === item.href ? "text-sidebaractive" : "text-[#979797]")} />
-                        <span className={cn("sidebar-item-text mr-2 rtl:mr-2 rtl:ml-0 text-[#979797] font-normal text-base font-vazirmatn", pathname === item.href ? "!text-sidebaractive" : "")}>{item.title}</span>
+                      <Link href={item.href || "#"} className="flex items-center w-full">
+                        <div className={cn(
+                          "flex items-center",
+                          state === "collapsed" ? "justify-center" : "justify-start w-full"
+                        )}>
+                          <item.icon className={cn(
+                            "h-6 w-6 flex-shrink-0", 
+                            pathname === item.href ? "text-sidebaractive" : "text-[#979797]"
+                          )} />
+                          <span className={cn(
+                            "sidebar-item-text mr-2 rtl:mr-2 rtl:ml-0 text-[#979797] font-normal text-base font-vazirmatn transition-all duration-300", 
+                            pathname === item.href ? "!text-sidebaractive" : "",
+                            state === "collapsed" && "hidden"
+                          )}>{item.title}</span>
+                        </div>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

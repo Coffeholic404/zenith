@@ -1,12 +1,12 @@
 "use client"
 import Image from "next/image"
 
-import archive from "@/public/add-employe/ArchiveUp.svg"
+
 import userplus from "@/public/add-employe/UserPlus.svg"
 import AddForm from "@/components/pages/employees/add-employe/add-form"
 export default function AddEmployee() {
   return (
-    <section className="w-full h-full outline px-20"> 
+    <section className="w-full h-full  px-20 space-y-8"> 
       <header className=" flex items-center gap-3 max-w-[334px]">
         <div className=" size-12 bg-sidebaractive flex items-center justify-center rounded-md">
           <Image src={userplus} alt="userplus" className=" size-8"/>

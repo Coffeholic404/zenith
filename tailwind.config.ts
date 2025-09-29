@@ -44,6 +44,7 @@ const config = {
         tableHeader: "hsla(var(--table-header))",
         tableRow: "hsla(var(--table-row))",
         avatarClr: "hsla(var(--avatar-clr))",
+        cancelBtnTxt: "hsla(var(--cancel-btn-txt))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
