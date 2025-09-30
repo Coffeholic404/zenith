@@ -45,6 +45,12 @@ const config = {
         tableRow: "hsla(var(--table-row))",
         avatarClr: "hsla(var(--avatar-clr))",
         cancelBtnTxt: "hsla(var(--cancel-btn-txt))",
+        /* employe header cards colors*/
+        cardOne: "hsla(var(--card-one))",
+        cardTwo: "hsla(var(--card-two))",
+        cardThree: "hsla(var(--card-three))",
+        cardFour: "hsla(var(--card-four))",
+        cardTxt: "hsla(var(--card-txt))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

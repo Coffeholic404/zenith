@@ -1,7 +1,10 @@
+import HeaderCards from "@/components/pages/employees/header-cards";
+
 export default function Page() {
   return (
     <div>
-      <h1>Employees</h1>
+      
+      <HeaderCards />
     </div>
   );
 }

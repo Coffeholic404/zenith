@@ -28,6 +28,9 @@ const addEmployeeSchema = z.object({
   BirthDate: z.number().int().min(18, "يجب أن يكون عمر الموظف على الأقل 18 سنة"),
   Phone : z.string().min(10, "رقم الهاتف غير صالح"),
   JobTitle: z.string().min(1, "عنوان الوظيفة مطلوب"),
+  Character: z.string().min(1, "  رمز المدرب مطلوب").optional(),
+  LicenseNumber: z.string().min(1, "رقم رخصة القيادة مطلوب").optional(),
+  TypeOfTraining: z.string().min(1, "نوع التدريب مطلوب").optional(),
 });
 
 export default function AddForm() {
@@ -129,6 +132,72 @@ export default function AddForm() {
                         <Input
                           {...field}
                           placeholder="عنوان وظيفي"
+                          className=" w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className=" max-w-[830px]">
+            <CardHeader className=" font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
+              معلومات المدرب
+            </CardHeader>
+            <CardContent>
+              <div className=" flex flex-wrap gap-x-1 gap-y-4">
+                <FormField
+                  control={control}
+                  name="Character"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="رمز المدرب"
+                          className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={control}
+                  name="LicenseNumber"
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <FormItem >
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="رقم رخصة المدرب"
+                          value={value || ""}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            onChange(val === "" ? undefined : Number(val));
+                          }}
+                          className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                          
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={control}
+                  name="TypeOfTraining"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="نوع التدريب"
                           className=" w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                       </FormControl>

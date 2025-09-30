@@ -83,6 +83,13 @@
     --table-header: 240, 2%, 17%, 1;
     --table-row: 0, 0%, 59%, 1;
     --cancel-btn-txt: 0, 0%, 43%, 1;
+
+    /* employe header cards colors*/
+    --card-one: 269, 54%, 81%, 0.72;
+    --card-two: 249, 76%, 92%, 1;
+    --card-three: 14, 61%, 90%, 1;
+    --card-four: 335, 68%, 88%, 1;
+    --card-txt: 240, 2%, 17%, 1;
   }
 
   /* Color themes */
