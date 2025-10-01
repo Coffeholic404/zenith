@@ -29,13 +29,14 @@ export default function Page() {
               className=" bg-white rounded-xl block w-full p-4 ps-10 min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
             />
           </div>
-          <div className=" bg-white size-10 flex items-center justify-center rounded-lg" >
+          <div className=" bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg" >
             <Image 
               src={filterIcon}
               alt="filter icon"
               className=" size-6"
             />
           </div>
+          
         </div>
       </div>
     </div>
