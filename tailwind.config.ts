@@ -51,6 +51,8 @@ const config = {
         cardThree: "hsla(var(--card-three))",
         cardFour: "hsla(var(--card-four))",
         cardTxt: "hsla(var(--card-txt))",
+        /*employ card*/
+        deleteTxt: "hsla(var(--delete-txt))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

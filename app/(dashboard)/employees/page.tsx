@@ -78,6 +78,9 @@ export default function Page() {
       </div>
       <div className=" flex flex-wrap gap-6">
         <EmployeeCard />
+        <EmployeeCard />
+        <EmployeeCard />
+        
       </div>
     </div>
   );

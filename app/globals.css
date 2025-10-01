@@ -90,8 +90,11 @@
     --card-three: 14, 61%, 90%, 1;
     --card-four: 335, 68%, 88%, 1;
     --card-txt: 240, 2%, 17%, 1;
-  }
 
+     /*employ card*/
+  --delete-txt: 346, 92%, 54%, 1;
+  }
+ 
   /* Color themes */
   /* .theme-blue {
     --primary: 210 100% 50%;
