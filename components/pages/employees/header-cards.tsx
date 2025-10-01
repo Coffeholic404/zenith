@@ -7,9 +7,9 @@ import Image from "next/image";
 export default function HeaderCards() {
   return (
     <div className=" flex items-center  w-full gap-12">
-        <Card className=" max-w-[16.875rem] flex-1 rounded-[10px] shadow-none bg-cardOne p-4">
+        <Card className=" max-w-[16.875rem] flex-1  shadow-none bg-cardOne p-4">
             <div className=" flex items-center justify-start gap-[14px]">
-                <div className=" size-12 flex items-center justify-center bg-studentClr rounded-sm">
+                <div className=" size-12 flex items-center justify-center bg-studentClr rounded-xl">
                     <Image src={UserRounded} alt="user rounded" width={24} height={24} />
                 </div>
                 <div className=" font-vazirmatn space-y-2">
@@ -18,9 +18,9 @@ export default function HeaderCards() {
                 </div>
             </div>
         </Card>
-        <Card className=" max-w-[16.875rem] flex-1 rounded-[10px] shadow-none bg-cardTwo p-4">
+        <Card className=" max-w-[16.875rem] flex-1  shadow-none bg-cardTwo p-4">
             <div className=" flex items-center justify-start gap-[14px]">
-                <div className=" size-12 flex items-center justify-center bg-studentClr rounded-sm">
+                <div className=" size-12 flex items-center justify-center bg-studentClr rounded-xl">
                     <Image src={Dep} alt="user rounded" width={24} height={24} />
                 </div>
                 <div className=" font-vazirmatn space-y-2">
@@ -29,9 +29,9 @@ export default function HeaderCards() {
                 </div>
             </div>
         </Card>
-        <Card className=" max-w-[16.875rem] flex-1 rounded-[10px] shadow-none bg-cardThree p-4">
+        <Card className=" max-w-[16.875rem] flex-1  shadow-none bg-cardThree p-4">
             <div className=" flex items-center justify-start gap-[14px]">
-                <div className=" size-12 flex items-center justify-center bg-couresClr rounded-sm">
+                <div className=" size-12 flex items-center justify-center bg-couresClr rounded-xl">
                     <Image src={people} alt="user rounded" width={24} height={24} />
                 </div>
                 <div className=" font-vazirmatn space-y-2">
@@ -40,9 +40,9 @@ export default function HeaderCards() {
                 </div>
             </div>
         </Card>
-        <Card className=" max-w-[16.875rem] flex-1 rounded-[10px] shadow-none bg-cardFour p-4">
+        <Card className=" max-w-[16.875rem] flex-1  shadow-none bg-cardFour p-4">
             <div className=" flex items-center justify-start gap-[14px]">
-                <div className=" size-12 flex items-center justify-center bg-employeeClr rounded-sm">
+                <div className=" size-12 flex items-center justify-center bg-employeeClr rounded-xl">
                     
                 </div>
                 <div className=" font-vazirmatn space-y-2">
