@@ -23,6 +23,9 @@ export default function Page() {
   const handleAddEmployee = () => {
     router.push('/employees/add-employe');
   };
+  const handleAddTrainer = () => {
+    router.push('/employees/add-trainer');
+  };
 
   return (
     <div className=" space-y-6">
@@ -66,7 +69,9 @@ export default function Page() {
                   <Image src={userrounded} alt="user rounded icon" className=" size-6" />
                   <p className=" font-normal text-base text-subtext">موظف</p>
                 </div>
-                <div className=" flex items-center gap-2 cursor-pointer">
+                <div 
+                 className=" flex items-center gap-2 cursor-pointer"
+                 onClick={handleAddTrainer}>
                   <Image src={userhearted} alt="user hearted icon" className=" size-6" />
                   <p className=" font-normal text-base text-sidebaractive">مدرب</p>
                 </div>

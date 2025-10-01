@@ -1,4 +1,6 @@
 "use client";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,10 +9,8 @@ import FileUploader from "@/components/utli/file-uploader";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,18 @@ const addEmployeeSchema = z.object({
 });
 
 export default function AddForm() {
+  const pathname = usePathname();
+  const [isTrainer, setIsTrainer] = useState(false);
+
+  useEffect(() => {
+    // Check if the URL contains 'add-trainer' in its path
+    if (pathname.includes('add-trainer')) {
+      setIsTrainer(true);
+    } else {
+      setIsTrainer(false);
+    }
+  }, [pathname]);
+
   function onSubmit(values: z.infer<typeof addEmployeeSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
@@ -143,71 +155,73 @@ export default function AddForm() {
             </CardContent>
           </Card>
 
-          <Card className=" max-w-[830px]">
-            <CardHeader className=" font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
-              معلومات المدرب
-            </CardHeader>
-            <CardContent>
-              <div className=" flex flex-wrap gap-x-1 gap-y-4">
-                <FormField
-                  control={control}
-                  name="Character"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="رمز المدرب"
-                          className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          {isTrainer && (
+            <Card className=" max-w-[830px]">
+              <CardHeader className=" font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
+                معلومات المدرب
+              </CardHeader>
+              <CardContent>
+                <div className=" flex flex-wrap gap-x-1 gap-y-4">
+                  <FormField
+                    control={control}
+                    name="Character"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="رمز المدرب"
+                            className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={control}
-                  name="LicenseNumber"
-                  render={({ field: { onChange, value, ...field } }) => (
-                    <FormItem >
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="رقم رخصة المدرب"
-                          value={value || ""}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            onChange(val === "" ? undefined : Number(val));
-                          }}
-                          className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                          
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={control}
+                    name="LicenseNumber"
+                    render={({ field: { onChange, value, ...field } }) => (
+                      <FormItem >
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="رقم رخصة المدرب"
+                            value={value || ""}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              onChange(val === "" ? undefined : Number(val));
+                            }}
+                            className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={control}
-                  name="TypeOfTraining"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="نوع التدريب"
-                          className=" w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
+                  <FormField
+                    control={control}
+                    name="TypeOfTraining"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="نوع التدريب"
+                            className=" w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
           <div className="max-w-[830px] flex justify-end gap-4">
             <Button
               variant="ghost"
