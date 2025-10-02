@@ -217,7 +217,16 @@ export const api = createApi({
         'getOrderForAdmin' ,
         'addCashier' ,
         'MerchantStatusOrder',
-        'AdminStatusOrder'
+        'AdminStatusOrder',
+
+        // employe
+        'getEmployees',
+        'getEmployeeById',
+        'addEmployee',
+        'updateEmployee',
+        'deleteEmployee',
+        'getTrainers',
+        'getAdministrators',
     ],
     endpoints: (build) => ({}),
 });
