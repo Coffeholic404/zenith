@@ -8,7 +8,7 @@ export type Employee = {
     phone: string;
     jobTitle: string;
     eType: boolean;
-    attachmentFile?: string; // string($binary)
+    attachment?: string; // string($binary)
     character?: string;
     licenseNumber?: string;
     typeOfTraining?: string;
@@ -24,7 +24,9 @@ export type GetEmployeesRequestParams = {
 };
 
 export type GetEmployeesResponse = {
-    data: Employee[];
+    result: {
+        data: Employee[];
+    };
     totalCount: number;
     pageNumber: number;
     pageSize: number;

@@ -17,8 +17,11 @@ import {
 } from "@/components/ui/popover";
 import { useRouter } from "next/navigation";
 import EmployeeCard from "@/components/pages/employees/employee-card";
+import { useGetEmployeesQuery } from "@/services/employe";
+
 export default function Page() {
   const router = useRouter();
+  const { data: employees, isLoading } = useGetEmployeesQuery({});
 
   const handleAddEmployee = () => {
     router.push('/employees/add-employe');
@@ -26,6 +29,10 @@ export default function Page() {
   const handleAddTrainer = () => {
     router.push('/employees/add-trainer');
   };
+
+  if(!employees) return null;
+  console.log(employees.result.data);
+
 
   return (
     <div className=" space-y-6">
@@ -82,9 +89,9 @@ export default function Page() {
         </div>
       </div>
       <div className=" flex flex-wrap gap-6">
-        <EmployeeCard />
-        <EmployeeCard />
-        <EmployeeCard />
+        {employees.result.data.map((employee) => (
+          <EmployeeCard key={employee.id} employee={employee} />
+        ))}
         
       </div>
     </div>

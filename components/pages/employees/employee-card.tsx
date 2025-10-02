@@ -17,21 +17,22 @@ import phone from "@/public/employees/Phone.svg";
 import pencil from "@/public/table/Pen.svg"
 import trash from "@/public/employees/TrashBin.svg"
 import Image from "next/image";
-export default function EmployeeCard() {
+import { Employee } from "@/services/employe";
+export default function EmployeeCard({ employee }: { employee: Employee }) {  
   return (
     <Card className=" min-w-[22.625rem] max-w-[24.625rem] flex-1 shadow-none p-2">
       <CardContent className="  p-0 space-y-4">
         <div className=" flex items-center justify-between ">
           <div className=" flex gap-2">
             <Avatar className=" size-16">
-              <AvatarImage src="/placeholder.svg" alt="@shadcn" />
+              <AvatarImage src={employee.attachment} alt="@shadcn" />
               <AvatarFallback>SC</AvatarFallback>
             </Avatar>
             <div className=" font-vazirmatn pt-2">
-              <p className=" font-medium text-lg text-cardTxt">احمد محمد</p>
+              <p className=" font-medium text-lg text-cardTxt">{employee.name}</p>
               <p className=" text-sm text-subtext font-normal">
                 {" "}
-                العنوان الوظيفي
+                 {employee.jobTitle}
               </p>
             </div>
           </div>
@@ -78,7 +79,7 @@ export default function EmployeeCard() {
         <Separator className="w-full mx-auto " />
         <CardFooter className="p-0  flex items-center justify-end">
           <div className=" flex items-center gap-2">
-            <p className=" text-sm text-subtext font-semibold">09123456789</p>
+            <p className=" text-sm text-subtext font-semibold">{employee.phone}</p>
             <Image src={phone} alt="phone" className=" size-6" />
           </div>
         </CardFooter>

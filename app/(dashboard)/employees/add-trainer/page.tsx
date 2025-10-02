@@ -14,7 +14,7 @@ export default function AddTrainer() {
           <p className=" font-vazirmatn font-medium text-sm text-subtext">املا البيانات التالي لإضافة مدرب جديد الى النظام</p>
         </div>
       </header>
-      <AddForm />
+      <AddForm type="trainer" />
     </section>
   )
 }

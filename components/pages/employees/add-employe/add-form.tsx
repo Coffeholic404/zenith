@@ -33,7 +33,7 @@ const addEmployeeSchema = z.object({
   TypeOfTraining: z.string().min(1, "نوع التدريب مطلوب").optional(),
 });
 
-export default function AddForm() {
+export default function AddForm({ type }: { type: "trainer" | "employe" }) {
   const pathname = usePathname();
   const [isTrainer, setIsTrainer] = useState(false);
 
