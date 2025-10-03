@@ -21,11 +21,20 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
+import { useAddEmployeeMutation } from "@/services/employe";
 const addEmployeeSchema = z.object({
   AttachmentFile: z.instanceof(File, { message: "يرجى تحميل صورة شخصية" }),
   Name: z.string().min(1, "الاسم الثلاثي مطلوب"),
-  BirthDate: z.number().int().min(18, "يجب أن يكون عمر الموظف على الأقل 18 سنة"),
+  BirthDate: z.string().min(1, "تاريخ الميلاد مطلوب").refine((date) => {
+    const birthDate = new Date(date);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1 >= 18;
+    }
+    return age >= 18;
+  }, "يجب أن يكون عمر الموظف على الأقل 18 سنة"),
   Phone : z.string().min(10, "رقم الهاتف غير صالح"),
   JobTitle: z.string().min(1, "عنوان الوظيفة مطلوب"),
   Character: z.string().min(1, "  رمز المدرب مطلوب").optional(),
@@ -46,24 +55,42 @@ export default function AddForm({ type }: { type: "trainer" | "employe" }) {
     }
   }, [pathname]);
 
-  function onSubmit(values: z.infer<typeof addEmployeeSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof addEmployeeSchema>) {
+    const formData = new FormData();
+    formData.append("AttachmentFile", values.AttachmentFile);
+    formData.append("Name", values.Name);
+    // Convert date string to ISO format for API
+    const birthDate = new Date(values.BirthDate);
+    formData.append("BirthDate", birthDate.toISOString());
+    formData.append("Phone", values.Phone);
+    formData.append("JobTitle", values.JobTitle);
+    formData.append("Character", values.Character || "");
+    formData.append("LicenseNumber", values.LicenseNumber || "");
+    formData.append("TypeOfTraining", values.TypeOfTraining || "");
+    formData.append("EType", isTrainer ? "true" : "false");
+    const response = await addEmployeeMutation(formData).unwrap();
+    // if (response.success) {
+    //   // Handle success (e.g., show a success message)
+    //   console.log("Employee added successfully:", response);
+    // } else {
+    //   // Handle error (e.g., show an error message)
+    //   console.error("Error adding employee:", response.message);
+    // }
   }
 
   const form = useForm<z.infer<typeof addEmployeeSchema>>({
     resolver: zodResolver(addEmployeeSchema),
     defaultValues: {
-      AttachmentFile: null!!,
+      AttachmentFile: undefined,
       Name: "",
-      BirthDate: undefined,
+      BirthDate: "",
       Phone: "",
       JobTitle: "",
     },
   });
 
   const { formState, handleSubmit, control } = form;
+  const [addEmployeeMutation, { isLoading }] = useAddEmployeeMutation();
 
   return (
     <div className=" space-y-6">
@@ -95,28 +122,22 @@ export default function AddForm({ type }: { type: "trainer" | "employe" }) {
                 />
 
                 <FormField
-                  control={control}
-                  name="BirthDate"
-                  render={({ field: { onChange, value, ...field } }) => (
-                    <FormItem >
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="number"
-                          placeholder="العمر"
-                          value={value || ""}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            onChange(val === "" ? undefined : Number(val));
-                          }}
-                          className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                          
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    control={control}
+                    name="BirthDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="date"
+                            placeholder="تاريخ الميلاد"
+                            className=" w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                 <FormField
                   control={control}
@@ -179,7 +200,7 @@ export default function AddForm({ type }: { type: "trainer" | "employe" }) {
                     )}
                   />
 
-                  <FormField
+                  {/* <FormField
                     control={control}
                     name="LicenseNumber"
                     render={({ field: { onChange, value, ...field } }) => (
@@ -188,11 +209,11 @@ export default function AddForm({ type }: { type: "trainer" | "employe" }) {
                           <Input
                             {...field}
                             placeholder="رقم رخصة المدرب"
-                            value={value || ""}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              onChange(val === "" ? undefined : Number(val));
-                            }}
+                            // value={value || ""}
+                            // onChange={(e) => {
+                            //   const val = e.target.value;
+                            //   onChange(val === "" ? undefined : Number(val));
+                            // }}
                             className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             
                           />
@@ -200,7 +221,23 @@ export default function AddForm({ type }: { type: "trainer" | "employe" }) {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
+                  <FormField
+                  control={control}
+                  name="LicenseNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="رقم رخصة المدرب"
+                          className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                   <FormField
                     control={control}
