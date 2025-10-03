@@ -7,6 +7,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { AppHeader } from "@/components/layout/app-header";
 import { AppFooter } from "@/components/layout/app-footer";
+import { Toaster } from "@/components/ui/toaster";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
@@ -48,6 +49,7 @@ export default function DashboardLayout({
             </div>
           </div>
         </SidebarProvider>
+        <Toaster />
       </ThemeProvider>
       <script
         dangerouslySetInnerHTML={{

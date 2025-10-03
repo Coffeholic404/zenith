@@ -23,12 +23,15 @@ export default function Page() {
   const router = useRouter();
   const { data: employees, isLoading } = useGetEmployeesQuery({});
 
+  
+  
   const handleAddEmployee = () => {
     router.push('/employees/add-employe');
   };
   const handleAddTrainer = () => {
     router.push('/employees/add-trainer');
   };
+
 
   if(!employees) return null;
   console.log(employees.result.data);
