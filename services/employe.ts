@@ -12,6 +12,7 @@ export type Employee = {
     character?: string;
     licenseNumber?: string;
     typeOfTraining?: string;
+    employeeTypeName?: string;
 };
 
 // Request/Response types for different endpoints
@@ -33,7 +34,20 @@ export type GetEmployeesResponse = {
     totalPages: number;
 };
 
-export type GetEmployeeByIdResponse = Employee;
+export type GetEmployeeByIdResponse = {
+    result: {
+            id?: string;
+    name: string;
+    birthDate: string; // string($date-time)
+    phone: string;
+    jobTitle: string;
+    eType: boolean;
+    attachment?: string; // string($binary)
+    character?: string;
+    licenseNumber?: string;
+    typeOfTraining?: string;
+    };
+};
 
 export type AddEmployeePayload = FormData; // For multipart/form-data
 

@@ -18,10 +18,13 @@ import {
 import { useRouter } from "next/navigation";
 import EmployeeCard from "@/components/pages/employees/employee-card";
 import { useGetEmployeesQuery } from "@/services/employe";
+import { useState } from "react";
 
 export default function Page() {
+  const [isEdit, setIsEdit] = useState(false);
   const router = useRouter();
   const { data: employees, isLoading } = useGetEmployeesQuery({});
+  console.log(employees);
 
   
   
@@ -40,7 +43,7 @@ export default function Page() {
   return (
     <div className=" space-y-6">
       <HeaderCards />
-      <div className=" flex items-center justify-between">
+      <div className=" flex items-center justify-between flex-1">
         <div className=" font-vazirmatn">
           <p className=" font-bold text-cardTxt ">إدارة الموظفين</p>
           <p className=" font-light text-subtext text-lg">
@@ -93,7 +96,7 @@ export default function Page() {
       </div>
       <div className=" flex flex-wrap gap-6">
         {employees.result.data.map((employee) => (
-          <EmployeeCard key={employee.id} employee={employee} />
+          <EmployeeCard key={employee.id} employee={employee} isEdit={isEdit} setIsEdit={setIsEdit}  />
         ))}
         
       </div>

@@ -32,11 +32,15 @@ import Image from "next/image";
 import { Employee, useDeleteEmployeeMutation } from "@/services/employe";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-export default function EmployeeCard({ employee }: { employee: Employee }) {  
+
+
+export default function EmployeeCard({ employee, isEdit, setIsEdit}: { employee: Employee, isEdit: boolean, setIsEdit: (value: boolean) => void }) {
+    
   const router = useRouter();
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteEmployee, { isLoading: isDeleting }] = useDeleteEmployeeMutation();
+  console.log(employee);
 
   const handleDeleteEmployee = async (id: string) => {
     try {
@@ -71,7 +75,18 @@ export default function EmployeeCard({ employee }: { employee: Employee }) {
       // Close the dialog even on error
       setIsDeleteDialogOpen(false);
     }
-  };      
+  };
+  
+  const handleEditEmployee = () => {
+    setIsEdit(true);
+    if(employee.employeeTypeName === "مدرب") {
+      router.push(`/employees/edit-trainer/${employee.id}`);
+    } else {
+      router.push(`/employees/edit-employe/${employee.id}`);
+    }
+  }
+
+
 
   return (
     <>
@@ -80,7 +95,7 @@ export default function EmployeeCard({ employee }: { employee: Employee }) {
           <div className=" flex items-center justify-between ">
             <div className=" flex gap-2">
               <Avatar className=" size-16">
-                <AvatarImage src={employee.attachment} alt="@shadcn" />
+                <AvatarImage src={`http://aliali.runasp.net/${employee.attachment}`} alt="employee name" />
                 <AvatarFallback>SC</AvatarFallback>
               </Avatar>
               <div className=" font-vazirmatn pt-2">
@@ -99,6 +114,7 @@ export default function EmployeeCard({ employee }: { employee: Employee }) {
                 <PopoverContent  className=" max-w-24 font-vazirmatn p-2 py-4 rounded-xl">
                   <div className=" flex flex-col gap-4">
                     <div
+                      onClick={handleEditEmployee}
                       className=" flex items-center gap-2 cursor-pointer"
                     >
                       <Image

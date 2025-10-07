@@ -16,7 +16,7 @@ export default function AddEmployee() {
           <p className=" font-vazirmatn font-medium text-sm text-subtext">املا البيانات التالي لإضافة موضف جديد الى النظام</p>
         </div>
       </header>
-      <AddForm />
+      <AddForm type="employee" />
     </section>
   )
 }
