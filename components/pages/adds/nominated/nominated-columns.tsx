@@ -1,12 +1,11 @@
 import Image from "next/image";
 import type { ColumnDef } from "@tanstack/react-table";
 import list from "@/public/table/List.svg"
-import pen from "@/public/table/Pen.svg"
+
 import trash from "@/public/table/trash.svg"
 import { Button } from "@/components/ui/button";
 import { useDeleteNominatedPartyMutation, useUpdateNominatedPartyMutation, useGetNominatedPartyQuery } from "@/services/nominatedParty";
 import { useState } from "react";
-import NominatedModel from "./nominatedModel";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -18,6 +17,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import EditNominatedModel from "./edit-nominated-model";
 export type NominatedParty = {
     uniqueID: string,
     name: string,
@@ -136,9 +136,7 @@ export const nominatedColumns: ColumnDef<NominatedParty>[] = [
             return (
                 <>
                     <div className="flex items-center justify-end gap-3 pe-4">
-                        <Button variant="ghost" className=" p-0 px-1">
-                            <Image src={pen} alt="pen" className=" size-5" />
-                        </Button>
+                        <EditNominatedModel id={row.original.uniqueID} name={row.original.name} />
                         <Button
                             variant="ghost"
                             className="p-0 px-1"

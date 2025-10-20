@@ -54,8 +54,8 @@ export const NominatedPartyApi = api.injectEndpoints({
         }),
 
         updateNominatedParty: builder.mutation<NominatedParty, any>({
-            query: (body) => ({
-                url: `/api/NominatedParty/{id}`,
+            query: ({ id, ...body }) => ({
+                url: `/api/NominatedParty/${id}`,
                 method: 'PUT',
                 body,
             }),
