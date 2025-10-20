@@ -4,7 +4,9 @@ import { DataTableSkeleton } from "@/components/ui/data-table-skeleton";
 
 import { columnsNames, columns } from "@/components/pages/adds/adds-columns";
 import { nominatedColumns, nominatedColumnsNames } from "@/components/pages/adds/nominated/nominated-columns";
+import { SubscriptionsColumns, SubscriptionsColumnsNames } from "@/components/pages/adds/subscriptions/subscriptions-columns";
 import { useGetNominatedPartiesQuery, NominatedParty } from "@/services/nominatedParty"
+import { useGetSubscriptionsQuery, subscriptionApi } from "@/services/subscriptions"
 
 
 
@@ -17,11 +19,18 @@ import {
 export default function Page() {
   const { data: nominatedParties, isLoading, error, isSuccess } = useGetNominatedPartiesQuery({
   })
+  const { data: subscriptions, isLoading: subscriptionsLoading, error: subscriptionsError, isSuccess: subscriptionsSuccess } = useGetSubscriptionsQuery({
+  })
+
   let nominatedPartiesData: NominatedParty[] = []
+  let subscriptionsData: subscriptionApi[] = []
   if (isSuccess && nominatedParties?.result?.data) {
     nominatedPartiesData = nominatedParties?.result.data || []
   }
-  console.log(nominatedPartiesData)
+  if (subscriptionsSuccess && subscriptions?.result?.data) {
+    subscriptionsData = subscriptions?.result.data || []
+  }
+  
   const data = [{
     name: "plan 1",
     date: "2023-01-01",
@@ -108,7 +117,7 @@ export default function Page() {
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />
           </TabsContent>
           <TabsContent value="انواع الاشتراكات" className="bg-white rounded-lg">
-            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+            <DataTable columns={SubscriptionsColumns} data={subscriptionsData} columnsNames={SubscriptionsColumnsNames} />
           </TabsContent>
           <TabsContent value="دورات بدنية" className="bg-white rounded-lg">
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />

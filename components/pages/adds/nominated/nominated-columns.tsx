@@ -163,7 +163,4 @@ export const nominatedColumns: ColumnDef<NominatedParty>[] = [
 export const nominatedColumnsNames = [
     { label: 'ت', dataIndex: 'sequence' },
     { label: 'الاسم', dataIndex: 'name' },
-    { label: 'التاريخ', dataIndex: 'date' },
-    { label: 'ملاحظات', dataIndex: 'notes' },
-
 ]

@@ -17,7 +17,7 @@ export default function TestFileUploaderPage() {
   })
 
   const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data)
+
     alert("تم رفع الملفات بنجاح!")
   }
 

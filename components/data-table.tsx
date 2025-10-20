@@ -16,6 +16,7 @@ import {
 } from "@tanstack/react-table";
 import { planes } from "@/components/pages/adds/adds-columns";
 import { NominatedParty } from "@/components/pages/adds/nominated/nominated-columns";
+import { subscriptionsColumns } from "@/components/pages/adds/subscriptions/subscriptions-columns"
 import { ChevronDown, Filter, SlidersHorizontal, Plus } from "lucide-react";
 import Image from "next/image";
 import searchIcon from "@/public/table/Magnifer.svg";
@@ -55,7 +56,7 @@ interface DataTableProps<TData, TValue, TNames> {
   type?: string;
 }
 
-export function DataTable<TData extends { email?: string } | planes | NominatedParty, TValue, TNames>({
+export function DataTable<TData extends { email?: string } | planes | NominatedParty | subscriptionsColumns, TValue, TNames>({
   columns,
   data,
   columnsNames,

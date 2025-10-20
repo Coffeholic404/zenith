@@ -24,7 +24,6 @@ export default function Page() {
   const [isEdit, setIsEdit] = useState(false);
   const router = useRouter();
   const { data: employees, isLoading } = useGetEmployeesQuery({});
-  console.log(employees);
 
   
   
@@ -37,7 +36,6 @@ export default function Page() {
 
 
   if(!employees) return null;
-  console.log(employees.result.data);
 
 
   return (
