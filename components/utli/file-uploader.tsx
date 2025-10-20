@@ -16,6 +16,7 @@ import userRounded from "@/public/add-employe/UserRounded.svg"
 import archive from "@/public/add-employe/ArchiveUp.svg"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 interface FileUploaderProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -92,8 +93,8 @@ export default function FileUploader<
   }
 
   return (
-    <div className={className}>
-      <Card className="max-w-[830px] pb-6">
+    <div >
+      <Card className={cn("max-w-[830px] pb-6", className)}>
         <CardHeader className="px-3 py-2 font-vazirmatn font-light text-subtext">
           {title}
         </CardHeader>

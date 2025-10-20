@@ -106,7 +106,7 @@ export default function BirthdayDate({
         name={name}
         value={displayValue}
         placeholder={placeholder}
-        className={`w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 pr-10 ${className}`}
+        className={`bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 pr-10 ${className}`}
         onChange={handleInputChange}
         onBlur={onBlur}
         onKeyDown={handleKeyDown}

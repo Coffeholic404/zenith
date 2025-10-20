@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { AppHeader } from "@/components/layout/app-header";
 import { AppFooter } from "@/components/layout/app-footer";
 import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
@@ -37,18 +38,20 @@ export default function DashboardLayout({
         enableSystem
         disableTransitionOnChange
       >
-        <SidebarProvider>
-          <div className="flex min-h-screen max-h-screen overflow-hidden  bg-mainBg">
-            <AppSidebar />
-            <div className="flex flex-col gap-1 flex-1 min-h-screen max-h-screen overflow-hidden">
-              <AppHeader />
-              <main className="flex-1 p-6  border-t  overflow-y-scroll bg-mainBg">
-                {children}
-              </main>
-              {/* <AppFooter /> */}
+        <TooltipProvider>
+          <SidebarProvider>
+            <div className="flex min-h-screen max-h-screen overflow-hidden  bg-mainBg">
+              <AppSidebar />
+              <div className="flex flex-col gap-1 flex-1 min-h-screen max-h-screen overflow-hidden">
+                <AppHeader />
+                <main className="flex-1 p-6  border-t  overflow-y-scroll bg-mainBg">
+                  {children}
+                </main>
+                {/* <AppFooter /> */}
+              </div>
             </div>
-          </div>
-        </SidebarProvider>
+          </SidebarProvider>
+        </TooltipProvider>
         <Toaster />
       </ThemeProvider>
       <script

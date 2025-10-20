@@ -1,7 +1,13 @@
 "use client"
 import { DataTable } from "@/components/data-table";
+import { DataTableSkeleton } from "@/components/ui/data-table-skeleton";
 
 import { columnsNames, columns } from "@/components/pages/adds/adds-columns";
+import { nominatedColumns, nominatedColumnsNames } from "@/components/pages/adds/nominated/nominated-columns";
+import { useGetNominatedPartiesQuery, NominatedParty } from "@/services/nominatedParty"
+
+
+
 import {
   Tabs,
   TabsContent,
@@ -9,11 +15,18 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 export default function Page() {
+  const { data: nominatedParties, isLoading, error, isSuccess } = useGetNominatedPartiesQuery({
+  })
+  let nominatedPartiesData: NominatedParty[] = []
+  if (isSuccess && nominatedParties?.result?.data) {
+    nominatedPartiesData = nominatedParties?.result.data || []
+  }
+  console.log(nominatedPartiesData)
   const data = [{
     name: "plan 1",
     date: "2023-01-01",
     notes: "plan 1 notes",
-  },{
+  }, {
     name: "plan 2",
     date: "2023-01-02",
     notes: "plan 2 notes",
@@ -23,61 +36,61 @@ export default function Page() {
     date: "2023-01-03",
     notes: "plan 3 notes",
   }
-]
+  ]
 
-const tabs = [
-  {
-    value: "الطائرات",
-    label: "الطائرات",
-  },
-  {
-    value: "الاماكن",
-    label: "الاماكن",
-  },
-  {
-    value: "انواع الدورات",
-    label: "انواع الدورات",
-  },
-  {
-    value: "انواع الاشتراكات",
-    label: "انواع الاشتراكات",
-  },
-  {
-    value: "دورات بدنية",
-    label: "دورات بدنية",
-  },
-  {
-    value: "مواد",
-    label: "مواد",
-  },
-  {
-    value: "الفئات ",
-    label: "الفئات ",
-  },
-  {
-    value: "الوحدات",
-    label: "الوحدات",
-  },
-  {
-    value: "انواع المرفقات ",
-    label: "انواع المرفقات ",
-  },
-  {
-    value: "جهة الترشيح",
-    label: "جهة الترشيح",
-  },
-]
+  const tabs = [
+    {
+      value: "الطائرات",
+      label: "الطائرات",
+    },
+    {
+      value: "الاماكن",
+      label: "الاماكن",
+    },
+    {
+      value: "انواع الدورات",
+      label: "انواع الدورات",
+    },
+    {
+      value: "انواع الاشتراكات",
+      label: "انواع الاشتراكات",
+    },
+    {
+      value: "دورات بدنية",
+      label: "دورات بدنية",
+    },
+    {
+      value: "مواد",
+      label: "مواد",
+    },
+    {
+      value: "الفئات ",
+      label: "الفئات ",
+    },
+    {
+      value: "الوحدات",
+      label: "الوحدات",
+    },
+    {
+      value: "انواع المرفقات ",
+      label: "انواع المرفقات ",
+    },
+    {
+      value: "جهة الترشيح",
+      label: "جهة الترشيح",
+    },
+  ]
 
   return (
     <div>
       <section>
         <Tabs defaultValue="الطائرات" className="w-full bg-transparent ">
-          <TabsList className="flex justify-start items-center md:flex-wrap md:shrink bg-transparent rounded-lg p-1 mb-6 h-auto space-x-2">
+          <TabsList className="flex justify-start items-center md:flex-wrap md:shrink bg-transparent h-auto space-x-2">
             {tabs.map((tab) => (
-              <TabsTrigger 
+              <TabsTrigger
                 key={tab.value}
-                value={tab.value} 
-                className="text-center py-2 rounded-lg data-[state=active]:text-sidebaractive"
+                value={tab.value}
+                className="text-center data-[state=active]:text-sidebaractive"
               >
                 {tab.label}
               </TabsTrigger>
@@ -87,6 +100,46 @@ const tabs = [
 
           <TabsContent value="الطائرات" className="bg-white rounded-lg">
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+          </TabsContent>
+          <TabsContent value="الاماكن" className="bg-white rounded-lg">
+            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+          </TabsContent>
+          <TabsContent value="انواع الدورات" className="bg-white rounded-lg">
+            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+          </TabsContent>
+          <TabsContent value="انواع الاشتراكات" className="bg-white rounded-lg">
+            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+          </TabsContent>
+          <TabsContent value="دورات بدنية" className="bg-white rounded-lg">
+            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+          </TabsContent>
+          <TabsContent value="مواد" className="bg-white rounded-lg">
+            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+          </TabsContent>
+          <TabsContent value="الفئات " className="bg-white rounded-lg">
+            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+          </TabsContent>
+          <TabsContent value="الوحدات" className="bg-white rounded-lg">
+            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+          </TabsContent>
+          <TabsContent value="انواع المرفقات " className="bg-white rounded-lg">
+            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+          </TabsContent>
+          <TabsContent value="جهة الترشيح" className="bg-white rounded-lg">
+            {isLoading ? (
+              <DataTableSkeleton 
+                columnCount={3} 
+                rowCount={5} 
+                showAddButton={true} 
+              />
+            ) : (
+              <DataTable 
+                columns={nominatedColumns} 
+                data={nominatedPartiesData} 
+                columnsNames={nominatedColumnsNames} 
+                type={"nominated"}
+              />
+            )}
           </TabsContent>
         </Tabs>
       </section>

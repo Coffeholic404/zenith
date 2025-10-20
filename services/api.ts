@@ -227,6 +227,12 @@ export const api = createApi({
         'deleteEmployee',
         'getTrainers',
         'getAdministrators',
+
+        // student
+        'getStudents',
+
+        // nominatedParty
+        'getNominatedParty',
     ],
     endpoints: (build) => ({}),
 });

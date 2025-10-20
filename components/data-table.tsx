@@ -15,6 +15,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { planes } from "@/components/pages/adds/adds-columns";
+import { NominatedParty } from "@/components/pages/adds/nominated/nominated-columns";
 import { ChevronDown, Filter, SlidersHorizontal, Plus } from "lucide-react";
 import Image from "next/image";
 import searchIcon from "@/public/table/Magnifer.svg";
@@ -43,6 +44,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import NominatedModel from "./pages/adds/nominated/nominatedModel";
 
 interface DataTableProps<TData, TValue, TNames> {
   columns: ColumnDef<TData, TValue>[];
@@ -50,15 +52,19 @@ interface DataTableProps<TData, TValue, TNames> {
   columnsNames: TNames[];
   loading?: boolean;
   expandedStatus?: boolean;
+  type?: string;
 }
 
-export function DataTable<TData extends { email?: string} | planes, TValue, TNames>({
+export function DataTable<TData extends { email?: string } | planes | NominatedParty, TValue, TNames>({
   columns,
   data,
   columnsNames,
   loading = false,
   expandedStatus,
-}: DataTableProps<TData, TValue, TNames>) {
+  type,
+}: DataTableProps<TData, TValue, TNames>) 
+
+{
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -128,15 +134,15 @@ export function DataTable<TData extends { email?: string} | planes, TValue, TNam
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className=" size-10 p-0 rounded-xl bg-searchBg">
-                    <Image src={filterIcon} alt="filter icon" className=" size-[22px]"/>
+                    <Image src={filterIcon} alt="filter icon" className=" size-[22px]" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuCheckboxItem
                     checked={(
                       table.getColumn("name")?.getFilterValue() as
-                        | string[]
-                        | undefined
+                      | string[]
+                      | undefined
                     )?.includes("نشط")}
                     onCheckedChange={(value) => {
                       const filterValues =
@@ -161,8 +167,8 @@ export function DataTable<TData extends { email?: string} | planes, TValue, TNam
                   <DropdownMenuCheckboxItem
                     checked={(
                       table.getColumn("name")?.getFilterValue() as
-                        | string[]
-                        | undefined
+                      | string[]
+                      | undefined
                     )?.includes("غير نشط")}
                     onCheckedChange={(value) => {
                       const filterValues =
@@ -187,8 +193,8 @@ export function DataTable<TData extends { email?: string} | planes, TValue, TNam
                   <DropdownMenuCheckboxItem
                     checked={(
                       table.getColumn("name")?.getFilterValue() as
-                        | string[]
-                        | undefined
+                      | string[]
+                      | undefined
                     )?.includes("معلق")}
                     onCheckedChange={(value) => {
                       const filterValues =
@@ -329,9 +335,12 @@ export function DataTable<TData extends { email?: string} | planes, TValue, TNam
                     ))}
                 </DropdownMenuContent>
               </DropdownMenu> */}
-              <Button className=" P-0 size-10 rounded-xl bg-btnTxtClr hover:bg-btnTxtClr hover:brightness-110">
-                  <Plus strokeWidth={4}/>
-              </Button>
+              {/* <Button className=" P-0 size-10 rounded-xl bg-btnTxtClr hover:bg-btnTxtClr hover:brightness-110">
+                <Plus strokeWidth={4} />
+              </Button> */}
+              {
+                type === "nominated" && <NominatedModel />
+                }
             </div>
           </div>
 
@@ -346,9 +355,9 @@ export function DataTable<TData extends { email?: string} | planes, TValue, TNam
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                         </TableHead>
                       );
                     })}
@@ -372,7 +381,7 @@ export function DataTable<TData extends { email?: string} | planes, TValue, TNam
                   table.getRowModel().rows.map((row) => (
                     <React.Fragment key={row.id}>
                       <TableRow
-        
+
                         data-state={row.getIsSelected() && "selected"}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -393,8 +402,8 @@ export function DataTable<TData extends { email?: string} | planes, TValue, TNam
                       >
                         {row.getVisibleCells().map((cell) => (
                           <TableCell
-                          className=" "
-                          key={cell.id}>
+                            className=" "
+                            key={cell.id}>
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()
