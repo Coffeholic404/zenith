@@ -9,6 +9,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useGetStudentsQuery } from "@/services/students";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import searchIcon from "@/public/table/Magnifer.svg";
 import filterIcon from "@/public/table/Filter.svg";
@@ -60,7 +63,26 @@ export default function Page() {
         </div>
       </div>
       {isLoading ? (
-        <div>Loading...</div>
+        <div className="flex items-center justify-start gap-y-4 flex-wrap">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="flex-1">
+              <Card className="w-[22.375rem] rounded-2xl">
+                <CardHeader className="flex items-center justify-start flex-row gap-2 p-2 px-3">
+                  <Skeleton className="size-14 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </CardHeader>
+                <Separator className="my-8 mb-6 text-[#CCCCCC] max-w-[284px] mx-auto border rounded-2xl border-[#CCCCCC]" />
+                <CardFooter className="flex items-center justify-center flex-row gap-2 p-2">
+                  <Skeleton className="w-[130px] h-10 rounded-xl" />
+                  <Skeleton className="w-[130px] h-10 rounded-xl" />
+                </CardFooter>
+              </Card>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className=" flex items-center justify-start gap-y-4 flex-wrap">
           {data?.result?.data?.map((student) => (

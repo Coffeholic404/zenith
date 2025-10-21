@@ -1,3 +1,4 @@
+"use client"
 import Image from "next/image"
 import {
     Card,
@@ -19,13 +20,63 @@ import { EllipsisVertical } from 'lucide-react';
 import pen from "@/public/table/Pen.svg"
 import trash from "@/public/table/trash.svg"
 import eye from "@/public/student/Eye.svg"
+import { Badge } from "@/components/ui/badge"
 import { type Student } from "@/services/students"
+import { useRouter } from "next/navigation";
+import { useDeleteStudentMutation } from "@/services/students";
 
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    PopoverArrow,
+} from "@/components/ui/popover";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react"
 function StudentCard({ student }: { student: Student }) {
+    const router = useRouter();
+    const [deleteStudent, { isLoading: isDeleting }] = useDeleteStudentMutation();
+    const { toast } = useToast();
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const itemName = student.name;
+    const handleDeleteClick = () => {
+        setShowDeleteDialog(true);
+    };
+    const handleDelete = async () => {
+        try {
+            await deleteStudent(student.uniqueID);
+            toast({
+                title: "تم حذف الطالب",
+                description: `تم حذف الطالب ${itemName} بنجاح.`,
+
+            });
+            setShowDeleteDialog(false);
+        } catch (error) {
+            toast({
+                title: "خطأ أثناء حذف الطالب",
+                description: "حدث خطأ أثناء حذف الطالب. يرجى المحاولة مرة أخرى.",
+                variant: "destructive",
+            });
+        }
+    }
+    const handleDeleteCancel = () => {
+        setShowDeleteDialog(false);
+    };
     return (
         <div className=" flex-1">
-                <Card className="w-[22.375rem] rounded-2xl ">
-                    <CardHeader className=" flex items-center justify-start flex-row gap-2 p-2 px-3 ">
+            <Card className="w-[22.375rem] rounded-2xl ">
+                <CardHeader className=" flex items-center justify-between flex-row gap-2 p-2 px-3 ">
+                    <div className=" flex items-center justify-start flex-row gap-2">
                         <Avatar className=" size-14">
                             <AvatarImage src="/placeholder.svg" alt={student.name} />
                             <AvatarFallback>{student.name.split(' ')[0].charAt(0)}</AvatarFallback>
@@ -33,21 +84,102 @@ function StudentCard({ student }: { student: Student }) {
                         <h4 className=" font-vazirmatn font-black text-sm place-items-start pb-4">
                             {student.name}
                         </h4>
-                    </CardHeader>
-                    <Separator className=" my-8 mb-6 text-[#CCCCCC] max-w-[284px] mx-auto border rounded-2xl border-[#CCCCCC]" />
-                    <CardFooter className=" flex items-center justify-center flex-row gap-2 p-2 ">
-                        <Button variant="outline" className=" w-[130px] rounded-xl">
+                    </div>
+                    <Popover>
+                        <PopoverTrigger>
+                            <EllipsisVertical className=" size-5 text-[#7B7B7B] hover:text-[#222222] cursor-pointer" />
+                        </PopoverTrigger>
+                        <PopoverContent className=" w-[120px] rounded-xl">
+                            <Button variant="ghost" className="">
+                                <Image src={pen} alt="pen" className=" size-[18px]" />
+                                <p className=" font-vazirmatn text-sm">تعديل</p>
+                            </Button >
+                            <Button variant="ghost" className="">
+                                <Image src={trash} alt="trash" className="size-[18px]" />
+                                <p className=" font-vazirmatn text-sm" onClick={handleDeleteClick}>حذف</p>
+                            </Button>
+
+                            <Button variant="ghost" className="" onClick={() => router.push(`/students/${student.uniqueID}`)}>
+                                <Image src={eye} alt="eye" className="size-[18px]" />
+                                <p className=" font-vazirmatn text-sm">عرض</p>
+                            </Button>
+                        </PopoverContent>
+                    </Popover>
+                </CardHeader>
+                <Separator className=" my-8 mb-6 text-[#CCCCCC] max-w-[284px] mx-auto border rounded-2xl border-[#CCCCCC]" />
+                <CardFooter className=" flex  flex-row items-center gap-2 px-9 ">
+                    {/* <Button variant="outline" className=" w-[130px] rounded-xl">
                             <Image src={pen} alt="pen" className=" size-[18px]" />
                             <p className=" font-vazirmatn text-sm">تعديل</p>
                         </Button >
                         <Button variant="outline" className=" w-[130px] rounded-xl">
                             <Image src={trash} alt="trash" className="size-[18px]" />
                             <p className=" font-vazirmatn text-sm">حذف</p>
-                        </Button>
-                    </CardFooter>
-                </Card>
+                        </Button> */}
+                    <Badge className=" bg-sidebaractive">
+                        183cm
+                    </Badge>
+                    <Badge className=" bg-sidebaractive">
+                        70kg
+                    </Badge>
+                </CardFooter>
+            </Card>
+            <DeleteConfirmationDialog
+                isOpen={showDeleteDialog}
+                onClose={handleDeleteCancel}
+                onConfirm={handleDelete}
+                itemName={itemName}
+                isDeleting={isDeleting}
+            />
         </div>
     )
 }
+
+const DeleteConfirmationDialog = ({
+    isOpen,
+    onClose,
+    onConfirm,
+    itemName,
+    isDeleting
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    itemName: string;
+    isDeleting: boolean;
+}) => {
+    return (
+        <AlertDialog open={isOpen} onOpenChange={onClose}>
+            <AlertDialogContent className="rtl" dir="rtl">
+                <AlertDialogHeader className="text-right">
+                    <AlertDialogTitle className="text-right font-vazirmatn">
+                        تأكيد الحذف
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-right font-vazirmatn">
+                        هل أنت متأكد من حذف الطالب "{itemName}"؟
+                        <br />
+                        لا يمكن التراجع عن هذا الإجراء.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="flex-row-reverse gap-2">
+                    <AlertDialogCancel
+                        onClick={onClose}
+                        className="font-vazirmatn"
+                        disabled={isDeleting}
+                    >
+                        إلغاء
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                        onClick={onConfirm}
+                        className="bg-red-600 hover:bg-red-700 font-vazirmatn"
+                        disabled={isDeleting}
+                    >
+                        {isDeleting ? "جاري الحذف..." : "حذف"}
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    );
+};
 
 export default StudentCard;
