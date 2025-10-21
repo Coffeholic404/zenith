@@ -23,23 +23,23 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { useAddNominatedPartyMutation } from "@/services/nominatedParty";
+import { useAddSubscriptionMutation } from "@/services/subscriptions";
 import { Plus } from 'lucide-react';
 
 const addNominatedPartySchema = z.object({
   name: z.string().min(1, { message: "الاسم مطلوب" }),
 })
 export type AddNominatedPartyFormData = z.infer<typeof addNominatedPartySchema>
-function NominatedModel() {
+function SubscriptionAddModel() {
   const [isOpen, setIsOpen] = useState(false);
-  const [addNominatedParty, { isLoading, isSuccess, isError, error }] = useAddNominatedPartyMutation();
+  const [addSubscription, { isLoading, isSuccess, isError, error }] = useAddSubscriptionMutation();
   const { toast } = useToast();
   const onSubmit = async (data: AddNominatedPartyFormData) => {
     try {
-      const response = await addNominatedParty(data).unwrap();
+      const response = await addSubscription(data).unwrap();
       toast({
         title: "تم بنجاح",
-        description: "تم إضافة جهة الترشيح بنجاح",
+        description: "تم إضافة أشتراك بنجاح",
       })
       // Close dialog on successful submission
       setIsOpen(false);
@@ -74,7 +74,7 @@ function NominatedModel() {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] rtl [&>button]:hidden space-y-4" dir="rtl">
           <DialogHeader className='text-right'>
-            <DialogTitle className="text-right font-vazirmatn font-bold text-[17px]">أضافة جهة الترشيح</DialogTitle>
+            <DialogTitle className="text-right font-vazirmatn font-bold text-[17px]">أضافة نوع أشتراك</DialogTitle>
             {/* <DialogDescription className='text-subtext text-right'>
                         يرجى إدخال أسم الجهة المرشحة
                     </DialogDescription> */}
@@ -89,7 +89,7 @@ function NominatedModel() {
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="الجهة المرشحة"
+                        placeholder="اسم الأشتراك"
                         className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right"
                         dir="rtl"
                       />
@@ -116,4 +116,4 @@ function NominatedModel() {
   )
 }
 
-export default NominatedModel
+export default SubscriptionAddModel

@@ -58,8 +58,8 @@ export const SubscriptionApi = api.injectEndpoints({
             }),
             invalidatesTags: ['getSubscription'],
         }),
-        updateSubscription: builder.mutation<subscriptionApi, { id: string; body: UpdateSubscriptionRequest }>({
-            query: ({ id, body }) => ({
+        updateSubscription: builder.mutation<subscriptionApi, any>({
+            query: ({ id, ...body }) => ({
                 url: `/api/SubscriptionType/${id}`,
                 method: 'PUT',
                 body,

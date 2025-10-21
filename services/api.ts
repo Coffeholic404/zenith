@@ -233,6 +233,13 @@ export const api = createApi({
 
         // nominatedParty
         'getNominatedParty',
+
+        //skills
+        'getSkills',
+        'createSkill',
+        'updateSkill',
+        'deleteSkill',
+        'getSkillById',
     ],
     endpoints: (build) => ({}),
 });

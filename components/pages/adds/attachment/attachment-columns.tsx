@@ -1,10 +1,10 @@
 import Image from "next/image";
 import type { ColumnDef } from "@tanstack/react-table";
 import list from "@/public/table/List.svg"
-
 import trash from "@/public/table/trash.svg"
 import { Button } from "@/components/ui/button";
-import { useDeleteNominatedPartyMutation} from "@/services/nominatedParty";
+import { useDeleteAttachmentTypeMutation } from "@/services/attachment";
+import EditAttachmentTypeModel from "@/components/pages/adds/attachment/edit-attachment";
 import { useState } from "react";
 import {
     AlertDialog,
@@ -17,10 +17,11 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import EditNominatedModel from "./edit-nominated-model";
-export type NominatedParty = {
+
+ export type attachmentColumns = {
     uniqueID: string,
     name: string,
+    // notes: string,
 }
 
 // Delete Confirmation Dialog Component
@@ -45,7 +46,7 @@ const DeleteConfirmationDialog = ({
                         تأكيد الحذف
                     </AlertDialogTitle>
                     <AlertDialogDescription className="text-right font-vazirmatn">
-                        هل أنت متأكد من حذف جهة الترشيح "{itemName}"؟
+                        هل أنت متأكد من حذف الاشتراك "{itemName}"؟
                         <br />
                         لا يمكن التراجع عن هذا الإجراء.
                     </AlertDialogDescription>
@@ -71,19 +72,18 @@ const DeleteConfirmationDialog = ({
     );
 };
 
-
-export const nominatedColumns: ColumnDef<NominatedParty>[] = [
+export const AttachmentColumns: ColumnDef<attachmentColumns>[] =[
     {
-        accessorKey: "sequence",
+        accessorKey:"sequence",
         header: () => {
             return <p className=" font-vazirmatn font-normal text-base text-tableHeader">ت</p>
         },
-        cell: ({ row }) => {
+        cell: ({row}) => {
             return row.index + 1
         }
     },
     {
-        accessorKey: "name",
+        accessorKey:"name",
         header: () => {
             return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الاسم</p>
         },
@@ -93,74 +93,67 @@ export const nominatedColumns: ColumnDef<NominatedParty>[] = [
         header: ({ column }) => {
             return (
                 <Button variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    <Image src={list} alt="list" className=" size-5" />
+                    <Image src={list} alt="list" className=" size-5"/>
                 </Button>
             )
         },
         cell: ({ row }) => {
-            const [deleteNominatedParty, { isLoading: isDeleting }] = useDeleteNominatedPartyMutation();
-            const [showDeleteDialog, setShowDeleteDialog] = useState(false);
             const { toast } = useToast();
-
+            const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+            const [deleteAttachmentTypeMutation, { isLoading: isDeleting }] = useDeleteAttachmentTypeMutation();
+            const itemName = row.original.name;
             const handleDeleteClick = () => {
                 setShowDeleteDialog(true);
             };
-
-            const handleDeleteConfirm = async () => {
+            const handleDelete = async () => {
                 try {
-                    await deleteNominatedParty(row.original.uniqueID).unwrap();
+                    await deleteAttachmentTypeMutation(row.original.uniqueID).unwrap();
                     toast({
-                        title: "تم بنجاح",
-                        description: "تم حذف جهة الترشيح بنجاح",
+                        title: "تم حذف الاشتراك",
+                        description: `${itemName} تم حذفه بنجاح.`,
                     });
-                    setShowDeleteDialog(false);
-                } catch (error: any) {
-                    const errorMessage = error?.data?.errorMessages?.[0] ||
-                        error?.data?.message ||
-                        error?.message ||
-                        "حدث خطأ أثناء الحذف";
+                setShowDeleteDialog(false);
+
+                } catch (error) {
                     toast({
-                        title: "خطأ",
-                        description: errorMessage,
+                        title: "خطأ أثناء الحذف",
+                        description: "حدث خطأ أثناء حذف الاشتراك. يرجى المحاولة مرة أخرى.",
                         variant: "destructive",
                     });
+                } finally {
+                    setShowDeleteDialog(false);
                 }
             };
 
             const handleDeleteCancel = () => {
                 setShowDeleteDialog(false);
             };
-
             return (
                 <>
-                    <div className="flex items-center justify-end gap-3 pe-4">
-                        <EditNominatedModel id={row.original.uniqueID} name={row.original.name} />
-                        <Button
-                            variant="ghost"
-                            className="p-0 px-1"
-                            onClick={handleDeleteClick}
-                            disabled={isDeleting}
-                        >
-                            <Image src={trash} alt="trash" className=" size-5" />
-                        </Button>
-                    </div>
+                <div className="flex items-center justify-end gap-3 pe-4">
+                    {/*     <EditSubscriptionModel id={row.original.uniqueID} name={row.original.name} /> */}
+                    <EditAttachmentTypeModel id={row.original.uniqueID} name={row.original.name} />
+                    <Button variant="ghost" className="p-0" onClick={handleDeleteClick} disabled={isDeleting}>
+                        <Image src={trash} alt="trash" className=" size-5"/>
+                    </Button>
+                </div>
 
                     <DeleteConfirmationDialog
                         isOpen={showDeleteDialog}
                         onClose={handleDeleteCancel}
-                        onConfirm={handleDeleteConfirm}
-                        itemName={row.original.name}
+                        onConfirm={handleDelete}
+                        itemName={itemName}
                         isDeleting={isDeleting}
                     />
-                </>
+                    </>
             )
         },
     }
 ]
 
-export const nominatedColumnsNames = [
-    { label: 'ت', dataIndex: 'sequence' },
-    { label: 'الاسم', dataIndex: 'name' },
+export const AttachmentColumnsNames = [
+    {label: 'ت', dataIndex: 'sequence'},
+    {label: 'الاسم', dataIndex: 'name'},
 ]

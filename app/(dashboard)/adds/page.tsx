@@ -7,6 +7,10 @@ import { nominatedColumns, nominatedColumnsNames } from "@/components/pages/adds
 import { SubscriptionsColumns, SubscriptionsColumnsNames } from "@/components/pages/adds/subscriptions/subscriptions-columns";
 import { useGetNominatedPartiesQuery, NominatedParty } from "@/services/nominatedParty"
 import { useGetSubscriptionsQuery, subscriptionApi } from "@/services/subscriptions"
+import { AttachmentColumns, AttachmentColumnsNames } from "@/components/pages/adds/attachment/attachment-columns";
+import { useGetAttachmentTypesQuery, AttachmentType } from "@/services/attachment";
+import { SkillsColumns, SkillsColumnsNames } from "@/components/pages/adds/skills/skills-columns";
+import { useGetSkillsQuery, Skill } from "@/services/skills";
 
 
 
@@ -17,19 +21,32 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 export default function Page() {
-  const { data: nominatedParties, isLoading, error, isSuccess } = useGetNominatedPartiesQuery({
+  const { data: nominatedParties, isLoading: nominatedPartiesLoading, error, isSuccess } = useGetNominatedPartiesQuery({
   })
   const { data: subscriptions, isLoading: subscriptionsLoading, error: subscriptionsError, isSuccess: subscriptionsSuccess } = useGetSubscriptionsQuery({
+  })
+  const { data: attachmentTypes, isLoading: attachmentTypesLoading, error: attachmentTypesError, isSuccess: attachmentTypesSuccess } = useGetAttachmentTypesQuery({
+  })
+  const { data: skills, isLoading: skillsLoading, error: skillsError, isSuccess: skillsSuccess } = useGetSkillsQuery({
   })
 
   let nominatedPartiesData: NominatedParty[] = []
   let subscriptionsData: subscriptionApi[] = []
+  let attachmentTypesData: AttachmentType[] = []
+  let skillsData: Skill[] = []
   if (isSuccess && nominatedParties?.result?.data) {
     nominatedPartiesData = nominatedParties?.result.data || []
   }
   if (subscriptionsSuccess && subscriptions?.result?.data) {
     subscriptionsData = subscriptions?.result.data || []
   }
+  if (attachmentTypesSuccess && attachmentTypes?.result?.data) {
+    attachmentTypesData = attachmentTypes?.result.data || []
+  }
+  if (isSuccess && skills?.result?.data) {
+    skillsData = skills?.result.data || []
+  }
+
   
   const data = [{
     name: "plan 1",
@@ -88,6 +105,10 @@ export default function Page() {
       value: "جهة الترشيح",
       label: "جهة الترشيح",
     },
+    {
+      value: "المهارات",
+      label: "المهارات",
+    },
   ]
 
   return (
@@ -117,7 +138,15 @@ export default function Page() {
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />
           </TabsContent>
           <TabsContent value="انواع الاشتراكات" className="bg-white rounded-lg">
-            <DataTable columns={SubscriptionsColumns} data={subscriptionsData} columnsNames={SubscriptionsColumnsNames} />
+            {subscriptionsLoading ? (
+              <DataTableSkeleton 
+                columnCount={3} 
+                rowCount={5} 
+                showAddButton={true} 
+              />
+            ) : (
+              <DataTable columns={SubscriptionsColumns} data={subscriptionsData} columnsNames={SubscriptionsColumnsNames} type={"subscriptions"} />
+            )}
           </TabsContent>
           <TabsContent value="دورات بدنية" className="bg-white rounded-lg">
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />
@@ -128,14 +157,25 @@ export default function Page() {
           <TabsContent value="الفئات " className="bg-white rounded-lg">
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />
           </TabsContent>
+          <TabsContent value="المهارات" className="bg-white rounded-lg">
+            {skillsLoading ? (
+              <DataTableSkeleton 
+                columnCount={3} 
+                rowCount={5} 
+                showAddButton={true} 
+              />
+            ) : (
+              <DataTable columns={SkillsColumns} data={skillsData} columnsNames={SkillsColumnsNames} type="skills" />
+            )}
+          </TabsContent>
           <TabsContent value="الوحدات" className="bg-white rounded-lg">
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />
           </TabsContent>
           <TabsContent value="انواع المرفقات " className="bg-white rounded-lg">
-            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+            <DataTable columns={AttachmentColumns} data={attachmentTypesData} columnsNames={AttachmentColumnsNames} type="attachmentTypes"/>
           </TabsContent>
           <TabsContent value="جهة الترشيح" className="bg-white rounded-lg">
-            {isLoading ? (
+            {nominatedPartiesLoading ? (
               <DataTableSkeleton 
                 columnCount={3} 
                 rowCount={5} 

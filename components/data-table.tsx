@@ -46,6 +46,9 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import NominatedModel from "./pages/adds/nominated/nominatedModel";
+import SubscriptionAddModel from "./pages/adds/subscriptions/add-subscription";
+import AttachmentAddModel from "./pages/adds/attachment/add-attachment";
+import SkillAddModel from "./pages/adds/skills/add-skills";
 
 interface DataTableProps<TData, TValue, TNames> {
   columns: ColumnDef<TData, TValue>[];
@@ -55,8 +58,8 @@ interface DataTableProps<TData, TValue, TNames> {
   expandedStatus?: boolean;
   type?: string;
 }
-
-export function DataTable<TData extends { email?: string } | planes | NominatedParty | subscriptionsColumns, TValue, TNames>({
+type adds = planes | NominatedParty | subscriptionsColumns
+export function DataTable<TData extends adds, TValue, TNames>({
   columns,
   data,
   columnsNames,
@@ -341,6 +344,15 @@ export function DataTable<TData extends { email?: string } | planes | NominatedP
               </Button> */}
               {
                 type === "nominated" && <NominatedModel />
+                }
+                {
+                type === "subscriptions" && <SubscriptionAddModel />
+                }
+                {
+                  type === "attachmentTypes" && <AttachmentAddModel />
+                }
+                {
+                  type === "skills" && <SkillAddModel />
                 }
             </div>
           </div>
