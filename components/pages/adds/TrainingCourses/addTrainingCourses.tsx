@@ -23,24 +23,23 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { useAddNominatedPartyMutation } from "@/services/nominatedParty";
 import { Plus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useCreateTrainingCourseMutation } from '@/services/trainingCourses';
 
-const addNominatedPartySchema = z.object({
+const addSkillSchema = z.object({
   name: z.string().min(1, { message: "الاسم مطلوب" }),
 })
-export type AddNominatedPartyFormData = z.infer<typeof addNominatedPartySchema>
-function NominatedModel({ btnClassName }: { btnClassName?: string }) {
+export type AddSkillFormData = z.infer<typeof addSkillSchema>
+function TrainingCourseAddModel() {
   const [isOpen, setIsOpen] = useState(false);
-  const [addNominatedParty, { isLoading, isSuccess, isError, error }] = useAddNominatedPartyMutation();
+  const [addSkill, { isLoading, isSuccess, isError, error }] = useCreateTrainingCourseMutation();
   const { toast } = useToast();
-  const onSubmit = async (data: AddNominatedPartyFormData) => {
+  const onSubmit = async (data: AddSkillFormData) => {
     try {
-      const response = await addNominatedParty(data).unwrap();
+      const response = await addSkill(data).unwrap();
       toast({
         title: "تم بنجاح",
-        description: "تم إضافة جهة الترشيح بنجاح",
+        description: "تم إضافة الدورة بنجاح",
       })
       // Close dialog on successful submission
       setIsOpen(false);
@@ -57,7 +56,7 @@ function NominatedModel({ btnClassName }: { btnClassName?: string }) {
       })
     }
   }
-  const form = useForm<AddNominatedPartyFormData>({
+  const form = useForm<AddSkillFormData>({
     resolver: zodResolver(
       z.object({
         name: z.string().min(3, { message: "الاسم يجب أن يكون على الأقل 3 أحرف" }),
@@ -69,13 +68,13 @@ function NominatedModel({ btnClassName }: { btnClassName?: string }) {
     <div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button className={cn(" P-0 size-10 rounded-xl bg-btnTxtClr hover:bg-btnTxtClr hover:brightness-110", btnClassName)}>
+          <Button className=" P-0 size-10 rounded-xl bg-btnTxtClr hover:bg-btnTxtClr hover:brightness-110">
             <Plus strokeWidth={4} />
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] rtl [&>button]:hidden space-y-4" dir="rtl">
           <DialogHeader className='text-right'>
-            <DialogTitle className="text-right font-vazirmatn font-bold text-[17px]">أضافة جهة الترشيح</DialogTitle>
+            <DialogTitle className="text-right font-vazirmatn font-bold text-[17px]">أضافة دورة</DialogTitle>
             {/* <DialogDescription className='text-subtext text-right'>
                         يرجى إدخال أسم الجهة المرشحة
                     </DialogDescription> */}
@@ -90,7 +89,7 @@ function NominatedModel({ btnClassName }: { btnClassName?: string }) {
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="الجهة المرشحة"
+                        placeholder="اسم الدورة"
                         className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right"
                         dir="rtl"
                       />
@@ -117,4 +116,4 @@ function NominatedModel({ btnClassName }: { btnClassName?: string }) {
   )
 }
 
-export default NominatedModel
+export default TrainingCourseAddModel

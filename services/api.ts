@@ -240,6 +240,13 @@ export const api = createApi({
         'updateSkill',
         'deleteSkill',
         'getSkillById',
+
+        // trainingCourses
+        'getTrainingCourse',
+        'addTrainingCourse',
+        'updateTrainingCourse',
+        'deleteTrainingCourse',
+        'getTrainingCourseById',
     ],
     endpoints: (build) => ({}),
 });

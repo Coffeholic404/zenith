@@ -8,9 +8,11 @@ import { SubscriptionsColumns, SubscriptionsColumnsNames } from "@/components/pa
 import { useGetNominatedPartiesQuery, NominatedParty } from "@/services/nominatedParty"
 import { useGetSubscriptionsQuery, subscriptionApi } from "@/services/subscriptions"
 import { AttachmentColumns, AttachmentColumnsNames } from "@/components/pages/adds/attachment/attachment-columns";
+import { TrainingCoursesColumns, TrainingCoursesColumnsNames } from "@/components/pages/adds/TrainingCourses/courses-columns";
 import { useGetAttachmentTypesQuery, AttachmentType } from "@/services/attachment";
 import { SkillsColumns, SkillsColumnsNames } from "@/components/pages/adds/skills/skills-columns";
 import { useGetSkillsQuery, Skill } from "@/services/skills";
+import { useGetTrainingCoursesQuery, TrainingCourse } from "@/services/trainingCourses";
 
 
 
@@ -30,10 +32,17 @@ export default function Page() {
   const { data: skills, isLoading: skillsLoading, error: skillsError, isSuccess: skillsSuccess } = useGetSkillsQuery({
   })
 
+  const { data: trainingCourses, isLoading: trainingCoursesLoading, error: trainingCoursesError, isSuccess: trainingCoursesSuccess } = useGetTrainingCoursesQuery({
+  })
+
   let nominatedPartiesData: NominatedParty[] = []
   let subscriptionsData: subscriptionApi[] = []
   let attachmentTypesData: AttachmentType[] = []
+  let trainingCoursesData: TrainingCourse[] = []
   let skillsData: Skill[] = []
+  if (trainingCoursesSuccess && trainingCourses?.result?.data) {
+    trainingCoursesData = trainingCourses?.result.data || []
+  }
   if (isSuccess && nominatedParties?.result?.data) {
     nominatedPartiesData = nominatedParties?.result.data || []
   }
@@ -135,7 +144,15 @@ export default function Page() {
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />
           </TabsContent>
           <TabsContent value="انواع الدورات" className="bg-white rounded-lg">
-            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+            {trainingCoursesLoading ? (
+              <DataTableSkeleton 
+                columnCount={3} 
+                rowCount={5} 
+                showAddButton={true} 
+              />
+            ) : (
+              <DataTable columns={TrainingCoursesColumns} data={trainingCoursesData} columnsNames={TrainingCoursesColumnsNames} type="trainingCourses" />
+            )}
           </TabsContent>
           <TabsContent value="انواع الاشتراكات" className="bg-white rounded-lg">
             {subscriptionsLoading ? (
