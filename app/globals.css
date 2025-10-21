@@ -188,6 +188,10 @@
   html {
     direction: rtl;
   }
+
+  .student-div {
+    background: linear-gradient(116.99deg, rgba(192, 238, 253, 0.21) 1.09%, rgba(194, 178, 253, 0.21) 33.87%, rgba(221, 186, 228, 0.21) 72.11%, rgba(220, 218, 206, 0.21) 99.45%, rgba(61, 83, 184, 0.21) 99.45%);
+  }
 }
 
 /* Modern UI Elements */
