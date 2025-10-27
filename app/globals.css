@@ -24,8 +24,11 @@
     --primary-foreground: 210 40% 98%;
 
     --sidebar-icon-clr: 252, 71%, 67%, 1;
+    --badge-clr: 252, 71%, 67%, 0.2;
     --sidebar-grad-one: 151, 131, 230, 0.26;
     --sidebar-grad-two: 197, 123, 216, 0.26;
+    --trainer-collaps-bg: 252, 71%, 67%, 0.06;
+    --collaps-txt-clr: 0, 1%, 48%, 1;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -93,6 +96,9 @@
 
      /*employ card*/
   --delete-txt: 346, 92%, 54%, 1;
+
+  --detalis-btn-bg:24, 91%, 58%, 0.2;
+  --detalis-txt-clr:24, 91%, 58%, 1;
   }
  
   /* Color themes */
@@ -190,6 +196,10 @@
   }
 
   .student-div {
+    background: linear-gradient(116.99deg, rgba(192, 238, 253, 0.21) 1.09%, rgba(194, 178, 253, 0.21) 33.87%, rgba(221, 186, 228, 0.21) 72.11%, rgba(220, 218, 206, 0.21) 99.45%, rgba(61, 83, 184, 0.21) 99.45%);
+  }
+
+  .course-card {
     background: linear-gradient(116.99deg, rgba(192, 238, 253, 0.21) 1.09%, rgba(194, 178, 253, 0.21) 33.87%, rgba(221, 186, 228, 0.21) 72.11%, rgba(220, 218, 206, 0.21) 99.45%, rgba(61, 83, 184, 0.21) 99.45%);
   }
 }

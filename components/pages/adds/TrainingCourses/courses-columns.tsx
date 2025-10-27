@@ -18,7 +18,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import EditTrainingCourseModel from "./edit-TrainingCourses";
 
- export type TrainingCoursesColumns = {
+export type TrainingCoursesColumns = {
     uniqueID: string,
     name: string,
     // notes: string,
@@ -72,18 +72,18 @@ const DeleteConfirmationDialog = ({
     );
 };
 
-export const TrainingCoursesColumns: ColumnDef<TrainingCoursesColumns>[] =[
+export const TrainingCoursesColumns: ColumnDef<TrainingCoursesColumns>[] = [
     {
-        accessorKey:"sequence",
+        accessorKey: "sequence",
         header: () => {
             return <p className=" font-vazirmatn font-normal text-base text-tableHeader">ت</p>
         },
-        cell: ({row}) => {
+        cell: ({ row }) => {
             return row.index + 1
         }
     },
     {
-        accessorKey:"name",
+        accessorKey: "name",
         header: () => {
             return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الاسم</p>
         },
@@ -99,9 +99,9 @@ export const TrainingCoursesColumns: ColumnDef<TrainingCoursesColumns>[] =[
         header: ({ column }) => {
             return (
                 <Button variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    <Image src={list} alt="list" className=" size-5"/>
+                    <Image src={list} alt="list" className=" size-5" />
                 </Button>
             )
         },
@@ -120,7 +120,7 @@ export const TrainingCoursesColumns: ColumnDef<TrainingCoursesColumns>[] =[
                         title: "تم حذف الدورة",
                         description: `${itemName} تم حذفها بنجاح.`,
                     });
-                setShowDeleteDialog(false);
+                    setShowDeleteDialog(false);
 
                 } catch (error) {
                     toast({
@@ -138,12 +138,12 @@ export const TrainingCoursesColumns: ColumnDef<TrainingCoursesColumns>[] =[
             };
             return (
                 <>
-                <div className="flex items-center justify-end gap-3 pe-4">
-                    <EditTrainingCourseModel id={row.original.uniqueID} name={row.original.name} />
-                    <Button variant="ghost" className="p-0" onClick={handleDeleteClick} disabled={isDeleting}>
-                        <Image src={trash} alt="trash" className=" size-5"/>
-                    </Button>
-                </div>
+                    <div className="flex items-center justify-end gap-3 pe-4">
+                        <EditTrainingCourseModel id={row.original.uniqueID} name={row.original.name} />
+                        <Button variant="ghost" className="p-0" onClick={handleDeleteClick} disabled={isDeleting}>
+                            <Image src={trash} alt="trash" className=" size-5" />
+                        </Button>
+                    </div>
 
                     <DeleteConfirmationDialog
                         isOpen={showDeleteDialog}
@@ -152,13 +152,13 @@ export const TrainingCoursesColumns: ColumnDef<TrainingCoursesColumns>[] =[
                         itemName={itemName}
                         isDeleting={isDeleting}
                     />
-                    </>
+                </>
             )
         },
     }
 ]
 
 export const TrainingCoursesColumnsNames = [
-    {label: 'ت', dataIndex: 'sequence'},
-    {label: 'الاسم', dataIndex: 'name'},
+    { label: 'ت', dataIndex: 'sequence' },
+    { label: 'الاسم', dataIndex: 'name' },
 ]

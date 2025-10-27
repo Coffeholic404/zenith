@@ -14,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { planes } from "@/components/pages/adds/adds-columns";
+import { planes } from "@/components/pages/adds/plane/plane-columns";
 import { NominatedParty } from "@/components/pages/adds/nominated/nominated-columns";
 import { subscriptionsColumns } from "@/components/pages/adds/subscriptions/subscriptions-columns"
 import { ChevronDown, Filter, SlidersHorizontal, Plus } from "lucide-react";
@@ -59,7 +59,7 @@ interface DataTableProps<TData, TValue, TNames> {
   expandedStatus?: boolean;
   type?: string;
 }
-type adds = planes | NominatedParty | subscriptionsColumns
+type adds = planes | NominatedParty | subscriptionsColumns 
 export function DataTable<TData extends adds, TValue, TNames>({
   columns,
   data,

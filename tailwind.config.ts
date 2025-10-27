@@ -51,6 +51,11 @@ const config = {
         cardThree: "hsla(var(--card-three))",
         cardFour: "hsla(var(--card-four))",
         cardTxt: "hsla(var(--card-txt))",
+        badgeClr: "hsla(var(--badge-clr))",
+        detalisBtnBg: "hsla(var(--detalis-btn-bg))",
+        detalisTxtClr: "hsla(var(--detalis-txt-clr))",
+        trainerCollapsBg: "hsla(var(--trainer-collaps-bg))",
+        collapsTxtClr: "hsla(var(--collaps-txt-clr))",
         /*employ card*/
         deleteTxt: "hsla(var(--delete-txt))",
         primary: {

@@ -183,7 +183,7 @@ function AddStudentForm() {
   };
 
   return (
-    <div className=''>
+    <div className=' scroll-smooth'>
       <Form {...form}>
         <form className='studentForm grid grid-cols-[378px_1fr] gap-8'>
           <div className=' space-y-4'>

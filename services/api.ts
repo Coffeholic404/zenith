@@ -247,6 +247,12 @@ export const api = createApi({
         'updateTrainingCourse',
         'deleteTrainingCourse',
         'getTrainingCourseById',
+
+        //plane
+        "Plane",
+
+        //courses
+        "Course",
     ],
     endpoints: (build) => ({}),
 });

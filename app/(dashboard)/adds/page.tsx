@@ -13,6 +13,8 @@ import { useGetAttachmentTypesQuery, AttachmentType } from "@/services/attachmen
 import { SkillsColumns, SkillsColumnsNames } from "@/components/pages/adds/skills/skills-columns";
 import { useGetSkillsQuery, Skill } from "@/services/skills";
 import { useGetTrainingCoursesQuery, TrainingCourse } from "@/services/trainingCourses";
+import { planeColumns, planeColumnsNames } from "@/components/pages/adds/plane/plane-columns";
+import { useGetPlanesQuery, Plane } from "@/services/plane";
 
 
 
@@ -35,10 +37,15 @@ export default function Page() {
   const { data: trainingCourses, isLoading: trainingCoursesLoading, error: trainingCoursesError, isSuccess: trainingCoursesSuccess } = useGetTrainingCoursesQuery({
   })
 
+  const { data: planes, isLoading: planesLoading, error: planesError, isSuccess: planesSuccess } = useGetPlanesQuery({
+  })
+
   let nominatedPartiesData: NominatedParty[] = []
   let subscriptionsData: subscriptionApi[] = []
   let attachmentTypesData: AttachmentType[] = []
   let trainingCoursesData: TrainingCourse[] = []
+  let planesData: Plane[] = []
+  
   let skillsData: Skill[] = []
   if (trainingCoursesSuccess && trainingCourses?.result?.data) {
     trainingCoursesData = trainingCourses?.result.data || []
@@ -55,7 +62,9 @@ export default function Page() {
   if (isSuccess && skills?.result?.data) {
     skillsData = skills?.result.data || []
   }
-
+  if (planesSuccess && planes?.result?.data) {
+    planesData = planes?.result.data || []
+  }
   
   const data = [{
     name: "plan 1",
@@ -138,11 +147,19 @@ export default function Page() {
 
 
           <TabsContent value="الطائرات" className="bg-white rounded-lg">
-            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+            {planesLoading ? (
+              <DataTableSkeleton 
+                columnCount={3} 
+                rowCount={5} 
+                showAddButton={true} 
+              />
+            ) : (
+              <DataTable columns={planeColumns} data={planesData} columnsNames={planeColumnsNames} type="plane" />
+            )}
           </TabsContent>
-          <TabsContent value="الاماكن" className="bg-white rounded-lg">
+          {/* <TabsContent value="الاماكن" className="bg-white rounded-lg">
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />
-          </TabsContent>
+          </TabsContent> */}
           <TabsContent value="انواع الدورات" className="bg-white rounded-lg">
             {trainingCoursesLoading ? (
               <DataTableSkeleton 
@@ -165,7 +182,7 @@ export default function Page() {
               <DataTable columns={SubscriptionsColumns} data={subscriptionsData} columnsNames={SubscriptionsColumnsNames} type={"subscriptions"} />
             )}
           </TabsContent>
-          <TabsContent value="دورات بدنية" className="bg-white rounded-lg">
+          {/* <TabsContent value="دورات بدنية" className="bg-white rounded-lg">
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />
           </TabsContent>
           <TabsContent value="مواد" className="bg-white rounded-lg">
@@ -173,7 +190,7 @@ export default function Page() {
           </TabsContent>
           <TabsContent value="الفئات " className="bg-white rounded-lg">
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />
-          </TabsContent>
+          </TabsContent> */}
           <TabsContent value="المهارات" className="bg-white rounded-lg">
             {skillsLoading ? (
               <DataTableSkeleton 
@@ -185,9 +202,9 @@ export default function Page() {
               <DataTable columns={SkillsColumns} data={skillsData} columnsNames={SkillsColumnsNames} type="skills" />
             )}
           </TabsContent>
-          <TabsContent value="الوحدات" className="bg-white rounded-lg">
+          {/* <TabsContent value="الوحدات" className="bg-white rounded-lg">
             <DataTable columns={columns} data={data} columnsNames={columnsNames} />
-          </TabsContent>
+          </TabsContent> */}
           <TabsContent value="انواع المرفقات " className="bg-white rounded-lg">
             <DataTable columns={AttachmentColumns} data={attachmentTypesData} columnsNames={AttachmentColumnsNames} type="attachmentTypes"/>
           </TabsContent>
