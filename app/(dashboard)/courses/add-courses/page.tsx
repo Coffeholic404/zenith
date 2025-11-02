@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 import dip from "@/public/courses/Diploma.svg"
+import AddCoursesForm from '@/components/pages/courses/AddCoursesForm'
 export default function AddCourses() {
   return (
    <section className='w-full h-full  px-20 space-y-8'>
@@ -13,7 +14,7 @@ export default function AddCourses() {
           <p className=" font-vazirmatn font-medium text-sm text-subtext">املا البيانات التالي لإضافة نشاط جديد الى النظام</p>
         </div>
       </header>
-        
+        <AddCoursesForm />
     </section>
   )
 }

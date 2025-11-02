@@ -10,6 +10,8 @@
 # production
 /build
 
+CLAUDE.md
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -25,3 +27,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.claude/settings.local.json

@@ -1,3 +1,4 @@
+"use client"
 import {
   Card,
   CardContent,
@@ -13,8 +14,9 @@ import Image from "next/image"
 import { Separator } from "@/components/ui/separator"
 import pen from "@/public/table/Pen.svg"
 import trash from "@/public/table/trash.svg"
-
+import { useRouter } from "next/navigation"
 export default function CoursesCard () {
+    const router = useRouter();
     return (
         <Card className="max-w-[363px] p-[17px]">
                 <CardContent className=" p-0 space-y-4">
@@ -26,7 +28,7 @@ export default function CoursesCard () {
                             </div>
                             <Badge className=" bg-badgeClr text-sidebaractive py-[3px] px-[17px] rounded-[8px] font-vazirmatn font-light text-sm">مكتمل</Badge>
                         </div>
-                        <Button variant="outline" className=" bg-detalisBtnBg font-vazirmatn font-normal text-md text-detalisTxtClr">
+                        <Button  variant="outline" className=" bg-detalisBtnBg font-vazirmatn font-normal text-md text-detalisTxtClr">
                             <Image src={eye} alt="eye" />
                             عرض التفاصيل
                         </Button>

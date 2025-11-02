@@ -185,9 +185,9 @@ function AddStudentForm() {
   return (
     <div className=' scroll-smooth'>
       <Form {...form}>
-        <form className='studentForm grid grid-cols-[378px_1fr] gap-8'>
+        <form className='studentForm grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8'>
           <div className=' space-y-4'>
-            <Card>
+          <Card>
               <CardContent>
                 <FileUploader className='border-none shadow-none' control={control} name="AttachmentFile" />
                 <Separator className=' my-4 h-px bg-gray-300 rounded-xl' />
@@ -589,8 +589,8 @@ function AddStudentForm() {
                 المعلومات الجسدية
               </CardHeader>
               <CardContent className=' space-y-4'>
-                <div className='w-full flex items-center justify-center gap-2 '>
-                  <div className=' flex-1'>
+                <div className='w-full flex flex-col sm:flex-row items-center justify-center gap-2 '>
+                  <div className=' flex-1 w-full'>
                     <FormField
                       control={control}
                       name="hight"
@@ -609,7 +609,7 @@ function AddStudentForm() {
                     />
                   </div>
 
-                  <div className='flex-1'>
+                  <div className='flex-1 w-full'>
                     <FormField
                       control={control}
                       name="width"
@@ -746,8 +746,8 @@ function AddStudentForm() {
                 معلومات الدورة والاشتراك
               </CardHeader>
 
-              <CardContent className=' flex items-center gap-2'>
-                <div className=' flex-1'>
+              <CardContent className=' flex flex-col sm:flex-row items-center gap-2'>
+                <div className=' flex-1 w-full'>
                   <FormField
                     control={control}
                     name="subscriptionTypeId"
@@ -772,7 +772,7 @@ function AddStudentForm() {
                     )}
                   />
                 </div>
-                <div className=' flex-1'>
+                <div className=' flex-1 w-full'>
                   <FormField
                     control={control}
                     name="coursename"
@@ -810,7 +810,7 @@ function AddStudentForm() {
                           ) : skillOptions.length === 0 ? (
                             <div className="text-muted-foreground text-sm">لا توجد مهارات متاحة</div>
                           ) : (
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                               {skillOptions.map((skill) => (
                                 <div key={skill.value} className="flex items-center space-x-2 space-x-reverse py-2">
                                   <Checkbox
@@ -866,7 +866,7 @@ function AddStudentForm() {
                           ) : trainingCourseOptions.length === 0 ? (
                             <div className="text-muted-foreground text-sm">لا توجد دورات متاحة</div>
                           ) : (
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                               {trainingCourseOptions.map((trainingCourse) => (
                                 <div key={trainingCourse.value} className="flex items-center space-x-2 space-x-reverse py-2">
                                   <Checkbox
@@ -906,6 +906,13 @@ function AddStudentForm() {
             </Card>
           </div>
         </form>
+            <div className=' absolute bottom-0 left-0 right-0 '>
+              <div className=' w-full text-left bg-white sticky px-4 py-2 -bottom-6 '>
+                <Button  className=' bg-sidebaractive font-vazirmatn px-6 h-8 text-white w-full sm:w-auto' type='submit'>
+                   حفظ
+                </Button>
+              </div>
+            </div>
       </Form>
     </div>
   )

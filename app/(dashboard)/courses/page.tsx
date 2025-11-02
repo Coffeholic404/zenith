@@ -1,4 +1,4 @@
-"use clinet"
+"use client"
 import HeaderCards from "@/components/pages/employees/header-cards";
 import ploy from "@/public/employees/Polygon.svg";
 import add from "@/public/employees/plus.svg";
@@ -16,10 +16,13 @@ import {
   PopoverArrow,
 } from "@/components/ui/popover";
 import CoursesCard from "@/components/pages/courses/courses-card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRouter } from "next/navigation";
 
 
 
 export default function Page() {
+  const router = useRouter();
   return (
     <section className=" space-y-6">
       <HeaderCards />
@@ -47,30 +50,16 @@ export default function Page() {
           <div className=" bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg">
             <Image src={filterIcon} alt="filter icon" className=" size-6" />
           </div>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button className=" bg-sidebaractive  px-3 rounded-2xl">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button className=" bg-sidebaractive  px-3 rounded-2xl" onClick={() => router.push("/courses/add-courses")}>
                 <Image src={add} alt="add icon" className=" size-5" />
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className=" max-w-24 font-vazirmatn p-2 py-4 rounded-xl">
-              <div className=" flex flex-col gap-4">
-                <div
-                  className=" flex items-center gap-2 cursor-pointer"
-                >
-                  <Image src={userrounded} alt="user rounded icon" className=" size-6" />
-                  <p className=" font-normal text-base text-subtext">موظف</p>
-                </div>
-                <div
-                  className=" flex items-center gap-2 cursor-pointer"
-                >
-                  <Image src={userhearted} alt="user hearted icon" className=" size-6" />
-                  <p className=" font-normal text-base text-sidebaractive">مدرب</p>
-                </div>
-              </div>
-              <PopoverArrow />
-            </PopoverContent>
-          </Popover>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
+              <p className=" font-normal text-sm text-white font-vazirmatn">إضافة دورة</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
 

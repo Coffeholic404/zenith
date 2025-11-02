@@ -5,7 +5,7 @@ import userplus from "@/public/add-employe/UserPlus.svg"
 import AddStudentForm from '@/components/pages/students/AddStudentForm'
 function page() {
   return (
-    <section className='w-full h-full  px-20 space-y-8 scroll-smooth'>
+    <section className='w-full px-20 space-y-8 scroll-smooth pb-[50px]'>
       <header className=" flex items-center gap-3 max-w-[334px]">
         <div className=" size-12 bg-sidebaractive flex items-center justify-center rounded-md">
           <Image src={userplus} alt="userplus" className=" size-8"/>
