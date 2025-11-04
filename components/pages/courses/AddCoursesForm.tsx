@@ -139,7 +139,7 @@ export default function AddCoursesForm() {
             </Card>
 
             <Card className=' px-4 py-3' id='trainer'>
-              <CardContent className=' p-0'>
+              <CardContent className=' p-0 space-y-4'>
                 <FormField
                   control={control}
                   name="trainer"
@@ -162,6 +162,10 @@ export default function AddCoursesForm() {
                     </FormItem>
                   )}
                 />
+                <div className=' font-vazirmatn flex items-center justify-between'>
+                  <p className=' text-collapsTxtClr'>اسم المدرب المختار </p>
+                  <Button variant="outline" className=" btn-border-clr bg-[#8870E733]/20 font-vazirmatn font-normal text-md text-sidebaractive py-1 px-6 h-9 hover:bg-[#8870E733]/40">أضافة</Button>
+                </div>
               </CardContent>
             </Card>
           </div>

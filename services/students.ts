@@ -1,7 +1,7 @@
 import { api } from './api';
 
 export type Student = { 
-    uniqueID: string;
+        uniqueID: string;
         name: string;
         degree: string;
         bdate: string; // string($date-time)
@@ -19,6 +19,9 @@ export type Student = {
         notes: string;
         subscriptionTypeId: string;
         subscriptionTypeName: string;
+        attachments: [];
+        courses: [];
+        skills: [];
 }
 
 export type GetStudentsRequestParams = {
@@ -28,6 +31,7 @@ export type GetStudentsRequestParams = {
     isDescending?: boolean;
     searchQuery?: string;
 };
+
 
 export type GetStudentsResponse = {
     result: {

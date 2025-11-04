@@ -14,6 +14,7 @@ import { useGetAttachmentTypesQuery } from "@/services/attachment";
 import { useGetSubscriptionsQuery } from "@/services/subscriptions";
 import { useGetSkillsQuery } from "@/services/skills";
 import { useGetTrainingCoursesQuery } from "@/services/trainingCourses";
+import { useAddStudentMutation } from "@/services/students";
 import NominatedModel from "@/components/pages/adds/nominated/nominatedModel";
 import {
   Card,
@@ -45,6 +46,9 @@ import {
 } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from 'sonner';
+
+
 
 
 const addStudentSchema = z.object({
@@ -72,8 +76,7 @@ const addStudentSchema = z.object({
   pressure: z.boolean(),
   notes: z.string().min(1, { message: "Notes are required" }),
   subscriptionTypeId: z.string().min(1, { message: "Subscription type is required" }),
-  AttachmentFile: z.instanceof(File, { message: "يرجى تحميل صورة شخصية" }),
-  coursename: z.string().min(3, { message: "يجب ان يكون اسم الدورة على الأقل 3 أحرف" }),
+  AttachmentFile: z.array(z.instanceof(File, { message: "يرجى تحميل صورة شخصية" })),
   skills: z.array(z.string()).min(1, { message: "يجب اختيار مهارة واحدة على الأقل" }),
 })
 
@@ -91,6 +94,7 @@ function AddStudentForm() {
   const { data: subscriptions, isLoading: isSubscriptionsLoading } = useGetSubscriptionsQuery({});
   const { data: skills, isLoading: isSkillsLoading } = useGetSkillsQuery({});
   const { data: trainingCourses, isLoading: isTrainingCoursesLoading } = useGetTrainingCoursesQuery({});
+  const [addStudent, { isLoading: isAddStudentLoading }] = useAddStudentMutation();
 
   let subscriptionOptions: { value: string; label: string }[] = [];
   if (!isSubscriptionsLoading) {
@@ -155,6 +159,47 @@ function AddStudentForm() {
     }));
 
     setAttachments(prev => [...prev, ...newAttachments]);
+    const handleSubmit = async (data: z.infer<typeof addStudentSchema>) => {
+      try {
+        const formData = new FormData();
+        formData.append('name', data.name);
+        formData.append('degree', data.degree);
+        formData.append('bdate', data.bdate);
+        formData.append('phone', data.phone);
+        formData.append('yearsOfServes', data.yearsOfServes.toString());
+        formData.append('nominatedPartyId', data.nominatedPartyId);
+        formData.append('hight', data.hight.toString());
+        formData.append('width', data.width.toString());
+        formData.append('bodyCondition', data.bodyCondition);
+        formData.append('epilepsy', data.epilepsy.toString());
+        formData.append('heartDisease', data.heartDisease.toString());
+        formData.append('sugar', data.sugar.toString());
+        formData.append('pressure', data.pressure.toString());
+        formData.append('notes', data.notes);
+        formData.append('subscriptionTypeId', data.subscriptionTypeId);
+
+        // Append skills as a JSON string
+        formData.append('skills', JSON.stringify(data.skills));
+
+        // Append courses as a JSON string
+        // formData.append('courses', JSON.stringify(data.coursename));
+
+        // Append attachments
+        attachments.forEach(attachment => {
+          formData.append('attachments', attachment.file);
+        });
+
+        const response = await addStudent(formData).unwrap();
+        // if (response.isSuccess) {
+        //   toast.success("تم إضافة الطالب بنجاح");
+        //   setOpen(false);
+        // } else {
+        //   toast.error(response.errorMessages?.[0] || "حدث خطأ أثناء إضافة الطالب");
+        // }
+      } catch (error) {
+        toast.error("حدث خطأ أثناء إضافة الطالب");
+      }
+    };
 
     // Reset state after adding
     setSelectedFiles([]);
@@ -184,8 +229,8 @@ function AddStudentForm() {
 
   return (
     <div className=' scroll-smooth'>
-      <Form {...form}>
-        <form className='studentForm grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8'>
+      <Form {...form} >
+        <form  className='studentForm grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8'>
           <div className=' space-y-4'>
           <Card>
               <CardContent>
@@ -772,7 +817,7 @@ function AddStudentForm() {
                     )}
                   />
                 </div>
-                <div className=' flex-1 w-full'>
+                {/* <div className=' flex-1 w-full'>
                   <FormField
                     control={control}
                     name="coursename"
@@ -789,7 +834,7 @@ function AddStudentForm() {
                       </FormItem>
                     )}
                   />
-                </div>
+                </div> */}
               </CardContent>
             </Card>
 
