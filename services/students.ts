@@ -43,6 +43,13 @@ export type GetStudentsResponse = {
     totalPages: number;
 };
 
+export interface UpdateStudentResponse {
+  statusCode: number;
+  isSuccess: boolean;
+  errorMessages: string[];
+  result: Student;
+}
+
 
 
 export const StudentApi = api.injectEndpoints({
@@ -56,7 +63,7 @@ export const StudentApi = api.injectEndpoints({
             providesTags: ['getStudents'],
         }),
 
-        addStudent: builder.mutation<Student, FormData>({
+        addStudent: builder.mutation<UpdateStudentResponse, FormData>({
             query: (student: FormData) => ({
                 url: '/api/Student',
                 method: 'POST',

@@ -47,13 +47,17 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from 'sonner';
+// import router from 'next/router';
+import { useRouter } from 'next/navigation';
+
+
 
 
 
 
 const addStudentSchema = z.object({
-  name: z.string().min(1, { message: "Name is required" }),
-  degree: z.string().min(1, { message: "Degree is required" }),
+  name: z.string().min(1, { message: "الاسم مطلوب" }),
+  degree: z.string().min(1, { message: "الشهادة مطلوبة" }),
   bdate: z.string().min(1, "تاريخ الميلاد مطلوب").refine((date) => {
     const birthDate = new Date(date);
     const today = new Date();
@@ -63,22 +67,25 @@ const addStudentSchema = z.object({
       return age - 1 >= 18;
     }
     return age >= 18;
-  }, "يجب أن يكون عمر الموظف على الأقل 18 سنة"),
+  }, "يجب أن يكون عمر الطالب على الأقل 18 سنة"),
   phone: z.string().min(10, "رقم الهاتف غير صالح"),
   yearsOfServes: z.number().min(0, "عدد سنوات الخبرة غير صالح"),
-  nominatedPartyId: z.string().min(1, { message: "الجهة المرشحة مطلوبة" }),
+  nominatedPartyId: z.string().optional(),
   hight: z.number().min(0, "طول الطالب مطلوب"),
   width: z.number().min(0, "وزن الطالب مطلوب"),
-  bodyCondition: z.string().min(1, { message: "Condition is required" }),
+  bodyCondition: z.string().optional(),
   epilepsy: z.boolean(),
   heartDisease: z.boolean(),
   sugar: z.boolean(),
   pressure: z.boolean(),
-  notes: z.string().min(1, { message: "Notes are required" }),
-  subscriptionTypeId: z.string().min(1, { message: "Subscription type is required" }),
-  AttachmentFile: z.array(z.instanceof(File, { message: "يرجى تحميل صورة شخصية" })),
+  notes: z.string().optional(),
+  subscriptionTypeId: z.string().min(1, { message: "نوع الاشتراك مطلوب" }),
+  AttachmentFile: z.instanceof(File, { message: "يرجى تحميل صورة شخصية" }),
   skills: z.array(z.string()).min(1, { message: "يجب اختيار مهارة واحدة على الأقل" }),
+  courses: z.array(z.string()),
 })
+
+type AddStudentFormValues = z.infer<typeof addStudentSchema>
 
 // Define attachment interface
 interface StudentAttachment {
@@ -129,13 +136,28 @@ function AddStudentForm() {
   const [attachmentTypeOpen, setAttachmentTypeOpen] = useState(false);
   const [isAddingAttachment, setIsAddingAttachment] = useState(false);
 
-  const form = useForm<z.infer<typeof addStudentSchema>>({
+  const router = useRouter();
+
+  const form = useForm<AddStudentFormValues>({
     resolver: zodResolver(addStudentSchema),
     defaultValues: {
-      skills: [], // Initialize skills as empty array
+      name: "",
+      degree: "",
+      bdate: "",
+      phone: "",
+      skills: [],
+      courses: [],
+      yearsOfServes: undefined,
+      hight: 0,
+      width: 0,
+      epilepsy: false,
+      heartDisease: false,
+      sugar: false,
+      pressure: false,
+      subscriptionTypeId: "",
     }
   })
-  const { formState, handleSubmit, control } = form;
+  const { control } = form;
 
   // Handle file selection
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,47 +181,6 @@ function AddStudentForm() {
     }));
 
     setAttachments(prev => [...prev, ...newAttachments]);
-    const handleSubmit = async (data: z.infer<typeof addStudentSchema>) => {
-      try {
-        const formData = new FormData();
-        formData.append('name', data.name);
-        formData.append('degree', data.degree);
-        formData.append('bdate', data.bdate);
-        formData.append('phone', data.phone);
-        formData.append('yearsOfServes', data.yearsOfServes.toString());
-        formData.append('nominatedPartyId', data.nominatedPartyId);
-        formData.append('hight', data.hight.toString());
-        formData.append('width', data.width.toString());
-        formData.append('bodyCondition', data.bodyCondition);
-        formData.append('epilepsy', data.epilepsy.toString());
-        formData.append('heartDisease', data.heartDisease.toString());
-        formData.append('sugar', data.sugar.toString());
-        formData.append('pressure', data.pressure.toString());
-        formData.append('notes', data.notes);
-        formData.append('subscriptionTypeId', data.subscriptionTypeId);
-
-        // Append skills as a JSON string
-        formData.append('skills', JSON.stringify(data.skills));
-
-        // Append courses as a JSON string
-        // formData.append('courses', JSON.stringify(data.coursename));
-
-        // Append attachments
-        attachments.forEach(attachment => {
-          formData.append('attachments', attachment.file);
-        });
-
-        const response = await addStudent(formData).unwrap();
-        // if (response.isSuccess) {
-        //   toast.success("تم إضافة الطالب بنجاح");
-        //   setOpen(false);
-        // } else {
-        //   toast.error(response.errorMessages?.[0] || "حدث خطأ أثناء إضافة الطالب");
-        // }
-      } catch (error) {
-        toast.error("حدث خطأ أثناء إضافة الطالب");
-      }
-    };
 
     // Reset state after adding
     setSelectedFiles([]);
@@ -227,10 +208,101 @@ function AddStudentForm() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // Handle form submission
+  const onSubmit = async (data: AddStudentFormValues) => {
+    try {
+      const formData = new FormData();
+
+      // Append basic fields
+      formData.append('Name', data.name);
+      formData.append('Degree', data.degree);
+      formData.append('Bdate', data.bdate);
+      formData.append('Phone', data.phone);
+      formData.append('YearsOfServes', data.yearsOfServes.toString());
+      if (data.nominatedPartyId) {
+        formData.append('NominatedPartyId', data.nominatedPartyId);
+      }
+      formData.append('Hight', data.hight.toString());
+      formData.append('Width', data.width.toString());
+      if (data.bodyCondition) {
+        formData.append('BodyCondition', data.bodyCondition);
+      }
+      formData.append('Epilepsy', data.epilepsy.toString());
+      formData.append('HeartDisease', data.heartDisease.toString());
+      formData.append('Sugar', data.sugar.toString());
+      formData.append('Pressure', data.pressure.toString());
+      if (data.notes) {
+        formData.append('Notes', data.notes);
+      }
+      formData.append('SubscriptionTypeId', data.subscriptionTypeId);
+
+      // Append skills array
+      data.skills.forEach((skillId) => {
+        formData.append('SkillIds', skillId);
+      });
+
+      // Append courses array
+      if (data.courses && data.courses.length > 0) {
+        data.courses.forEach((courseId) => {
+          formData.append('CourseIds', courseId);
+        });
+      }
+
+      // Append attachments array
+      // First append profile picture with the default profile picture typeId
+      const PROFILE_PICTURE_TYPE_ID = "3a3ae5af-d8e9-40b6-8194-11458e4caf32";
+      let attachmentIndex = 0;
+
+      // Add profile picture
+      if (data.AttachmentFile) {
+        formData.append(`Attachments[${attachmentIndex}].typeId`, PROFILE_PICTURE_TYPE_ID);
+        formData.append(`Attachments[${attachmentIndex}].file`, data.AttachmentFile);
+        attachmentIndex++;
+      }
+
+      // Add other attachments
+      attachments.forEach((attachment) => {
+        formData.append(`Attachments[${attachmentIndex}].typeId`, attachment.attachmentTypeId);
+        formData.append(`Attachments[${attachmentIndex}].file`, attachment.file);
+        attachmentIndex++;
+      });
+
+      // Submit the form
+      const response = await addStudent(formData).unwrap();
+
+      if (response.isSuccess) {
+        const studentData = response.result;
+        toast.success(`تم إضافة الطالب بنجاح`, {
+          description: `الاسم: ${studentData?.name || data.name}${studentData?.uniqueID ? ` - المعرف: ${studentData.uniqueID}` : ''}`,
+        });
+
+        // Reset form
+        form.reset();
+        setAttachments([]);
+      } else {
+        // Display error messages from server
+        const errorMsg = response.errorMessages?.join('\n') || "حدث خطأ أثناء إضافة الطالب";
+        toast.error('فشل في إضافة الطالب', {
+          description: errorMsg,
+        });
+      }
+    } catch (error: any) {
+      // Handle error
+      const errorMessages = error?.data?.errorMessages || [];
+      const errorMsg = errorMessages.length > 0
+        ? errorMessages.join('\n')
+        : "حدث خطأ أثناء إضافة الطالب";
+
+      toast.error('فشل في إضافة الطالب', {
+        description: errorMsg,
+      });
+    }
+  };
+
   return (
     <div className=' scroll-smooth'>
       <Form {...form} >
-        <form  className='studentForm grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='studentForm grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8'>
           <div className=' space-y-4'>
           <Card>
               <CardContent>
@@ -311,6 +383,9 @@ function AddStudentForm() {
                         <FormControl>
                           <Input
                             {...field}
+                            type="number"
+                            onChange={(e) => field.onChange(e.target.valueAsNumber || undefined)}
+                            value={field.value || undefined}
                             placeholder="سنوات الخدمة"
                             className=" bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           />
@@ -628,6 +703,7 @@ function AddStudentForm() {
               </CardContent>
             </Card>
           </div>
+          
           <div className=' space-y-4' id='personal-info'>
             <Card>
               <CardHeader className=" font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
@@ -644,6 +720,9 @@ function AddStudentForm() {
                           <FormControl>
                             <Input
                               {...field}
+                              type="number"
+                              onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
+                              value={field.value || 0}
                               placeholder="الطول"
                               className=" bg-searchBg rounded-xl w-full  font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
@@ -663,6 +742,9 @@ function AddStudentForm() {
                           <FormControl>
                             <Input
                               {...field}
+                              type="number"
+                              onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
+                              value={field.value || 0}
                               placeholder="الوزن"
                               className=" bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
@@ -901,7 +983,7 @@ function AddStudentForm() {
               <CardContent className=' bg-searchBg p-4 rounded-xl'>
                 <FormField
                   control={form.control}
-                  name="skills"
+                  name="courses"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -931,7 +1013,7 @@ function AddStudentForm() {
                                     }}
                                     className="size-5 rounded-md border data-[state=checked]:bg-sidebaractive"
                                   />
-                                  <FormLabel 
+                                  <FormLabel
                                     htmlFor={`trainingCourse-${trainingCourse.value}`}
                                     className="text-muted-foreground cursor-pointer text-sm font-normal"
                                   >
@@ -950,15 +1032,29 @@ function AddStudentForm() {
               </CardContent>
             </Card>
           </div>
-        </form>
-            <div className=' absolute bottom-0 left-0 right-0 '>
-              <div className=' w-full text-left bg-white sticky px-4 py-2 -bottom-6 '>
-                <Button  className=' bg-sidebaractive font-vazirmatn px-6 h-8 text-white w-full sm:w-auto' type='submit'>
-                   حفظ
-                </Button>
-              </div>
+          </form>
+          <div className=' absolute bottom-0 left-0 right-0 '>
+            <div className=' w-full text-left bg-white sticky px-4 py-2 -bottom-6 flex justify-end items-center gap-4'>
+              <Button
+                className=' bg-transparent font-vazirmatn px-6 h-8 text-black w-full sm:w-auto'
+                type='button'
+                onClick={() => router.push('/students')}
+                variant="outline"
+              >
+                 الغاء
+              </Button>
+              <Button
+                className=' bg-sidebaractive font-vazirmatn px-6 h-8 text-white w-full sm:w-auto'
+                type='submit'
+                disabled={isAddStudentLoading}
+                onClick={form.handleSubmit(onSubmit)}
+              >
+                {isAddStudentLoading ? 'جاري الحفظ...' : 'حفظ'}
+              </Button>
+              
             </div>
-      </Form>
+          </div>
+        </Form>
     </div>
   )
 }
