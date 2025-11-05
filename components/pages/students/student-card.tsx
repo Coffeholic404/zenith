@@ -90,7 +90,7 @@ function StudentCard({ student }: { student: Student }) {
                             <EllipsisVertical className=" size-5 text-[#7B7B7B] hover:text-[#222222] cursor-pointer" />
                         </PopoverTrigger>
                         <PopoverContent className=" w-[120px] rounded-xl">
-                            <Button variant="ghost" className="">
+                            <Button variant="ghost" className=" w-full" onClick={() => router.push(`/students/edit-student/${student.uniqueID}`)}>
                                 <Image src={pen} alt="pen" className=" size-[18px]" />
                                 <p className=" font-vazirmatn text-sm">تعديل</p>
                             </Button >

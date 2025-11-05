@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Form,
   FormControl,
@@ -14,12 +14,11 @@ import { useGetAttachmentTypesQuery } from "@/services/attachment";
 import { useGetSubscriptionsQuery } from "@/services/subscriptions";
 import { useGetSkillsQuery } from "@/services/skills";
 import { useGetTrainingCoursesQuery } from "@/services/trainingCourses";
-import { useAddStudentMutation } from "@/services/students";
+import { useGetStudentByIdQuery, useUpdateStudentMutation, StudentAttachment } from "@/services/students";
 import NominatedModel from "@/components/pages/adds/nominated/nominatedModel";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -47,15 +46,9 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from 'sonner';
-// import router from 'next/router';
 import { useRouter } from 'next/navigation';
 
-
-
-
-
-
-const addStudentSchema = z.object({
+const editStudentSchema = z.object({
   name: z.string().min(1, { message: "الاسم مطلوب" }),
   degree: z.string().min(1, { message: "الشهادة مطلوبة" }),
   bdate: z.string().min(1, "تاريخ الميلاد مطلوب").refine((date) => {
@@ -80,28 +73,40 @@ const addStudentSchema = z.object({
   pressure: z.boolean(),
   notes: z.string().optional(),
   subscriptionTypeId: z.string().min(1, { message: "نوع الاشتراك مطلوب" }),
-  AttachmentFile: z.instanceof(File, { message: "يرجى تحميل صورة شخصية" }),
+  AttachmentFile: z.instanceof(File).optional(), // Optional in edit mode
   skills: z.array(z.string()).min(1, { message: "يجب اختيار مهارة واحدة على الأقل" }),
   courses: z.array(z.string()),
 })
 
-type AddStudentFormValues = z.infer<typeof addStudentSchema>
+type EditStudentFormValues = z.infer<typeof editStudentSchema>
 
-// Define attachment interface
-interface StudentAttachment {
+// Define attachment interface for new attachments
+interface NewAttachment {
   id: string;
   file: File;
   attachmentTypeId: string;
   attachmentTypeName: string;
 }
 
-function AddStudentForm() {
+// Define existing attachment with URL
+interface ExistingAttachment extends StudentAttachment {
+  isDeleted?: boolean;
+}
+
+function EditStudentForm({ id }: { id: string }) {
+  // API queries
+  const { data: studentData, isLoading: isStudentLoading, error: studentError } = useGetStudentByIdQuery({ uniqueID: id });
   const { data: nominatedParties, isLoading: isNominatedPartiesLoading } = useGetNominatedPartiesQuery({});
   const { data: attachmentTypes, isLoading: isAttachmentTypesLoading } = useGetAttachmentTypesQuery({});
   const { data: subscriptions, isLoading: isSubscriptionsLoading } = useGetSubscriptionsQuery({});
   const { data: skills, isLoading: isSkillsLoading } = useGetSkillsQuery({});
   const { data: trainingCourses, isLoading: isTrainingCoursesLoading } = useGetTrainingCoursesQuery({});
-  const [addStudent, { isLoading: isAddStudentLoading }] = useAddStudentMutation();
+  const [updateStudent, { isLoading: isUpdateStudentLoading }] = useUpdateStudentMutation();
+
+  // State for tracking original data
+  const [originalSkills, setOriginalSkills] = useState<string[]>([]);
+  const [originalCourses, setOriginalCourses] = useState<string[]>([]);
+  const [existingAttachments, setExistingAttachments] = useState<ExistingAttachment[]>([]);
 
   let subscriptionOptions: { value: string; label: string }[] = [];
   if (!isSubscriptionsLoading) {
@@ -129,8 +134,8 @@ function AddStudentForm() {
 
   const [open, setOpen] = useState(false);
 
-  // Attachment state management
-  const [attachments, setAttachments] = useState<StudentAttachment[]>([]);
+  // New attachment state management
+  const [newAttachments, setNewAttachments] = useState<NewAttachment[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [selectedAttachmentType, setSelectedAttachmentType] = useState<string>("");
   const [attachmentTypeOpen, setAttachmentTypeOpen] = useState(false);
@@ -138,8 +143,8 @@ function AddStudentForm() {
 
   const router = useRouter();
 
-  const form = useForm<AddStudentFormValues>({
-    resolver: zodResolver(addStudentSchema),
+  const form = useForm<EditStudentFormValues>({
+    resolver: zodResolver(editStudentSchema),
     defaultValues: {
       name: "",
       degree: "",
@@ -147,7 +152,7 @@ function AddStudentForm() {
       phone: "",
       skills: [],
       courses: [],
-      yearsOfServes: undefined,
+      yearsOfServes: 0,
       hight: 0,
       width: 0,
       epilepsy: false,
@@ -159,13 +164,53 @@ function AddStudentForm() {
   })
   const { control } = form;
 
+  // Populate form when student data is loaded
+  useEffect(() => {
+    if (studentData?.result) {
+      const student = studentData.result;
+
+      // Format date to YYYY-MM-DD
+      const formattedDate = student.bdate ? new Date(student.bdate).toISOString().split('T')[0] : "";
+
+      // Extract skill and course IDs
+      const skillIds = student.skills?.map(s => s.skillId) || [];
+      const courseIds = student.courses?.map(c => c.courseId) || [];
+
+      // Store original values for comparison
+      setOriginalSkills(skillIds);
+      setOriginalCourses(courseIds);
+      setExistingAttachments(student.attachments || []);
+
+      // Populate form
+      form.reset({
+        name: student.name || "",
+        degree: student.degree || "",
+        bdate: formattedDate,
+        phone: student.phone || "",
+        yearsOfServes: student.yearsOfServes || 0,
+        nominatedPartyId: student.nominatedPartyId || "",
+        hight: student.hight || 0,
+        width: student.width || 0,
+        bodyCondition: student.bodyCondition || "",
+        epilepsy: student.epilepsy || false,
+        heartDisease: student.heartDisease || false,
+        sugar: student.sugar || false,
+        pressure: student.pressure || false,
+        notes: student.notes || "",
+        subscriptionTypeId: student.subscriptionTypeId || "",
+        skills: skillIds,
+        courses: courseIds,
+      });
+    }
+  }, [studentData, form]);
+
   // Handle file selection
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     setSelectedFiles(files);
   };
 
-  // Add attachments to the list
+  // Add new attachments to the list
   const handleAddAttachments = () => {
     if (selectedFiles.length === 0 || !selectedAttachmentType) return;
 
@@ -173,14 +218,14 @@ function AddStudentForm() {
       type => type.uniqueID === selectedAttachmentType
     )?.name || "";
 
-    const newAttachments: StudentAttachment[] = selectedFiles.map((file, index) => ({
+    const newAtts: NewAttachment[] = selectedFiles.map((file, index) => ({
       id: `${Date.now()}-${index}`,
       file,
       attachmentTypeId: selectedAttachmentType,
       attachmentTypeName,
     }));
 
-    setAttachments(prev => [...prev, ...newAttachments]);
+    setNewAttachments(prev => [...prev, ...newAtts]);
 
     // Reset state after adding
     setSelectedFiles([]);
@@ -194,9 +239,27 @@ function AddStudentForm() {
     }
   };
 
-  // Remove attachment
-  const removeAttachment = (id: string) => {
-    setAttachments(prev => prev.filter(att => att.id !== id));
+  // Remove new attachment
+  const removeNewAttachment = (id: string) => {
+    setNewAttachments(prev => prev.filter(att => att.id !== id));
+  };
+
+  // Mark existing attachment as deleted
+  const markExistingAttachmentDeleted = (attachmentId: string) => {
+    setExistingAttachments(prev =>
+      prev.map(att =>
+        att.attachmentId === attachmentId ? { ...att, isDeleted: true } : att
+      )
+    );
+  };
+
+  // Restore deleted attachment
+  const restoreExistingAttachment = (attachmentId: string) => {
+    setExistingAttachments(prev =>
+      prev.map(att =>
+        att.attachmentId === attachmentId ? { ...att, isDeleted: false } : att
+      )
+    );
   };
 
   // Format file size
@@ -208,8 +271,14 @@ function AddStudentForm() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // Get backend URL for attachment preview
+  const getAttachmentUrl = (filePath: string) => {
+    const backendUrl = process.env.NEXT_PUBLIC_BASIC_URL || "http://aliali.runasp.net";
+    return `${backendUrl}${filePath}`;
+  };
+
   // Handle form submission
-  const onSubmit = async (data: AddStudentFormValues) => {
+  const onSubmit = async (data: EditStudentFormValues) => {
     try {
       const formData = new FormData();
 
@@ -236,53 +305,74 @@ function AddStudentForm() {
       }
       formData.append('SubscriptionTypeId', data.subscriptionTypeId);
 
-      // Append skills array
-      data.skills.forEach((skillId) => {
-        formData.append('SkillIds', skillId);
+      // Handle Skills - calculate added and deleted
+      const currentSkills = data.skills;
+      const addedSkills = currentSkills.filter(id => !originalSkills.includes(id));
+      const deletedSkills = originalSkills.filter(id => !currentSkills.includes(id));
+
+      addedSkills.forEach(skillId => {
+        formData.append('AddedSkillIds', skillId);
       });
 
-      // Append courses array
-      if (data.courses && data.courses.length > 0) {
-        data.courses.forEach((courseId) => {
-          formData.append('CourseIds', courseId);
-        });
-      }
+      deletedSkills.forEach(skillId => {
+        formData.append('DeletedSkillIds', skillId);
+      });
 
-      // Append attachments array
-      // First append profile picture with the default profile picture typeId
+      // Handle Courses - calculate added and deleted
+      const currentCourses = data.courses;
+      const addedCourses = currentCourses.filter(id => !originalCourses.includes(id));
+      const deletedCourses = originalCourses.filter(id => !currentCourses.includes(id));
+
+      addedCourses.forEach(courseId => {
+        formData.append('AddedCourseIds', courseId);
+      });
+
+      deletedCourses.forEach(courseId => {
+        formData.append('DeletedCourseIds', courseId);
+      });
+
+      // Handle Attachments
       const PROFILE_PICTURE_TYPE_ID = "3a3ae5af-d8e9-40b6-8194-11458e4caf32";
-      let attachmentIndex = 0;
 
-      // Add profile picture
+      // Get deleted attachment IDs
+      const deletedAttachmentIds = existingAttachments
+        .filter(att => att.isDeleted)
+        .map(att => att.attachmentId);
+
+      deletedAttachmentIds.forEach(attachmentId => {
+        formData.append('DeletedAttachmentIds', attachmentId);
+      });
+
+      // Handle new profile picture if uploaded
+      let newAttachmentIndex = 0;
       if (data.AttachmentFile) {
-        formData.append(`Attachments[${attachmentIndex}].typeId`, PROFILE_PICTURE_TYPE_ID);
-        formData.append(`Attachments[${attachmentIndex}].file`, data.AttachmentFile);
-        attachmentIndex++;
+        formData.append(`NewAttachments[${newAttachmentIndex}].typeId`, PROFILE_PICTURE_TYPE_ID);
+        formData.append(`NewAttachments[${newAttachmentIndex}].file`, data.AttachmentFile);
+        newAttachmentIndex++;
       }
 
-      // Add other attachments
-      attachments.forEach((attachment) => {
-        formData.append(`Attachments[${attachmentIndex}].typeId`, attachment.attachmentTypeId);
-        formData.append(`Attachments[${attachmentIndex}].file`, attachment.file);
-        attachmentIndex++;
+      // Add other new attachments
+      newAttachments.forEach((attachment) => {
+        formData.append(`NewAttachments[${newAttachmentIndex}].typeId`, attachment.attachmentTypeId);
+        formData.append(`NewAttachments[${newAttachmentIndex}].file`, attachment.file);
+        newAttachmentIndex++;
       });
 
       // Submit the form
-      const response = await addStudent(formData).unwrap();
+      const response = await updateStudent({ uniqueID: id, student: formData }).unwrap();
 
       if (response.isSuccess) {
         const studentData = response.result;
-        toast.success(`تم إضافة الطالب بنجاح`, {
+        toast.success(`تم تحديث بيانات الطالب بنجاح`, {
           description: `الاسم: ${studentData?.name || data.name}${studentData?.uniqueID ? ` - المعرف: ${studentData.uniqueID}` : ''}`,
         });
 
-        // Reset form
-        form.reset();
-        setAttachments([]);
+        // Redirect to students page
+        router.push('/students');
       } else {
         // Display error messages from server
-        const errorMsg = response.errorMessages?.join('\n') || "حدث خطأ أثناء إضافة الطالب";
-        toast.error('فشل في إضافة الطالب', {
+        const errorMsg = response.errorMessages?.join('\n') || "حدث خطأ أثناء تحديث الطالب";
+        toast.error('فشل في تحديث الطالب', {
           description: errorMsg,
         });
       }
@@ -291,24 +381,57 @@ function AddStudentForm() {
       const errorMessages = error?.data?.errorMessages || [];
       const errorMsg = errorMessages.length > 0
         ? errorMessages.join('\n')
-        : "حدث خطأ أثناء إضافة الطالب";
+        : "حدث خطأ أثناء تحديث الطالب";
 
-      toast.error('فشل في إضافة الطالب', {
+      toast.error('فشل في تحديث الطالب', {
         description: errorMsg,
       });
     }
   };
 
+  // Loading state
+  if (isStudentLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sidebaractive mx-auto"></div>
+          <p className="font-vazirmatn text-subtext">جاري تحميل بيانات الطالب...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (studentError || !studentData?.isSuccess) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <p className="font-vazirmatn text-red-500">حدث خطأ أثناء تحميل بيانات الطالب</p>
+          <Button onClick={() => router.push('/students')} className="font-vazirmatn">
+            العودة إلى قائمة الطلاب
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className=' scroll-smooth'>
-      <Form {...form} >
+    <div className='scroll-smooth'>
+      <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='studentForm grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8'>
-          <div className=' space-y-4'>
-          <Card>
+          <div className='space-y-4'>
+            <Card>
               <CardContent>
                 <FileUploader className='border-none shadow-none' control={control} name="AttachmentFile" />
-                <Separator className=' my-4 h-px bg-gray-300 rounded-xl' />
-                <div className=' space-y-4'>
+                {/* Show current profile picture */}
+                {existingAttachments.find(att => att.typeId === "3a3ae5af-d8e9-40b6-8194-11458e4caf32") && (
+                  <div className="mt-2 text-sm text-subtext font-vazirmatn">
+                    <p>الصورة الحالية: {existingAttachments.find(att => att.typeId === "3a3ae5af-d8e9-40b6-8194-11458e4caf32")?.typeName}</p>
+                    <p className="text-xs">قم برفع صورة جديدة للتحديث</p>
+                  </div>
+                )}
+                <Separator className='my-4 h-px bg-gray-300 rounded-xl' />
+                <div className='space-y-4'>
                   <FormField
                     control={control}
                     name="name"
@@ -318,7 +441,7 @@ function AddStudentForm() {
                           <Input
                             {...field}
                             placeholder="الاسم الثلاثي"
-                            className=" bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           />
                         </FormControl>
                         <FormMessage />
@@ -334,7 +457,7 @@ function AddStudentForm() {
                           <Input
                             {...field}
                             placeholder="الشهادة"
-                            className=" bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           />
                         </FormControl>
                         <FormMessage />
@@ -347,13 +470,7 @@ function AddStudentForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          {/* <Input
-                              {...field}
-                              type="date"
-                              placeholder="تاريخ الميلاد"
-                              className=" w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                            /> */}
-                          <BirthdayDate   {...field} />
+                          <BirthdayDate {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -368,7 +485,7 @@ function AddStudentForm() {
                           <Input
                             {...field}
                             placeholder="رقم الهاتف"
-                            className=" bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           />
                         </FormControl>
                         <FormMessage />
@@ -384,10 +501,10 @@ function AddStudentForm() {
                           <Input
                             {...field}
                             type="number"
-                            onChange={(e) => field.onChange(e.target.valueAsNumber || undefined)}
-                            value={field.value || undefined}
+                            onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
+                            value={field.value || 0}
                             placeholder="سنوات الخدمة"
-                            className=" bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           />
                         </FormControl>
                         <FormMessage />
@@ -416,15 +533,15 @@ function AddStudentForm() {
                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                               </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-full p-0 " align="start">
+                            <PopoverContent className="w-full p-0" align="start">
                               <Command>
                                 <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
                                   <CommandInput
                                     placeholder="البحث عن جهة الترشيح..."
-                                    className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 border-0 focus:ring-0 focus:outline-none "
+                                    className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 border-0 focus:ring-0 focus:outline-none"
                                   />
-                                  <div className="flex-shrink-0 ml-2 ">
-                                    <NominatedModel btnClassName=" bg-transparent text-black hover:bg-transparent" />
+                                  <div className="flex-shrink-0 ml-2">
+                                    <NominatedModel btnClassName="bg-transparent text-black hover:bg-transparent" />
                                   </div>
                                 </div>
                                 <CommandList>
@@ -465,11 +582,88 @@ function AddStudentForm() {
             </Card>
 
             {/* Attachment Section */}
-            <Card className=''>
+            <Card>
               <CardContent className="p-4 space-y-4">
                 <div className="text-right">
                   <h3 className="text-lg font-medium font-vazirmatn mb-4">المرفقات</h3>
                 </div>
+
+                {/* Existing Attachments */}
+                {existingAttachments.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium font-vazirmatn">المرفقات الحالية:</p>
+                    <div className="space-y-2">
+                      {existingAttachments
+                        .filter(att => att.typeId !== "3a3ae5af-d8e9-40b6-8194-11458e4caf32") // Exclude profile picture
+                        .map((attachment) => (
+                          <div
+                            key={attachment.attachmentId}
+                            className={cn(
+                              "flex items-center justify-between p-3 bg-white rounded border",
+                              attachment.isDeleted && "opacity-50 bg-red-50"
+                            )}
+                          >
+                            <div
+                              className="flex items-center space-x-3 space-x-reverse cursor-pointer flex-1"
+                              onClick={() => {
+                                if (!attachment.isDeleted) {
+                                  window.open(getAttachmentUrl(attachment.file), "_blank", "noopener,noreferrer");
+                                }
+                              }}
+                              title={attachment.isDeleted ? "المرفق محذوف" : "فتح الملف في تبويب جديد"}
+                            >
+                              {attachment.file.match(/\.(jpg|jpeg|png|gif)$/i) ? (
+                                <img
+                                  src={getAttachmentUrl(attachment.file)}
+                                  alt={attachment.typeName}
+                                  className="h-10 w-10 rounded object-cover border"
+                                />
+                              ) : attachment.file.match(/\.pdf$/i) ? (
+                                <div className="flex items-center justify-center h-10 w-10 rounded border bg-gray-50">
+                                  <span className="text-[10px] font-vazirmatn text-gray-700">PDF</span>
+                                </div>
+                              ) : (
+                                <FileText className="h-5 w-5 text-green-500" />
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 truncate font-vazirmatn">
+                                  {attachment.typeName}
+                                  {attachment.isDeleted && " (محذوف)"}
+                                </p>
+                                <p className="text-xs text-gray-500 font-vazirmatn">
+                                  {attachment.file.split('/').pop()}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              {attachment.isDeleted ? (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => restoreExistingAttachment(attachment.attachmentId)}
+                                  className="text-green-500 hover:text-green-700 hover:bg-green-50 font-vazirmatn"
+                                >
+                                  استعادة
+                                </Button>
+                              ) : (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => markExistingAttachmentDeleted(attachment.attachmentId)}
+                                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                    <Separator className="h-px bg-gray-300 rounded-xl my-4" />
+                  </div>
+                )}
 
                 {/* Add Attachment trigger */}
                 {!isAddingAttachment && (
@@ -484,12 +678,12 @@ function AddStudentForm() {
                       className="bg-sidebaractive text-white rounded-xl hover:brightness-110 font-vazirmatn w-full"
                     >
                       <Plus className="ml-2 h-4 w-4" />
-                      إضافة مرفق
+                      إضافة مرفق جديد
                     </Button>
                   </div>
                 )}
 
-                {/* Attachments Input Workflow */}
+                {/* New Attachments Input Workflow */}
                 {isAddingAttachment && (
                   <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -559,25 +753,27 @@ function AddStudentForm() {
                                   لم يتم العثور على نوع المرفق
                                 </CommandEmpty>
                                 <CommandGroup>
-                                  {attachmentTypes?.result?.data?.map((type) => (
-                                    <CommandItem
-                                      key={type.uniqueID}
-                                      value={type.name}
-                                      onSelect={() => {
-                                        setSelectedAttachmentType(type.uniqueID);
-                                        setAttachmentTypeOpen(false);
-                                      }}
-                                      className="font-vazirmatn"
-                                    >
-                                      {type.name}
-                                      <Check
-                                        className={cn(
-                                          "ml-auto h-4 w-4",
-                                          selectedAttachmentType === type.uniqueID ? "opacity-100" : "opacity-0"
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
+                                  {attachmentTypes?.result?.data
+                                    ?.filter(type => type.uniqueID !== "3a3ae5af-d8e9-40b6-8194-11458e4caf32") // Exclude profile picture type
+                                    ?.map((type) => (
+                                      <CommandItem
+                                        key={type.uniqueID}
+                                        value={type.name}
+                                        onSelect={() => {
+                                          setSelectedAttachmentType(type.uniqueID);
+                                          setAttachmentTypeOpen(false);
+                                        }}
+                                        className="font-vazirmatn"
+                                      >
+                                        {type.name}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto h-4 w-4",
+                                            selectedAttachmentType === type.uniqueID ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    ))}
                                 </CommandGroup>
                               </CommandList>
                             </Command>
@@ -636,13 +832,13 @@ function AddStudentForm() {
                   </div>
                 )}
 
-                {/* Added Attachments List */}
-                {attachments.length > 0 && (
+                {/* New Attachments List */}
+                {newAttachments.length > 0 && (
                   <div className="space-y-2 mt-4">
                     <Separator className="h-px bg-gray-300 rounded-xl" />
-                    <p className="text-sm font-medium font-vazirmatn">المرفقات المضافة:</p>
+                    <p className="text-sm font-medium font-vazirmatn">المرفقات الجديدة المضافة:</p>
                     <div className="space-y-2">
-                      {attachments.map((attachment) => (
+                      {newAttachments.map((attachment) => (
                         <div
                           key={attachment.id}
                           className="flex items-center justify-between p-3 bg-white rounded border"
@@ -655,7 +851,6 @@ function AddStudentForm() {
                               setTimeout(() => URL.revokeObjectURL(url), 10000);
                             }}
                             title="فتح الملف في تبويب جديد"
-                            aria-label="فتح الملف في تبويب جديد"
                           >
                             {(attachment.file.type?.startsWith('image/') || /\.(png|jpe?g|gif)$/i.test(attachment.file.name)) ? (
                               <img
@@ -690,7 +885,7 @@ function AddStudentForm() {
                             type="button"
                             variant="ghost"
                             size="sm"
-                            onClick={() => removeAttachment(attachment.id)}
+                            onClick={() => removeNewAttachment(attachment.id)}
                             className="text-red-500 hover:text-red-700 hover:bg-red-50"
                           >
                             <X className="h-4 w-4" />
@@ -703,15 +898,15 @@ function AddStudentForm() {
               </CardContent>
             </Card>
           </div>
-          
-          <div className=' space-y-4' id='personal-info'>
+
+          <div className='space-y-4' id='personal-info'>
             <Card>
-              <CardHeader className=" font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
+              <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
                 المعلومات الجسدية
               </CardHeader>
-              <CardContent className=' space-y-4'>
-                <div className='w-full flex flex-col sm:flex-row items-center justify-center gap-2 '>
-                  <div className=' flex-1 w-full'>
+              <CardContent className='space-y-4'>
+                <div className='w-full flex flex-col sm:flex-row items-center justify-center gap-2'>
+                  <div className='flex-1 w-full'>
                     <FormField
                       control={control}
                       name="hight"
@@ -724,7 +919,7 @@ function AddStudentForm() {
                               onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
                               value={field.value || 0}
                               placeholder="الطول"
-                              className=" bg-searchBg rounded-xl w-full  font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                              className="bg-searchBg rounded-xl w-full font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
                           </FormControl>
                           <FormMessage />
@@ -746,7 +941,7 @@ function AddStudentForm() {
                               onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
                               value={field.value || 0}
                               placeholder="الوزن"
-                              className=" bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                              className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
                           </FormControl>
                           <FormMessage />
@@ -769,7 +964,6 @@ function AddStudentForm() {
                           <SelectContent>
                             <SelectItem value="thin">مقبول</SelectItem>
                             <SelectItem value="average">مرفوض</SelectItem>
-                            
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -781,7 +975,7 @@ function AddStudentForm() {
             </Card>
 
             <Card>
-              <CardHeader className=" font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
+              <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
                 الحالات الصحية
               </CardHeader>
               <CardContent>
@@ -868,12 +1062,12 @@ function AddStudentForm() {
             </Card>
 
             <Card>
-              <CardHeader className=" font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
+              <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
                 معلومات الدورة والاشتراك
               </CardHeader>
 
-              <CardContent className=' flex flex-col sm:flex-row items-center gap-2'>
-                <div className=' flex-1 w-full'>
+              <CardContent className='flex flex-col sm:flex-row items-center gap-2'>
+                <div className='flex-1 w-full'>
                   <FormField
                     control={control}
                     name="subscriptionTypeId"
@@ -898,32 +1092,14 @@ function AddStudentForm() {
                     )}
                   />
                 </div>
-                {/* <div className=' flex-1 w-full'>
-                  <FormField
-                    control={control}
-                    name="coursename"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder=" اسم الدورة"
-                            className=" bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div> */}
               </CardContent>
             </Card>
 
             <Card className='px-3 py-4'>
-              <CardHeader className=" font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
+              <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
                 المهارات
               </CardHeader>
-              <CardContent className=' bg-searchBg p-4 rounded-xl'>
+              <CardContent className='bg-searchBg p-4 rounded-xl'>
                 <FormField
                   control={form.control}
                   name="skills"
@@ -945,18 +1121,16 @@ function AddStudentForm() {
                                     onCheckedChange={(checked) => {
                                       const currentValues = field.value || [];
                                       if (checked) {
-                                        // Add skill to array if not already present
                                         if (!currentValues.includes(skill.value)) {
                                           field.onChange([...currentValues, skill.value]);
                                         }
                                       } else {
-                                        // Remove skill from array
                                         field.onChange(currentValues.filter((value) => value !== skill.value));
                                       }
                                     }}
                                     className="size-5 rounded-md border data-[state=checked]:bg-sidebaractive"
                                   />
-                                  <FormLabel 
+                                  <FormLabel
                                     htmlFor={`skill-${skill.value}`}
                                     className="text-muted-foreground cursor-pointer text-sm font-normal"
                                   >
@@ -976,10 +1150,10 @@ function AddStudentForm() {
             </Card>
 
             <Card className='px-3 py-4'>
-              <CardHeader className=" font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
+              <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
                 الدورات
               </CardHeader>
-              <CardContent className=' bg-searchBg p-4 rounded-xl'>
+              <CardContent className='bg-searchBg p-4 rounded-xl'>
                 <FormField
                   control={form.control}
                   name="courses"
@@ -1001,12 +1175,10 @@ function AddStudentForm() {
                                     onCheckedChange={(checked) => {
                                       const currentValues = field.value || [];
                                       if (checked) {
-                                        // Add trainingCourse to array if not already present
                                         if (!currentValues.includes(trainingCourse.value)) {
                                           field.onChange([...currentValues, trainingCourse.value]);
                                         }
                                       } else {
-                                        // Remove trainingCourse from array
                                         field.onChange(currentValues.filter((value) => value !== trainingCourse.value));
                                       }
                                     }}
@@ -1031,31 +1203,30 @@ function AddStudentForm() {
               </CardContent>
             </Card>
           </div>
-          </form>
-          <div className=' absolute bottom-0 left-0 right-0 '>
-            <div className=' w-full text-left bg-white sticky px-4 py-2 -bottom-6 flex justify-end items-center gap-4'>
-              <Button
-                className=' bg-transparent font-vazirmatn px-6 h-8 text-black w-full sm:w-auto'
-                type='button'
-                onClick={() => router.push('/students')}
-                variant="outline"
-              >
-                 الغاء
-              </Button>
-              <Button
-                className=' bg-sidebaractive font-vazirmatn px-6 h-8 text-white w-full sm:w-auto'
-                type='submit'
-                disabled={isAddStudentLoading}
-                onClick={form.handleSubmit(onSubmit)}
-              >
-                {isAddStudentLoading ? 'جاري الحفظ...' : 'حفظ'}
-              </Button>
-              
-            </div>
+        </form>
+        <div className='absolute bottom-0 left-0 right-0'>
+          <div className='w-full text-left bg-white sticky px-4 py-2 -bottom-6 flex justify-end items-center gap-4'>
+            <Button
+              className='bg-transparent font-vazirmatn px-6 h-8 text-black w-full sm:w-auto'
+              type='button'
+              onClick={() => router.push('/students')}
+              variant="outline"
+            >
+              الغاء
+            </Button>
+            <Button
+              className='bg-sidebaractive font-vazirmatn px-6 h-8 text-white w-full sm:w-auto'
+              type='submit'
+              disabled={isUpdateStudentLoading}
+              onClick={form.handleSubmit(onSubmit)}
+            >
+              {isUpdateStudentLoading ? 'جاري الحفظ...' : 'حفظ التعديلات'}
+            </Button>
           </div>
-        </Form>
+        </div>
+      </Form>
     </div>
   )
 }
 
-export default AddStudentForm
+export default EditStudentForm

@@ -1,6 +1,23 @@
 import { api } from './api';
 
-export type Student = { 
+export interface StudentAttachment {
+    attachmentId: string;
+    typeId: string;
+    typeName: string;
+    file: string; // URL path to file
+}
+
+export interface StudentCourse {
+    courseId: string;
+    courseName: string;
+}
+
+export interface StudentSkill {
+    skillId: string;
+    skillName: string;
+}
+
+export type Student = {
         uniqueID: string;
         name: string;
         degree: string;
@@ -19,9 +36,9 @@ export type Student = {
         notes: string;
         subscriptionTypeId: string;
         subscriptionTypeName: string;
-        attachments: [];
-        courses: [];
-        skills: [];
+        attachments: StudentAttachment[];
+        courses: StudentCourse[];
+        skills: StudentSkill[];
 }
 
 export type GetStudentsRequestParams = {
@@ -50,6 +67,23 @@ export interface UpdateStudentResponse {
   result: Student;
 }
 
+// Request type for updating a student via multipart/form-data
+export interface UpdateStudentRequest {
+  uniqueID: string;
+  student: FormData;
+}
+
+// GET /api/Student/{id} request/response types
+export interface GetStudentByIdRequest {
+  uniqueID: string;
+}
+
+export interface GetStudentByIdResponse {
+  statusCode: number;
+  isSuccess: boolean;
+  errorMessages: string[];
+  result: Student;
+}
 
 
 export const StudentApi = api.injectEndpoints({
@@ -72,6 +106,25 @@ export const StudentApi = api.injectEndpoints({
             invalidatesTags: ['getStudents'],
         }),
 
+        // PUT /api/Student/{id} - Update an existing student (multipart/form-data)
+        updateStudent: builder.mutation<UpdateStudentResponse, UpdateStudentRequest>({
+            query: ({ uniqueID, student }) => ({
+                url: `/api/Student/${uniqueID}`,
+                method: 'PUT',
+                body: student,
+            }),
+            invalidatesTags: ['getStudents'],
+        }),
+
+        // GET /api/Student/{id} - Get student by ID
+        getStudentById: builder.query<GetStudentByIdResponse, GetStudentByIdRequest>({
+            query: ({ uniqueID }) => ({
+                url: `/api/Student/${uniqueID}`,
+                method: 'GET',
+            }),
+            providesTags: ['getStudents'],
+        }),
+
         deleteStudent: builder.mutation<boolean, string>({
             query: (uniqueID: string) => ({
                 url: `/api/Student/${uniqueID}`,
@@ -82,4 +135,4 @@ export const StudentApi = api.injectEndpoints({
     }),
 });
 
-export const { useGetStudentsQuery, useAddStudentMutation, useDeleteStudentMutation } = StudentApi;
+export const { useGetStudentsQuery, useAddStudentMutation, useUpdateStudentMutation, useGetStudentByIdQuery, useDeleteStudentMutation } = StudentApi;
