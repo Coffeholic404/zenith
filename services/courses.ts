@@ -7,6 +7,8 @@ export interface Course {
   startDate: string;
   endDate: string;
   typeId: string;
+  status?: string;
+  typeName: string;
   courseNameId: string;
 }
 
