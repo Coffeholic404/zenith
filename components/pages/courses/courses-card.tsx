@@ -100,7 +100,7 @@ export default function CoursesCard({ course }: { course: Course }) {
                     </Button>
                     <Separator className=" my-4" />
                     <div className=" flex items-center justify-evenly gap-4">
-                        <Button variant="outline" className="font-vazirmatn font-normal text-md flex-1">
+                        <Button onClick={() => router.push(`/courses/edit-course/${course.uniqueID}`)} variant="outline" className="font-vazirmatn font-normal text-md flex-1">
                             <Image src={pen} alt="pen" />
                             تعديل
                         </Button>

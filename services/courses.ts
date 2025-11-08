@@ -41,6 +41,20 @@ export interface CourseTrainerStudent {
   studentCode: string;
 }
 
+export interface CourseTrainerStudentUpdate extends CourseTrainerStudent {
+  uniqueID?: string; // co_St_TrId for existing participants
+}
+
+export interface CourseParticipant {
+  co_St_TrId: string;
+  studentId: string;
+  studentName: string;
+  studentCode: string;
+  trainerId: string;
+  trainerName: string;
+  hasEvaluation: boolean;
+}
+
 export interface CreateCourseRequest {
   character: string;
   startDate: string;
@@ -62,7 +76,8 @@ export interface UpdateCourseRequest {
   startDate: string;
   endDate: string;
   typeId: string;
-  courseNameId: string;
+  costtr: CourseTrainerStudentUpdate[];
+  deletedCoStTrIds?: string[];
 }
 
 export interface UpdateCourseResponse {
@@ -91,7 +106,11 @@ export interface GetCourseByIdResponse {
   statusCode: number;
   isSuccess: boolean;
   errorMessages: string[];
-  result: Course;
+  result: Course & {
+    participantsCount: number;
+    durationDays: number;
+    participants: CourseParticipant[];
+  };
 }
 
 export interface GetCourseDetailsRequest {
