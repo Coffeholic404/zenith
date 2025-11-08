@@ -33,12 +33,18 @@ export interface GetCoursesResponse {
   };
 }
 
+export interface CourseTrainerStudent {
+  studentId: string;
+  trainerId: string;
+  studentCode: string;
+}
+
 export interface CreateCourseRequest {
   character: string;
   startDate: string;
   endDate: string;
   typeId: string;
-  courseNameId: string;
+  costtr: CourseTrainerStudent[];
 }
 
 export interface CreateCourseResponse {

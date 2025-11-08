@@ -56,6 +56,9 @@ const config = {
         detalisTxtClr: "hsla(var(--detalis-txt-clr))",
         trainerCollapsBg: "hsla(var(--trainer-collaps-bg))",
         collapsTxtClr: "hsla(var(--collaps-txt-clr))",
+        trainerTableBg: "hsla(var(--trainer-table-bg))",
+        trainerTableHeaderTxt: "hsla(var(--trainer-table-header-txt))",
+        studentCheckboxClr: "hsla(var(--student-checkbox-clr))",
         /*employ card*/
         deleteTxt: "hsla(var(--delete-txt))",
         primary: {

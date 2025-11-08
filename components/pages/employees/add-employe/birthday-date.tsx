@@ -22,12 +22,11 @@ function formatDateForDisplay(date: Date | undefined): string {
   if (!date) {
     return ""
   }
-  
-  return date.toLocaleDateString("ar-SA", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  })
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  // Display as: yyyy mm dd
+  return `${year} ${month} ${day}`
 }
 
 function formatDateForInput(dateString: string): Date | undefined {
@@ -72,7 +71,11 @@ export default function BirthdayDate({
     setDisplayValue(inputValue)
     
     // Try to parse the input as a date
-    const parsedDate = new Date(inputValue)
+    // Support formats: yyyy-mm-dd, yyyy/mm/dd, yyyy mm dd
+    const ymdMatch = inputValue.match(/^\s*(\d{4})[-/ ](\d{2})[-/ ](\d{2})\s*$/)
+    const parsedDate = ymdMatch
+      ? new Date(Number(ymdMatch[1]), Number(ymdMatch[2]) - 1, Number(ymdMatch[3]))
+      : new Date(inputValue)
     if (isValidDate(parsedDate)) {
       setSelectedDate(parsedDate)
       // Convert to YYYY-MM-DD format for form submission
@@ -134,17 +137,10 @@ export default function BirthdayDate({
             selected={selectedDate}
             captionLayout="dropdown"
             onSelect={handleDateSelect}
-            disabled={(date) => {
-              // Disable future dates and dates that would make person younger than 18
-              const today = new Date()
-              const eighteenYearsAgo = new Date()
-              eighteenYearsAgo.setFullYear(today.getFullYear() - 18)
-              
-              return date > eighteenYearsAgo || date > today
-            }}
+            
             defaultMonth={selectedDate || new Date(2000, 0, 1)}
             fromYear={1950}
-            toYear={new Date().getFullYear() - 18}
+            toYear={new Date().getFullYear()}
           />
         </PopoverContent>
       </Popover>
