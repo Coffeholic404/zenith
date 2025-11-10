@@ -15,10 +15,15 @@ import { useState } from "react"
 import eye from "@/public/courses/Eye.svg"
 import plain from "@/public/courses/Plain.svg"
 import map from "@/public/courses/map.svg"
+import React from "react"
+import { useGetCourseByIdQuery } from "@/services/courses";
 
 
-export default function Page() {
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id: courseId } = React.use(params);
     const [isOpen, setIsOpen] = useState(false)
+    const { data, isLoading, isError } = useGetCourseByIdQuery({ uniqueID:courseId })
+    console.log(data)
     return (
         <div className=" space-y-4">
             <Card className="  flex justify-center items-center py-4">

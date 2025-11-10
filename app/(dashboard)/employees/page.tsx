@@ -15,15 +15,46 @@ import {
   PopoverTrigger,
   PopoverArrow,
 } from "@/components/ui/popover";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import EmployeeCard from "@/components/pages/employees/employee-card";
 import { useGetEmployeesQuery } from "@/services/employe";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export default function Page() {
   const [isEdit, setIsEdit] = useState(false);
   const router = useRouter();
-  const { data: employees, isLoading } = useGetEmployeesQuery({});
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  // Controlled search term with URL persistence
+  const [searchTerm, setSearchTerm] = React.useState<string>(searchParams.get("q") ?? "");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = React.useState<string>(searchTerm);
+  const debounceRef = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    if (debounceRef.current) {
+      window.clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = window.setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    };
+  }, [searchTerm]);
+
+  // Persist debounced term in URL
+  React.useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (debouncedSearchTerm) params.set("q", debouncedSearchTerm);
+    else params.delete("q");
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchTerm]);
+
+  const { data: employees, isLoading, isFetching, isError, error, refetch } = useGetEmployeesQuery({
+    searchQuery: debouncedSearchTerm,
+  });
 
   
   
@@ -50,7 +81,7 @@ export default function Page() {
         </div>
 
         <div className=" flex items-center gap-4">
-          <div className=" relative">
+          <div className=" relative" aria-label="بحث عن الموظفين" aria-busy={isFetching}>
             <Image
               src={searchIcon}
               alt="magnifier icon"
@@ -58,9 +89,39 @@ export default function Page() {
             />
             <Input
               id="search"
+              role="searchbox"
+              aria-label="حقل البحث"
               placeholder="بحث ..."
-              className=" bg-white rounded-xl block w-full p-4 ps-10 min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setSearchTerm("");
+                  setDebouncedSearchTerm("");
+                } else if (e.key === "Enter") {
+                  if (debounceRef.current) window.clearTimeout(debounceRef.current);
+                  setDebouncedSearchTerm(searchTerm);
+                }
+              }}
+              className=" bg-white rounded-xl block w-full p-4 ps-10 sm:min-w-[21rem] min-w-0 font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
             />
+            {isFetching && (
+              <div aria-hidden className="absolute inset-y-0 end-10 my-auto size-4 rounded-full border-2 border-searchBg border-t-transparent animate-spin" />
+            )}
+            {!!searchTerm && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchTerm("");
+                  setDebouncedSearchTerm("");
+                }}
+                aria-label="مسح البحث"
+                className="absolute inset-y-0 end-2 my-auto size-6 flex items-center justify-center rounded-full bg-searchBg hover:bg-[#DAF1FF] text-[#666]"
+              >
+                ×
+                <span className="sr-only">مسح</span>
+              </button>
+            )}
           </div>
           <div className=" bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg">
             <Image src={filterIcon} alt="filter icon" className=" size-6" />
@@ -92,6 +153,15 @@ export default function Page() {
           </Popover>
         </div>
       </div>
+      {/* Error state */}
+      {isError && (
+        <div role="alert" className="bg-[#FDECEC] border border-red-200 text-red-700 rounded-xl p-3 font-vazirmatn">
+          حدث خطأ أثناء تحميل الموظفين. يرجى المحاولة مرة أخرى.
+          <Button variant="outline" className="ml-2 rounded-xl" onClick={() => refetch()}>
+            إعادة المحاولة
+          </Button>
+        </div>
+      )}
       <div className=" flex flex-wrap gap-6">
         {employees.result.data.map((employee) => (
           <EmployeeCard key={employee.id} employee={employee} isEdit={isEdit} setIsEdit={setIsEdit}  />

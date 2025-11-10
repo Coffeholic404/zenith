@@ -72,13 +72,16 @@ function StudentCard({ student }: { student: Student }) {
     const handleDeleteCancel = () => {
         setShowDeleteDialog(false);
     };
+
+    const profileImage = student.attachments?.filter(attachment => attachment.typeName === "صورة شخصية")[0];
+    console.log(profileImage)
     return (
-        <div className=" flex-1">
-            <Card className="w-[22.375rem] rounded-2xl ">
+        <div className="flex-1 basis-1/4">
+            <Card className=" rounded-2xl ">
                 <CardHeader className=" flex items-center justify-between flex-row gap-2 p-2 px-3 ">
                     <div className=" flex items-center justify-start flex-row gap-2">
                         <Avatar className=" size-14">
-                            <AvatarImage src="/placeholder.svg" alt={student.name} />
+                            <AvatarImage src={`http://aliali.runasp.net${profileImage?.file}`} alt={student.name} />
                             <AvatarFallback>{student.name.split(' ')[0].charAt(0)}</AvatarFallback>
                         </Avatar>
                         <h4 className=" font-vazirmatn font-black text-sm place-items-start pb-4">
@@ -94,9 +97,9 @@ function StudentCard({ student }: { student: Student }) {
                                 <Image src={pen} alt="pen" className=" size-[18px]" />
                                 <p className=" font-vazirmatn text-sm">تعديل</p>
                             </Button >
-                            <Button variant="ghost" className="">
+                            <Button  variant="ghost" className=" hover:bg-red-400" onClick={handleDeleteClick}>
                                 <Image src={trash} alt="trash" className="size-[18px]" />
-                                <p className=" font-vazirmatn text-sm" onClick={handleDeleteClick}>حذف</p>
+                                <p className=" font-vazirmatn text-sm" >حذف</p>
                             </Button>
 
                             <Button variant="ghost" className="" onClick={() => router.push(`/students/${student.uniqueID}`)}>
@@ -117,10 +120,10 @@ function StudentCard({ student }: { student: Student }) {
                             <p className=" font-vazirmatn text-sm">حذف</p>
                         </Button> */}
                     <Badge className=" bg-sidebaractive">
-                        183cm
+                       {student.hight}cm
                     </Badge>
                     <Badge className=" bg-sidebaractive">
-                        70kg
+                       {student.width}kg
                     </Badge>
                 </CardFooter>
             </Card>

@@ -86,6 +86,8 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit}: { employee:
     }
   }
 
+  console.log(employee);
+
 
 
   return (
@@ -95,7 +97,7 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit}: { employee:
           <div className=" flex items-center justify-between ">
             <div className=" flex gap-2">
               <Avatar className=" size-16">
-                <AvatarImage src={`http://aliali.runasp.net/${employee.attachment}`} alt="employee name" />
+                <AvatarImage src={`http://aliali.runasp.net${employee.attachment}`} alt="employee name" />
                 <AvatarFallback>SC</AvatarFallback>
               </Avatar>
               <div className=" font-vazirmatn pt-2">

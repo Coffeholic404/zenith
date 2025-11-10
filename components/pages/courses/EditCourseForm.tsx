@@ -353,23 +353,16 @@ export default function EditCourseForm({ courseId }: { courseId: string }) {
     };
 
     try {
-      const result = await updateCourse(payload).unwrap();
+      await updateCourse(payload).unwrap();
 
-      if (result.isSuccess) {
-        toast({
-          title: "نجح",
-          description: `تم تحديث الدورة ${result.result.character} بنجاح`,
-        });
+      // Treat 204 No Content as success — no body to parse
+      toast({
+        title: "نجح",
+        description: `تم تحديث الدورة ${payload.character} بنجاح`,
+      });
 
-        // Navigate back to courses list or details page
-        router.push('/courses');
-      } else {
-        toast({
-          title: "خطأ",
-          description: result.errorMessages.join(", "),
-          variant: "destructive"
-        });
-      }
+      // Navigate back to courses list or details page
+      router.push('/courses');
     } catch (error: any) {
       toast({
         title: "خطأ",

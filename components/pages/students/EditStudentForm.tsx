@@ -332,7 +332,7 @@ function EditStudentForm({ id }: { id: string }) {
       });
 
       // Handle Attachments
-      const PROFILE_PICTURE_TYPE_ID = "3a3ae5af-d8e9-40b6-8194-11458e4caf32";
+      const PROFILE_PICTURE_TYPE_ID = "11111111-1111-1111-1111-111111111111";
 
       // Get deleted attachment IDs
       const deletedAttachmentIds = existingAttachments
@@ -415,6 +415,13 @@ function EditStudentForm({ id }: { id: string }) {
     );
   }
 
+    const attachmentsOptions = attachmentTypes?.result.data?.filter(type => type.name !== "صورة شخصية")?.map((type) => ({
+    value: type.uniqueID,
+    label: type.name,
+  })) || [];
+  const profileImage = studentData?.result?.attachments?.find(attachment => attachment.typeId === "11111111-1111-1111-1111-111111111111");
+  console.log(profileImage);
+
   return (
     <div className='scroll-smooth'>
       <Form {...form}>
@@ -422,11 +429,11 @@ function EditStudentForm({ id }: { id: string }) {
           <div className='space-y-4'>
             <Card>
               <CardContent>
-                <FileUploader className='border-none shadow-none' control={control} name="AttachmentFile" />
+                <FileUploader previewUrl={profileImage?.file || ""} className='border-none shadow-none' control={control} name="AttachmentFile" />
                 {/* Show current profile picture */}
-                {existingAttachments.find(att => att.typeId === "3a3ae5af-d8e9-40b6-8194-11458e4caf32") && (
+                {existingAttachments.find(att => att.typeId === "11111111-1111-1111-1111-111111111111") && (
                   <div className="mt-2 text-sm text-subtext font-vazirmatn">
-                    <p>الصورة الحالية: {existingAttachments.find(att => att.typeId === "3a3ae5af-d8e9-40b6-8194-11458e4caf32")?.typeName}</p>
+                    <p>الصورة الحالية: {existingAttachments.find(att => att.typeId === "11111111-1111-1111-1111-111111111111")?.typeName}</p>
                     <p className="text-xs">قم برفع صورة جديدة للتحديث</p>
                   </div>
                 )}
@@ -735,9 +742,9 @@ function EditStudentForm({ id }: { id: string }) {
                               {isAttachmentTypesLoading
                                 ? "جاري التحميل..."
                                 : selectedAttachmentType
-                                  ? attachmentTypes?.result?.data?.find(
-                                    (type) => type.uniqueID === selectedAttachmentType
-                                  )?.name
+                                  ? attachmentsOptions.find(
+                                    (type) => type.value === selectedAttachmentType
+                                  )?.label
                                   : "اختر نوع المرفق"}
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
@@ -753,23 +760,23 @@ function EditStudentForm({ id }: { id: string }) {
                                   لم يتم العثور على نوع المرفق
                                 </CommandEmpty>
                                 <CommandGroup>
-                                  {attachmentTypes?.result?.data
-                                    ?.filter(type => type.uniqueID !== "3a3ae5af-d8e9-40b6-8194-11458e4caf32") // Exclude profile picture type
+                                  {attachmentsOptions
+                                    ?.filter(type => type.value !== "11111111-1111-1111-1111-111111111111") // Exclude profile picture type
                                     ?.map((type) => (
                                       <CommandItem
-                                        key={type.uniqueID}
-                                        value={type.name}
+                                        key={type.value}
+                                        value={type.value}
                                         onSelect={() => {
-                                          setSelectedAttachmentType(type.uniqueID);
+                                          setSelectedAttachmentType(type.value);
                                           setAttachmentTypeOpen(false);
                                         }}
                                         className="font-vazirmatn"
                                       >
-                                        {type.name}
+                                        {type.label}
                                         <Check
                                           className={cn(
                                             "ml-auto h-4 w-4",
-                                            selectedAttachmentType === type.uniqueID ? "opacity-100" : "opacity-0"
+                                            selectedAttachmentType === type.value ? "opacity-100" : "opacity-0"
                                           )}
                                         />
                                       </CommandItem>

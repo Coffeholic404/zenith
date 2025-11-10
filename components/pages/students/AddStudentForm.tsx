@@ -136,6 +136,13 @@ function AddStudentForm() {
   const [attachmentTypeOpen, setAttachmentTypeOpen] = useState(false);
   const [isAddingAttachment, setIsAddingAttachment] = useState(false);
 
+  const attachmentsOptions = attachmentTypes?.result.data?.filter(type => type.name !== "صورة شخصية")?.map((type) => ({
+    value: type.uniqueID,
+    label: type.name,
+  })) || [];
+
+  console.log(attachmentsOptions);
+
   const router = useRouter();
 
   const form = useForm<AddStudentFormValues>({
@@ -148,8 +155,8 @@ function AddStudentForm() {
       skills: [],
       courses: [],
       yearsOfServes: undefined,
-      hight: 0,
-      width: 0,
+      hight: undefined,
+      width: undefined,
       epilepsy: false,
       heartDisease: false,
       sugar: false,
@@ -250,7 +257,7 @@ function AddStudentForm() {
 
       // Append attachments array
       // First append profile picture with the default profile picture typeId
-      const PROFILE_PICTURE_TYPE_ID = "3a3ae5af-d8e9-40b6-8194-11458e4caf32";
+      const PROFILE_PICTURE_TYPE_ID = "11111111-1111-1111-1111-111111111111";
       let attachmentIndex = 0;
 
       // Add profile picture
@@ -541,9 +548,9 @@ function AddStudentForm() {
                               {isAttachmentTypesLoading
                                 ? "جاري التحميل..."
                                 : selectedAttachmentType
-                                  ? attachmentTypes?.result?.data?.find(
-                                    (type) => type.uniqueID === selectedAttachmentType
-                                  )?.name
+                                  ? attachmentsOptions?.find(
+                                    (type) => type.value === selectedAttachmentType
+                                  )?.label
                                   : "اختر نوع المرفق"}
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
@@ -559,21 +566,21 @@ function AddStudentForm() {
                                   لم يتم العثور على نوع المرفق
                                 </CommandEmpty>
                                 <CommandGroup>
-                                  {attachmentTypes?.result?.data?.map((type) => (
+                                  {attachmentsOptions.map((type) => (
                                     <CommandItem
-                                      key={type.uniqueID}
-                                      value={type.name}
+                                      key={type.value}
+                                      value={type.value}
                                       onSelect={() => {
-                                        setSelectedAttachmentType(type.uniqueID);
+                                        setSelectedAttachmentType(type.value);
                                         setAttachmentTypeOpen(false);
                                       }}
                                       className="font-vazirmatn"
                                     >
-                                      {type.name}
+                                      {type.label}
                                       <Check
                                         className={cn(
                                           "ml-auto h-4 w-4",
-                                          selectedAttachmentType === type.uniqueID ? "opacity-100" : "opacity-0"
+                                          selectedAttachmentType === type.value ? "opacity-100" : "opacity-0"
                                         )}
                                       />
                                     </CommandItem>
@@ -722,7 +729,7 @@ function AddStudentForm() {
                               {...field}
                               type="number"
                               onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
-                              value={field.value || 0}
+                              value={field.value}
                               placeholder="الطول"
                               className=" bg-searchBg rounded-xl w-full  font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
@@ -744,7 +751,7 @@ function AddStudentForm() {
                               {...field}
                               type="number"
                               onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
-                              value={field.value || 0}
+                              value={field.value}
                               placeholder="الوزن"
                               className=" bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
