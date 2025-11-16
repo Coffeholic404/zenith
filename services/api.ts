@@ -255,7 +255,10 @@ export const api = createApi({
         "Course",
 
         //courses types
-        "Types"
+        "Place",
+
+        //activity
+        "Activity",
     ],
     endpoints: (build) => ({}),
 });

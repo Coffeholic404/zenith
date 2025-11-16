@@ -38,7 +38,7 @@ import { useRouter } from "next/navigation"
 import { useDeleteCourseMutation, Course } from "@/services/courses"
 import { useState } from "react";
 import { EllipsisVertical } from "lucide-react";
-export default function CoursesCard({ course }: { course: Course }) {
+export default function ActivitiesCard({ course }: { course: Course }) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
     const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();

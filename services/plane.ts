@@ -6,7 +6,6 @@ export interface Plane {
   name: string;
   licenseNumber: string;
   activitiesCount: number;
-  createdAt: string;
 }
 
 // Request/Response types for CRUD operations

@@ -4,24 +4,86 @@ import list from "@/public/table/List.svg"
 import pen from "@/public/table/Pen.svg"
 import trash from "@/public/table/trash.svg"
 import { Button } from "@/components/ui/button";
- export type planes = {
+import EditPlaneModel from "./editPlane-model";
+import { useDeletePlaneMutation } from "@/services/plane"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+export type planes = {
+    uniqueID: string,
     name: string,
     // date: string,
     licenseNumber: string,
 }
 
-export const planeColumns: ColumnDef<planes>[] =[
+const DeleteConfirmationDialog = ({
+    isOpen,
+    onClose,
+    onConfirm,
+    itemName,
+    isDeleting
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    itemName: string;
+    isDeleting: boolean;
+}) => {
+    return (
+        <AlertDialog open={isOpen} onOpenChange={onClose}>
+            <AlertDialogContent className="rtl" dir="rtl">
+                <AlertDialogHeader className="text-right">
+                    <AlertDialogTitle className="text-right font-vazirmatn">
+                        تأكيد الحذف
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-right font-vazirmatn">
+                        هل أنت متأكد من حذف طائرة "{itemName}"؟
+                        <br />
+                        لا يمكن التراجع عن هذا الإجراء.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="flex-row-reverse gap-2">
+                    <AlertDialogCancel
+                        onClick={onClose}
+                        className="font-vazirmatn"
+                        disabled={isDeleting}
+                    >
+                        إلغاء
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                        onClick={onConfirm}
+                        className="bg-red-600 hover:bg-red-700 font-vazirmatn"
+                        disabled={isDeleting}
+                    >
+                        {isDeleting ? "جاري الحذف..." : "حذف"}
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    );
+};
+
+export const planeColumns: ColumnDef<planes>[] = [
     {
-        accessorKey:"sequence",
+        accessorKey: "sequence",
         header: () => {
             return <p className=" font-vazirmatn font-normal text-base text-tableHeader">ت</p>
         },
-        cell: ({row}) => {
+        cell: ({ row }) => {
             return row.index + 1
         }
     },
     {
-        accessorKey:"name",
+        accessorKey: "name",
         header: () => {
             return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الاسم</p>
         },
@@ -33,9 +95,9 @@ export const planeColumns: ColumnDef<planes>[] =[
     //     },
     // },
     {
-        accessorKey:"notes",
+        accessorKey: "licenseNumber",
         header: () => {
-            return <p className=" font-vazirmatn font-normal text-base text-tableHeader">ملاحظات</p>
+            return <p className=" font-vazirmatn font-normal text-base text-tableHeader">رقم رخصة</p>
         },
     },
     {
@@ -43,30 +105,65 @@ export const planeColumns: ColumnDef<planes>[] =[
         header: ({ column }) => {
             return (
                 <Button variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    <Image src={list} alt="list" className=" size-5"/>
+                    <Image src={list} alt="list" className=" size-5" />
                 </Button>
             )
         },
         cell: ({ row }) => {
+            const [deletePlane, { isLoading: isDeleting }] = useDeletePlaneMutation();
+            const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+            const { toast } = useToast();
+            const handleDeleteClick = () => {
+                setShowDeleteDialog(true);
+            };
+            const handleDeleteConfirm = async () => {
+                try {
+                    await deletePlane({ uniqueID: row.original.uniqueID }).unwrap();
+                    toast({
+                        title: `تم حذف ${row.original.name}`,
+                    });
+                    setShowDeleteDialog(false);
+                } catch (error) {
+                    toast({
+                        title: `حدث خطأ أثناء حذف ${row.original.name}`,
+                        variant: "destructive",
+                    });
+                }
+            };
+            const handleDeleteCancel = () => {
+                setShowDeleteDialog(false);
+            };
             return (
+                <>
                 <div className="flex items-center justify-end gap-3 pe-4">
-                    <Button variant="ghost" className=" p-0">
-                        <Image src={pen} alt="pen" className=" size-5"/>
-                    </Button>
-                    <Button variant="ghost" className="p-0">
-                        <Image src={trash} alt="trash" className=" size-5"/>
-                    </Button>
+                    <EditPlaneModel id={row.original.uniqueID} name={row.original.name} licenseNumber={row.original.licenseNumber} />
+                     <Button
+                            variant="ghost"
+                            className="p-0 px-1"
+                            onClick={handleDeleteClick}
+                            disabled={isDeleting}
+                        >
+                            <Image src={trash} alt="trash" className=" size-5" />
+                        </Button>
                 </div>
+                <DeleteConfirmationDialog
+                        isOpen={showDeleteDialog}
+                        onClose={handleDeleteCancel}
+                        onConfirm={handleDeleteConfirm}
+                        itemName={row.original.name}
+                        isDeleting={isDeleting}
+                    />
+                </>
             )
         },
     }
 ]
 
 export const planeColumnsNames = [
-    {label: 'ت', dataIndex: 'sequence'},
-    {label: 'الاسم', dataIndex: 'name'},
-    {label: 'ملاحظات', dataIndex: 'notes'},
-    
+    { label: 'ت', dataIndex: 'sequence' },
+    { label: 'الاسم', dataIndex: 'name' },
+    { label: 'رقم رخصة', dataIndex: 'licenseNumber' },
+    { label: 'إجراءات', dataIndex: 'actions' },
 ]
