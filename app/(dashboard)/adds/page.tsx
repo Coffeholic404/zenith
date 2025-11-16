@@ -15,6 +15,8 @@ import { useGetSkillsQuery, Skill } from "@/services/skills";
 import { useGetTrainingCoursesQuery, TrainingCourse } from "@/services/trainingCourses";
 import { planeColumns, planeColumnsNames } from "@/components/pages/adds/plane/plane-columns";
 import { useGetPlanesQuery, Plane } from "@/services/plane";
+import { PlacesColumns, PlacesColumnsNames } from "@/components/pages/adds/places/places-columns";
+import { useGetPlacesQuery, PlaceItem } from "@/services/place";
 
 
 
@@ -39,12 +41,15 @@ export default function Page() {
 
   const { data: planes, isLoading: planesLoading, error: planesError, isSuccess: planesSuccess } = useGetPlanesQuery({
   })
+  const { data: places, isLoading: placesLoading, error: placesError, isSuccess: placesSuccess } = useGetPlacesQuery({
+  })
 
   let nominatedPartiesData: NominatedParty[] = []
   let subscriptionsData: subscriptionApi[] = []
   let attachmentTypesData: AttachmentType[] = []
   let trainingCoursesData: TrainingCourse[] = []
   let planesData: Plane[] = []
+  let placesData: PlaceItem[] = []
   
   let skillsData: Skill[] = []
   if (trainingCoursesSuccess && trainingCourses?.result?.data) {
@@ -65,22 +70,10 @@ export default function Page() {
   if (planesSuccess && planes?.result?.data) {
     planesData = planes?.result.data || []
   }
-  
-  const data = [{
-    name: "plan 1",
-    date: "2023-01-01",
-    notes: "plan 1 notes",
-  }, {
-    name: "plan 2",
-    date: "2023-01-02",
-    notes: "plan 2 notes",
-  },
-  {
-    name: "plan 3",
-    date: "2023-01-03",
-    notes: "plan 3 notes",
+  if (placesSuccess && places?.result?.data) {
+    placesData = places?.result.data || []
   }
-  ]
+  
 
   const tabs = [
     {
@@ -157,9 +150,17 @@ export default function Page() {
               <DataTable columns={planeColumns} data={planesData} columnsNames={planeColumnsNames} type="plane" />
             )}
           </TabsContent>
-          {/* <TabsContent value="الاماكن" className="bg-white rounded-lg">
-            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
-          </TabsContent> */}
+          <TabsContent value="الاماكن" className="bg-white rounded-lg">
+            {placesLoading ? (
+              <DataTableSkeleton 
+                columnCount={3} 
+                rowCount={5} 
+                showAddButton={true} 
+              />
+            ) : (
+              <DataTable columns={PlacesColumns} data={placesData} columnsNames={PlacesColumnsNames} type="place" />
+            )}
+          </TabsContent>
           <TabsContent value="انواع الدورات" className="bg-white rounded-lg">
             {trainingCoursesLoading ? (
               <DataTableSkeleton 

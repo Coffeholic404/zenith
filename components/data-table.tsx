@@ -51,6 +51,7 @@ import AttachmentAddModel from "./pages/adds/attachment/add-attachment";
 import SkillAddModel from "./pages/adds/skills/add-skills";
 import TrainingCourseAddModel from "./pages/adds/TrainingCourses/addTrainingCourses";
 import AddPlaneModel from "./pages/adds/plane/addPlane-model";
+import PlaceAddModel from "./pages/adds/places/addPlaces-model";
 
 interface DataTableProps<TData, TValue, TNames> {
   columns: ColumnDef<TData, TValue>[];
@@ -362,6 +363,9 @@ export function DataTable<TData extends adds, TValue, TNames>({
 
                 {
                   type === "plane" && <AddPlaneModel />
+                }
+                {
+                  type === "place" && <PlaceAddModel />
                 }
             </div>
           </div>

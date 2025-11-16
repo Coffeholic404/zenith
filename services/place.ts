@@ -4,7 +4,6 @@ export interface PlaceItem {
   uniqueID: string;
   name: string;
   activitiesCount: number;
-  createdAt?: string;
 }
 
 export interface GetPlacesRequest {
