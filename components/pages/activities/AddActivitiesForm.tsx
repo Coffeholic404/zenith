@@ -1,9 +1,10 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller, Form, useForm } from "react-hook-form"
+import { Controller, Form, useForm, useWatch } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
+import { DevTool } from '@hookform/devtools';
 import {
   Card,
   CardContent,
@@ -34,6 +35,10 @@ import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import trash from "@/public/employees/TrashBin.svg"
 import Image from "next/image"
+import { Course, useGetCoursesQuery, useGetCourseByIdQuery } from "@/services/courses"
+import { Plane, useGetPlanesQuery } from "@/services/plane"
+import { PlaceItem, useGetPlacesQuery } from "@/services/place"
+import { useEffect } from "react"
 
 const AddActivitiesFormSchema = z.object({
   character: z.string().min(1, {
@@ -89,7 +94,46 @@ const AddActivitiesFormSchema = z.object({
   }),
 })
 
+
+
 export default function AddActivitiesForm() {
+  const { data: courses, isLoading: isCoursesLoading, isSuccess: isCoursesSuccess } = useGetCoursesQuery({
+    pageNumber: 1,
+    pageSize: 100,
+  })
+  const { data: planes, isLoading: isPlanesLoading, isSuccess: isPlanesSuccess } = useGetPlanesQuery({
+    pageNumber: 1,
+    pageSize: 100,
+  })
+  const { data: places, isLoading: isPlacesLoading, isSuccess: isPlacesSuccess } = useGetPlacesQuery({
+    pageNumber: 1,
+    pageSize: 100,
+  })
+  let placeData: PlaceItem[] = []
+  if(isPlacesSuccess) {
+    placeData = places?.result?.data || []
+  }
+  let planeData: Plane[] = []
+  if(isPlanesSuccess) {
+    planeData = planes?.result?.data || []
+  }
+  let courseData: Course[] = []
+  if(isCoursesSuccess) {
+    courseData = courses?.result?.data || []
+  }
+  const coursesCharacter = courseData.map((course) => ({
+    label: course.character,
+    value: course.uniqueID,
+  }))
+  const planesOptions = planeData.map((plane) => ({
+    label: plane.name,
+    value: plane.uniqueID,
+  }))
+  const placesOptions = placeData.map((place) => ({
+    label: place.name,
+    value: place.uniqueID,
+  }))
+
   const form = useForm<z.infer<typeof AddActivitiesFormSchema>>({
     resolver: zodResolver(AddActivitiesFormSchema),
     defaultValues: {
@@ -113,6 +157,36 @@ export default function AddActivitiesForm() {
     }
   })
 
+  const watchedCharacter = useWatch({ control: form.control, name: "character" })
+  const watchedStudent = useWatch({ control: form.control, name: "student" })
+
+  const { data: courseById, isFetching: isCourseDetailsFetching, isSuccess: isCourseDetailsSuccess } = useGetCourseByIdQuery(
+    { uniqueID: watchedCharacter || "" },
+    { skip: !watchedCharacter }
+  )
+
+  const rawParticipants = isCourseDetailsSuccess ? courseById?.result?.participants || [] : []
+  const studentOptions = Array.from(
+    new Map(
+      rawParticipants.map((p) => [
+        p.studentId,
+        { label: p.studentName, value: p.studentId, code: p.studentCode },
+      ])
+    ).values()
+  )
+
+
+  useEffect(() => {
+    if (!isCoursesSuccess) return
+    const option = handleCourseTypeChange(watchedCharacter || "")
+    if (option.value) {
+      form.setValue("courseType", option.value, { shouldValidate: true })
+    } else {
+      form.setValue("courseType", "", { shouldValidate: true })
+    }
+    
+  }, [watchedCharacter, isCoursesSuccess, courseData])
+
   const selectOptions = [
     {
       label: "الدورة الأولى",
@@ -123,9 +197,16 @@ export default function AddActivitiesForm() {
       value: "secondCourse",
     },
   ]
+  const handleCourseTypeChange = (value: string) => {
+    let courseTypeOption = {} as {label: string, value: string};
+    courseTypeOption.value = courseData.find((course) => course.uniqueID === value)?.typeId || ""
+    courseTypeOption.label = courseData.find((course) => course.uniqueID === value)?.typeName || ""
+    return courseTypeOption;
+  }
 
   return (
     <div >
+      <DevTool control={form.control} placement="top-left" />
       <form className="grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8">
         <div className="" id="basic-info">
           <Card>
@@ -142,7 +223,12 @@ export default function AddActivitiesForm() {
                       <Select
                         name={field.name}
                         value={field.value}
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                          field.onChange(value)
+                          const option = handleCourseTypeChange(value)
+                          form.setValue("courseType", option.value, { shouldValidate: true })
+                        }}
+                        disabled={isCoursesLoading || !isCoursesSuccess}
                       >
                         <SelectTrigger
                           id="form-rhf-select-language"
@@ -152,7 +238,7 @@ export default function AddActivitiesForm() {
                           <SelectValue placeholder="حرف الدورة" />
                         </SelectTrigger>
                         <SelectContent >
-                          {selectOptions.map((option) => (
+                          {coursesCharacter.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
@@ -165,30 +251,34 @@ export default function AddActivitiesForm() {
                 <Controller
                   name="courseType"
                   control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field orientation="responsive" data-invalid={fieldState.invalid}>
-                      <Select
-                        name={field.name}
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger
-                          id="form-rhf-select-language"
-                          aria-invalid={fieldState.invalid}
-                          className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  render={({ field, fieldState }) => {
+                    const selectedType = handleCourseTypeChange(watchedCharacter || "")
+                    return (
+                      <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                        <Select
+                          name={field.name}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          disabled
                         >
-                          <SelectValue placeholder="نوع الدورة" />
-                        </SelectTrigger>
-                        <SelectContent >
-                          {selectOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </Field>
-                  )}
+                          <SelectTrigger
+                            id="form-rhf-select-language"
+                            aria-invalid={fieldState.invalid}
+                            className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                          >
+                            <SelectValue placeholder="نوع الدورة" />
+                          </SelectTrigger>
+                          <SelectContent >
+                            {selectedType.value && (
+                              <SelectItem key={selectedType.value} value={selectedType.value}>
+                                {selectedType.label}
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </Field>
+                    )
+                  }}
                 />
                 <Controller
                   name="plane"
@@ -208,7 +298,7 @@ export default function AddActivitiesForm() {
                           <SelectValue placeholder="الطائرة" />
                         </SelectTrigger>
                         <SelectContent >
-                          {selectOptions.map((option) => (
+                          {planesOptions.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
@@ -236,7 +326,7 @@ export default function AddActivitiesForm() {
                           <SelectValue placeholder="المكان" />
                         </SelectTrigger>
                         <SelectContent >
-                          {selectOptions.map((option) => (
+                          {placesOptions.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
@@ -351,16 +441,17 @@ export default function AddActivitiesForm() {
                           name={field.name}
                           value={field.value}
                           onValueChange={field.onChange}
+                          
                         >
                           <SelectTrigger
                             id="form-rhf-select-language"
                             aria-invalid={fieldState.invalid}
                             className="char-select max-w-[320px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           >
-                            <SelectValue placeholder="حرف الدورة" />
+                            <SelectValue placeholder="الطالب" />
                           </SelectTrigger>
                           <SelectContent >
-                            {selectOptions.map((option) => (
+                            {studentOptions.map((option) => (
                               <SelectItem key={option.value} value={option.value}>
                                 {option.label}
                               </SelectItem>
@@ -370,9 +461,7 @@ export default function AddActivitiesForm() {
                       </Field>
                     )}
                   />
-                  <div className=" bg-badgeClr w-[7.5rem] h-11 rounded-md font-vazirmatn flex items-center justify-center">
-                    <p id="student-code" className=" text-sidebaractive">RG</p>
-                  </div>
+                  
                 </div>
                 <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
                   المدربون
