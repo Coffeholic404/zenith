@@ -8,7 +8,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useGetStudentsQuery } from "@/services/students";
+import { useGetActivitiesQuery } from "@/services/activity";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -19,6 +19,7 @@ import add from "@/public/employees/plus.svg";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import ActivitiesCard from "@/components/pages/activities/Activity-Card";
+import ActivityCard from "@/components/pages/activities/Activity-Card";
 
 
 export default function Page() {
@@ -48,7 +49,7 @@ export default function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchTerm]);
 
-  const { data, isLoading, isFetching, isError, error, refetch } = useGetStudentsQuery({
+  const { data, isLoading, isFetching, isError, error, refetch } = useGetActivitiesQuery({
     searchQuery: debouncedSearchTerm,
   });
 
@@ -152,9 +153,9 @@ export default function Page() {
           </div>
         )}
         <div className=" flex items-center justify-start gap-4 flex-wrap">
-          {/* {data?.result?.data?.map((student) => (
-            <ActivitiesCard key={student.uniqueID} student={student} />
-          ))} */}
+          {data?.result?.data?.map((activity) => (
+            <ActivityCard key={activity.uniqueID} activity={activity} />
+          ))}
         </div>
         </>
       )}

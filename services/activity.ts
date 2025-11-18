@@ -17,6 +17,10 @@ export interface ActivityJumper {
   trainer3Note?: string;
 }
 
+export interface ActivityJumperWithId extends ActivityJumper {
+  jumperId: string;
+}
+
 export interface ActivityItem {
   uniqueID: string;
   courseId: string;
@@ -26,7 +30,7 @@ export interface ActivityItem {
   date: string; // ISO date string
   time: string;
   windSpeed: string;
-  jumpers: ActivityJumper[];
+  jumpers: ActivityJumperWithId[];
   createdAt?: string;
 }
 
@@ -70,8 +74,22 @@ export interface CreateActivityResponse {
   result: ActivityItem;
 }
 
-export interface UpdateActivityRequest extends CreateActivityRequest {
+export interface ActivityJumperToUpdate extends ActivityJumper {
+  jumperId: string;
+}
+
+export interface UpdateActivityRequest {
   uniqueID: string;
+  courseId: string;
+  placeId: string;
+  planeId: string;
+  typeId: string;
+  date: string;
+  time: string;
+  windSpeed: string;
+  jumpersToAdd: ActivityJumper[];
+  jumpersToUpdate: ActivityJumperToUpdate[];
+  jumpersToDelete: string[];
 }
 
 export interface UpdateActivityResponse {

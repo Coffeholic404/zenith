@@ -33,7 +33,7 @@ import { Course, useGetCoursesQuery, useGetCourseByIdQuery } from "@/services/co
 import { Plane, useGetPlanesQuery } from "@/services/plane"
 import { PlaceItem, useGetPlacesQuery } from "@/services/place"
 import { useEffect, useState } from "react"
-import { useCreateActivityMutation, ActivityJumper } from "@/services/activity"
+import { useGetActivityByIdQuery, useUpdateActivityMutation, ActivityJumper, ActivityJumperWithId, ActivityJumperToUpdate } from "@/services/activity"
 import { toast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { useGetEmployeesQuery } from "@/services/employe";
@@ -99,10 +99,20 @@ const AddActivitiesFormSchema = z.object({
 // Interface for jumper with display info
 interface JumperWithDisplay extends ActivityJumper {
   studentName: string;
+  jumperId?: string; // Only present for existing jumpers
+  isNew?: boolean; // Track if this is a newly added jumper
+  isModified?: boolean; // Track if this existing jumper was modified
 }
 
-export default function AddActivitiesForm() {
+export default function EditActivitiesForm({id}: {id: string}) {
   const router = useRouter();
+
+  // Fetch activity data for editing
+  const { data: activityData, isLoading: isActivityLoading, isSuccess: isActivitySuccess } = useGetActivityByIdQuery(
+    { uniqueID: id },
+    { skip: !id }
+  );
+
   const { data: courses, isLoading: isCoursesLoading, isSuccess: isCoursesSuccess } = useGetCoursesQuery({
     pageNumber: 1,
     pageSize: 100,
@@ -127,13 +137,19 @@ export default function AddActivitiesForm() {
     }))
   }
 
-  const [createActivity, { isLoading: isCreating }] = useCreateActivityMutation();
+  const [updateActivity, { isLoading: isUpdating }] = useUpdateActivityMutation();
 
   // State for added jumpers (students with their info)
   const [addedJumpers, setAddedJumpers] = useState<JumperWithDisplay[]>([]);
+  // State for tracking deleted jumper IDs (existing jumpers that were removed)
+  const [deletedJumperIds, setDeletedJumperIds] = useState<string[]>([]);
+  // State for tracking original jumpers from API (for comparison)
+  const [originalJumpers, setOriginalJumpers] = useState<JumperWithDisplay[]>([]);
   // State for tracking which jumper is selected for editing
   const [selectedJumperIndex, setSelectedJumperIndex] = useState<number | null>(null);
   const [isEditingJumper, setIsEditingJumper] = useState(false);
+  // Flag to track if form has been initialized with activity data
+  const [isFormInitialized, setIsFormInitialized] = useState(false);
 
   let placeData: PlaceItem[] = []
   if (isPlacesSuccess) {
@@ -240,6 +256,73 @@ export default function AddActivitiesForm() {
 
   }, [watchedCharacter, isCoursesSuccess, courseData])
 
+  // Effect to prefill form with activity data
+  useEffect(() => {
+    if (!isActivitySuccess || !activityData?.result || isFormInitialized) return;
+
+    const activity = activityData.result;
+
+    // Prefill basic info
+    form.setValue("character", activity.courseId, { shouldValidate: true });
+    form.setValue("plane", activity.planeId, { shouldValidate: true });
+    form.setValue("location", activity.placeId, { shouldValidate: true });
+    form.setValue("windSpeed", activity.windSpeed, { shouldValidate: true });
+    form.setValue("time", activity.time, { shouldValidate: true });
+
+    // Format date for input (YYYY-MM-DD)
+    const activityDate = new Date(activity.date);
+    const formattedDate = activityDate.toISOString().split('T')[0];
+    form.setValue("startDate", formattedDate, { shouldValidate: true });
+
+    // Prefill jumpers - map the existing jumpers to include student names
+    // Note: Student names will be populated once course details are fetched
+    const existingJumpers: JumperWithDisplay[] = activity.jumpers.map((jumper) => ({
+      ...jumper,
+      studentName: "", // Will be updated when course details are available
+      isNew: false,
+      isModified: false,
+    }));
+
+    setAddedJumpers(existingJumpers);
+    setOriginalJumpers(JSON.parse(JSON.stringify(existingJumpers))); // Deep copy for comparison
+    setIsFormInitialized(true);
+  }, [isActivitySuccess, activityData, isFormInitialized, form]);
+
+  // Effect to update student names once course details are fetched
+  useEffect(() => {
+    if (!isCourseDetailsSuccess || !rawParticipants.length || addedJumpers.length === 0) return;
+
+    // Update student names for jumpers that don't have names yet
+    const updatedJumpers = addedJumpers.map((jumper) => {
+      if (!jumper.studentName) {
+        // Find student name from participants using co_St_TrId
+        const participant = rawParticipants.find(p => p.co_St_TrId === jumper.co_St_TrId);
+        return {
+          ...jumper,
+          studentName: participant?.studentName || "غير معروف",
+        };
+      }
+      return jumper;
+    });
+
+    // Only update if names were actually changed
+    const hasChanges = updatedJumpers.some((j, i) => j.studentName !== addedJumpers[i].studentName);
+    if (hasChanges) {
+      setAddedJumpers(updatedJumpers);
+      // Also update original jumpers with names
+      setOriginalJumpers(prev => prev.map((jumper) => {
+        if (!jumper.studentName) {
+          const participant = rawParticipants.find(p => p.co_St_TrId === jumper.co_St_TrId);
+          return {
+            ...jumper,
+            studentName: participant?.studentName || "غير معروف",
+          };
+        }
+        return jumper;
+      }));
+    }
+  }, [isCourseDetailsSuccess, rawParticipants, addedJumpers]);
+
   const handleCourseTypeChange = (value: string) => {
     let courseTypeOption = {} as { label: string, value: string };
     courseTypeOption.value = courseData.find((course) => course.uniqueID === value)?.typeId || ""
@@ -305,6 +388,8 @@ export default function AddActivitiesForm() {
       trainer2Note: form.getValues("currentTrainer2Note") || undefined,
       trainer3Id: form.getValues("currentTrainer3Id") || undefined,
       trainer3Note: form.getValues("currentTrainer3Note") || undefined,
+      isNew: true, // Mark as new jumper for add operation
+      isModified: false,
     };
 
     setAddedJumpers([...addedJumpers, newJumper]);
@@ -334,6 +419,13 @@ export default function AddActivitiesForm() {
   // Handle removing student from jumpers list
   const handleRemoveStudent = (co_St_TrId: string) => {
     const removedIndex = addedJumpers.findIndex(j => j.co_St_TrId === co_St_TrId);
+    const removedJumper = addedJumpers[removedIndex];
+
+    // If this is an existing jumper (has jumperId), track it for deletion
+    if (removedJumper && removedJumper.jumperId && !removedJumper.isNew) {
+      setDeletedJumperIds(prev => [...prev, removedJumper.jumperId!]);
+    }
+
     setAddedJumpers(addedJumpers.filter(j => j.co_St_TrId !== co_St_TrId));
 
     // Clear selection if the removed student was selected
@@ -429,6 +521,7 @@ export default function AddActivitiesForm() {
     }
 
     const co_St_TrId = getCoStTrIdForStudent(currentStudentId);
+    const existingJumper = addedJumpers[selectedJumperIndex];
 
     const updatedJumper: JumperWithDisplay = {
       co_St_TrId: co_St_TrId,
@@ -446,6 +539,11 @@ export default function AddActivitiesForm() {
       trainer2Note: form.getValues("currentTrainer2Note") || undefined,
       trainer3Id: form.getValues("currentTrainer3Id") || undefined,
       trainer3Note: form.getValues("currentTrainer3Note") || undefined,
+      // Preserve jumperId for existing jumpers
+      jumperId: existingJumper.jumperId,
+      isNew: existingJumper.isNew || false,
+      // Mark as modified only if it's an existing jumper (has jumperId and not new)
+      isModified: !existingJumper.isNew && !!existingJumper.jumperId,
     };
 
     // Update the jumper in the array
@@ -513,11 +611,34 @@ export default function AddActivitiesForm() {
       return;
     }
 
-    // Prepare jumpers array for API (remove studentName)
-    const jumpers: ActivityJumper[] = addedJumpers.map(({ studentName, ...jumper }) => jumper);
+    // Separate jumpers into add and update categories
+    const jumpersToAdd: ActivityJumper[] = addedJumpers
+      .filter(jumper => jumper.isNew)
+      .map(({ studentName, jumperId, isNew, isModified, ...jumper }) => jumper);
 
-    // Prepare final payload
+    const jumpersToUpdate: ActivityJumperToUpdate[] = addedJumpers
+      .filter(jumper => !jumper.isNew && jumper.isModified && jumper.jumperId)
+      .map(({ studentName, isNew, isModified, ...jumper }) => ({
+        jumperId: jumper.jumperId!,
+        co_St_TrId: jumper.co_St_TrId,
+        jumperCount: jumper.jumperCount,
+        freefallTime: jumper.freefallTime,
+        freefallAltitude: jumper.freefallAltitude,
+        deployAltitude: jumper.deployAltitude,
+        exitAltitude: jumper.exitAltitude,
+        landings: jumper.landings,
+        typeOfJump: jumper.typeOfJump,
+        trainer1Id: jumper.trainer1Id,
+        trainer1Note: jumper.trainer1Note,
+        trainer2Id: jumper.trainer2Id,
+        trainer2Note: jumper.trainer2Note,
+        trainer3Id: jumper.trainer3Id,
+        trainer3Note: jumper.trainer3Note,
+      }));
+
+    // Prepare final payload for update
     const payload = {
+      uniqueID: id,
       courseId: data.character, // character field contains courseId
       placeId: data.location,
       planeId: data.plane,
@@ -525,21 +646,25 @@ export default function AddActivitiesForm() {
       date: new Date(data.startDate).toISOString(),
       time: data.time,
       windSpeed: data.windSpeed,
-      jumpers
+      jumpersToAdd,
+      jumpersToUpdate,
+      jumpersToDelete: deletedJumperIds,
     };
 
     try {
-      const result = await createActivity(payload).unwrap();
+      const result = await updateActivity(payload).unwrap();
 
       if (result.isSuccess) {
         toast({
           title: "نجح",
-          description: "تم إضافة النشاط بنجاح",
+          description: "تم تحديث النشاط بنجاح",
         });
 
         // Reset form and state
         form.reset();
         setAddedJumpers([]);
+        setDeletedJumperIds([]);
+        setOriginalJumpers([]);
 
         // Redirect to activities page
         router.push('/activities');
@@ -553,11 +678,23 @@ export default function AddActivitiesForm() {
     } catch (error: any) {
       toast({
         title: "خطأ",
-        description: error?.data?.errorMessages?.join(", ") || "حدث خطأ أثناء إضافة النشاط",
+        description: error?.data?.errorMessages?.join(", ") || "حدث خطأ أثناء تحديث النشاط",
         variant: "destructive"
       });
     }
   });
+
+  // Show loading state while fetching activity data
+  if (isActivityLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sidebaractive mx-auto mb-4"></div>
+          <p className="font-vazirmatn text-subtext">جاري تحميل بيانات النشاط...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div >
@@ -1147,10 +1284,10 @@ export default function AddActivitiesForm() {
             
             <Button
               type="submit"
-              disabled={isCreating || addedJumpers.length === 0}
+              disabled={isUpdating || addedJumpers.length === 0}
               className=" w-[225px] bg-sidebaractive text-white  text-[14px]"
             >
-              {isCreating ? "جاري الحفظ..." : "حفظ و انهاء الاضافة"}
+              {isUpdating ? "جاري التحديث..." : "حفظ التغييرات"}
             </Button>
           </div>
         </div>
