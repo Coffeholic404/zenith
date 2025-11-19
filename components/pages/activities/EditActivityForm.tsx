@@ -137,6 +137,9 @@ export default function EditActivitiesForm({id}: {id: string}) {
     }))
   }
 
+  const courseCharacter = activityData?.result?.courseName || ""
+  const courseType = activityData?.result?.typeName || ""
+
   const [updateActivity, { isLoading: isUpdating }] = useUpdateActivityMutation();
 
   // State for added jumpers (students with their info)
@@ -179,8 +182,8 @@ export default function EditActivitiesForm({id}: {id: string}) {
   const form = useForm<z.infer<typeof AddActivitiesFormSchema>>({
     resolver: zodResolver(AddActivitiesFormSchema),
     defaultValues: {
-      character: "",
-      courseType: "",
+      character: courseCharacter,
+      courseType: courseType,
       plane: "",
       location: "",
       startDate: "",
@@ -249,9 +252,9 @@ export default function EditActivitiesForm({id}: {id: string}) {
     if (!isCoursesSuccess) return
     const option = handleCourseTypeChange(watchedCharacter || "")
     if (option.value) {
-      form.setValue("courseType", option.value, { shouldValidate: true })
+      form.setValue("courseType", option.value)
     } else {
-      form.setValue("courseType", "", { shouldValidate: true })
+      form.setValue("courseType", "")
     }
 
   }, [watchedCharacter, isCoursesSuccess, courseData])
@@ -260,68 +263,56 @@ export default function EditActivitiesForm({id}: {id: string}) {
   useEffect(() => {
     if (!isActivitySuccess || !activityData?.result || isFormInitialized) return;
 
+    // Wait for all select options to be loaded before prefilling
+    if (!isCoursesSuccess || !isPlanesSuccess || !isPlacesSuccess) return;
+
     const activity = activityData.result;
 
-    // Prefill basic info
-    form.setValue("character", activity.courseId, { shouldValidate: true });
-    form.setValue("plane", activity.planeId, { shouldValidate: true });
-    form.setValue("location", activity.placeId, { shouldValidate: true });
-    form.setValue("windSpeed", activity.windSpeed, { shouldValidate: true });
-    form.setValue("time", activity.time, { shouldValidate: true });
+    // Prefill basic info - use IDs for select fields
+    form.setValue("character", activity.courseId);
+    form.setValue("plane", activity.planeId);
+    form.setValue("location", activity.placeId);
+    form.setValue("windSpeed", activity.windSpeed);
+    form.setValue("time", activity.time);
 
     // Format date for input (YYYY-MM-DD)
     const activityDate = new Date(activity.date);
     const formattedDate = activityDate.toISOString().split('T')[0];
-    form.setValue("startDate", formattedDate, { shouldValidate: true });
+    form.setValue("startDate", formattedDate);
 
-    // Prefill jumpers - map the existing jumpers to include student names
-    // Note: Student names will be populated once course details are fetched
-    const existingJumpers: JumperWithDisplay[] = activity.jumpers.map((jumper) => ({
-      ...jumper,
-      studentName: "", // Will be updated when course details are available
-      isNew: false,
-      isModified: false,
-    }));
+    // Note: courseType will be auto-set by the useEffect that watches character field
+    // We'll set jumpers later when course details are available
+
+    setIsFormInitialized(true);
+  }, [isActivitySuccess, activityData, isFormInitialized, form, isCoursesSuccess, isPlanesSuccess, isPlacesSuccess]);
+
+  // Effect to load jumpers once course details are available (after form initialization)
+  useEffect(() => {
+    // Only run this after form is initialized and course details are loaded
+    if (!isFormInitialized || !isCourseDetailsSuccess || !rawParticipants.length) return;
+
+    // Only run if jumpers haven't been loaded yet
+    if (addedJumpers.length > 0) return;
+
+    // Only run if we have activity data
+    if (!isActivitySuccess || !activityData?.result) return;
+
+    const activity = activityData.result;
+
+    // Load jumpers with student names from course participants
+    const existingJumpers: JumperWithDisplay[] = activity.jumpers.map((jumper) => {
+      const participant = rawParticipants.find(p => p.co_St_TrId === jumper.co_St_TrId);
+      return {
+        ...jumper,
+        studentName: participant?.studentName || "غير معروف",
+        isNew: false,
+        isModified: false,
+      };
+    });
 
     setAddedJumpers(existingJumpers);
     setOriginalJumpers(JSON.parse(JSON.stringify(existingJumpers))); // Deep copy for comparison
-    setIsFormInitialized(true);
-  }, [isActivitySuccess, activityData, isFormInitialized, form]);
-
-  // Effect to update student names once course details are fetched
-  useEffect(() => {
-    if (!isCourseDetailsSuccess || !rawParticipants.length || addedJumpers.length === 0) return;
-
-    // Update student names for jumpers that don't have names yet
-    const updatedJumpers = addedJumpers.map((jumper) => {
-      if (!jumper.studentName) {
-        // Find student name from participants using co_St_TrId
-        const participant = rawParticipants.find(p => p.co_St_TrId === jumper.co_St_TrId);
-        return {
-          ...jumper,
-          studentName: participant?.studentName || "غير معروف",
-        };
-      }
-      return jumper;
-    });
-
-    // Only update if names were actually changed
-    const hasChanges = updatedJumpers.some((j, i) => j.studentName !== addedJumpers[i].studentName);
-    if (hasChanges) {
-      setAddedJumpers(updatedJumpers);
-      // Also update original jumpers with names
-      setOriginalJumpers(prev => prev.map((jumper) => {
-        if (!jumper.studentName) {
-          const participant = rawParticipants.find(p => p.co_St_TrId === jumper.co_St_TrId);
-          return {
-            ...jumper,
-            studentName: participant?.studentName || "غير معروف",
-          };
-        }
-        return jumper;
-      }));
-    }
-  }, [isCourseDetailsSuccess, rawParticipants, addedJumpers]);
+  }, [isFormInitialized, isCourseDetailsSuccess, rawParticipants, addedJumpers.length, isActivitySuccess, activityData]);
 
   const handleCourseTypeChange = (value: string) => {
     let courseTypeOption = {} as { label: string, value: string };
@@ -730,6 +721,7 @@ export default function EditActivitiesForm({id}: {id: string}) {
                           <SelectValue placeholder="حرف الدورة" />
                         </SelectTrigger>
                         <SelectContent >
+                          {/* <SelectItem value={}>auto</SelectItem> */}
                           {coursesCharacter.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}

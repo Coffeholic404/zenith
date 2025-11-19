@@ -22,14 +22,20 @@ export interface ActivityJumperWithId extends ActivityJumper {
 }
 
 export interface ActivityItem {
-  uniqueID: string;
-  courseId: string;
-  placeId: string;
-  planeId: string;
-  typeId: string;
-  date: string; // ISO date string
-  time: string;
-  windSpeed: string;
+ uniqueID: string,
+    courseId: string,
+    courseName: string,
+    placeId: string,
+    placeName: string,
+    planeId: string,
+    planeName: string,
+    typeId: string,
+    typeName: string,
+    date: string,
+    time: string,
+    windSpeed: string,
+    jumpersCount: number,
+    accidentsCount: number,
   jumpers: ActivityJumperWithId[];
   createdAt?: string;
 }
