@@ -33,31 +33,19 @@ import { Course, useGetCoursesQuery, useGetCourseByIdQuery } from "@/services/co
 import { Plane, useGetPlanesQuery } from "@/services/plane"
 import { PlaceItem, useGetPlacesQuery } from "@/services/place"
 import { useEffect, useState } from "react"
-import { useGetActivityByIdQuery, useUpdateActivityMutation, ActivityJumper, ActivityJumperWithId, ActivityJumperToUpdate } from "@/services/activity"
+import {
+  useGetActivityByIdQuery,
+  useUpdateActivityMutation,
+  ActivityJumper,
+  ActivityJumperToUpdate,
+  ActivityJumperWithId
+} from "@/services/activity"
 import { toast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { useGetEmployeesQuery } from "@/services/employe";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// Schema for individual jumper entry (student with trainers)
-const jumperSchema = z.object({
-  co_St_TrId: z.string().min(1, { message: "معرف الطالب مطلوب" }),
-  studentName: z.string().optional(), // For display only
-  jumperCount: z.number().min(1, { message: "عدد القفزات مطلوب" }),
-  freefallTime: z.number().min(0, { message: "وقت السقوط الحر مطلوب" }),
-  freefallAltitude: z.number().min(0, { message: "ارتفاع السقوط الحر مطلوب" }),
-  deployAltitude: z.number().min(0, { message: "ارتفاع فتح المظلة مطلوب" }),
-  exitAltitude: z.number().min(0, { message: "ارتفاع الخروج من الطائرة مطلوب" }),
-  landings: z.string().min(1, { message: "موقع الهبوط مطلوب" }),
-  typeOfJump: z.string().min(1, { message: "نوع القفزة مطلوب" }),
-  trainer1Id: z.string().optional(),
-  trainer1Note: z.string().optional(),
-  trainer2Id: z.string().optional(),
-  trainer2Note: z.string().optional(),
-  trainer3Id: z.string().optional(),
-  trainer3Note: z.string().optional(),
-})
-
-const AddActivitiesFormSchema = z.object({
+const EditActivitiesFormSchema = z.object({
   character: z.string().min(1, {
     message: "حرف الدورة مطلوب",
   }),
@@ -79,7 +67,7 @@ const AddActivitiesFormSchema = z.object({
   time: z.string().min(1, {
     message: "وقت النشاط مطلوب",
   }),
-  // Current student being added (not part of final submission)
+  // Current student being added/edited
   currentStudent: z.string().optional(),
   currentTrainer1Id: z.string().optional(),
   currentTrainer1Note: z.string().optional(),
@@ -96,22 +84,21 @@ const AddActivitiesFormSchema = z.object({
   currentPlaneExitHeight: z.string().optional(),
 })
 
-// Interface for jumper with display info
+// Interface for jumper with display info and tracking
 interface JumperWithDisplay extends ActivityJumper {
   studentName: string;
-  jumperId?: string; // Only present for existing jumpers
-  isNew?: boolean; // Track if this is a newly added jumper
-  isModified?: boolean; // Track if this existing jumper was modified
+  jumperId?: string; // Present for existing jumpers
+  isNew?: boolean; // True for newly added jumpers
+  isModified?: boolean; // True if existing jumper was modified
 }
 
-export default function EditActivitiesForm({id}: {id: string}) {
+export default function EditActivityForm({ activityId }: { activityId: string }) {
   const router = useRouter();
 
-  // Fetch activity data for editing
-  const { data: activityData, isLoading: isActivityLoading, isSuccess: isActivitySuccess } = useGetActivityByIdQuery(
-    { uniqueID: id },
-    { skip: !id }
-  );
+  // Fetch activity data
+  const { data: activityData, isLoading: isLoadingActivity, isError: isErrorActivity } = useGetActivityByIdQuery({
+    uniqueID: activityId
+  });
 
   const { data: courses, isLoading: isCoursesLoading, isSuccess: isCoursesSuccess } = useGetCoursesQuery({
     pageNumber: 1,
@@ -125,34 +112,27 @@ export default function EditActivitiesForm({id}: {id: string}) {
     pageNumber: 1,
     pageSize: 100,
   })
-  const { data: employees, isLoading: isLoadingEmployees, isError: isErrorEmployees, isSuccess: isSuccessEmployees } = useGetEmployeesQuery({
-      pageNumber: 1,
-      pageSize: 100,
-    })
-    let trainers: any = []
-    if (isSuccessEmployees) {
+  const { data: employees, isLoading: isLoadingEmployees, isSuccess: isSuccessEmployees } = useGetEmployeesQuery({
+    pageNumber: 1,
+    pageSize: 100,
+  })
+
+  let trainers: any = []
+  if (isSuccessEmployees) {
     trainers = employees?.result?.data?.filter((item) => item.employeeTypeName === "مدرب").map((item) => ({
       value: item.id,
       label: item.name,
     }))
   }
 
-  const courseCharacter = activityData?.result?.courseName || ""
-  const courseType = activityData?.result?.typeName || ""
-
   const [updateActivity, { isLoading: isUpdating }] = useUpdateActivityMutation();
 
-  // State for added jumpers (students with their info)
+  // State for jumpers management
   const [addedJumpers, setAddedJumpers] = useState<JumperWithDisplay[]>([]);
-  // State for tracking deleted jumper IDs (existing jumpers that were removed)
-  const [deletedJumperIds, setDeletedJumperIds] = useState<string[]>([]);
-  // State for tracking original jumpers from API (for comparison)
-  const [originalJumpers, setOriginalJumpers] = useState<JumperWithDisplay[]>([]);
-  // State for tracking which jumper is selected for editing
+  const [jumpersToDelete, setJumpersToDelete] = useState<string[]>([]);
   const [selectedJumperIndex, setSelectedJumperIndex] = useState<number | null>(null);
   const [isEditingJumper, setIsEditingJumper] = useState(false);
-  // Flag to track if form has been initialized with activity data
-  const [isFormInitialized, setIsFormInitialized] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   let placeData: PlaceItem[] = []
   if (isPlacesSuccess) {
@@ -179,11 +159,11 @@ export default function EditActivitiesForm({id}: {id: string}) {
     value: place.uniqueID,
   }))
 
-  const form = useForm<z.infer<typeof AddActivitiesFormSchema>>({
-    resolver: zodResolver(AddActivitiesFormSchema),
+  const form = useForm<z.infer<typeof EditActivitiesFormSchema>>({
+    resolver: zodResolver(EditActivitiesFormSchema),
     defaultValues: {
-      character: courseCharacter,
-      courseType: courseType,
+      character: "",
+      courseType: "",
       plane: "",
       location: "",
       startDate: "",
@@ -226,16 +206,6 @@ export default function EditActivitiesForm({id}: {id: string}) {
     ).values()
   )
 
-  // Get unique trainers from participants
-  const trainerOptions = Array.from(
-    new Map(
-      rawParticipants.map((p) => [
-        p.trainerId,
-        { label: p.trainerName, value: p.trainerId },
-      ])
-    ).values()
-  )
-
   // Get co_St_TrId for selected student
   const getCoStTrIdForStudent = (studentId: string): string => {
     const participant = rawParticipants.find(p => p.studentId === studentId);
@@ -248,71 +218,96 @@ export default function EditActivitiesForm({id}: {id: string}) {
     return student?.label || "";
   }
 
+  // Get student name from co_St_TrId
+  const getStudentNameFromCoStTrId = (co_St_TrId: string): string => {
+    const participant = rawParticipants.find(p => p.co_St_TrId === co_St_TrId);
+    return participant?.studentName || "طالب";
+  }
+
+  // Pre-fill form with existing activity data
   useEffect(() => {
-    if (!isCoursesSuccess) return
-    const option = handleCourseTypeChange(watchedCharacter || "")
-    if (option.value) {
-      form.setValue("courseType", option.value)
-    } else {
-      form.setValue("courseType", "")
-    }
+    if (activityData?.isSuccess && activityData.result && !isDataLoaded) {
+      const activity = activityData.result;
 
-  }, [watchedCharacter, isCoursesSuccess, courseData])
+      // Format date to YYYY-MM-DD for date input
+      const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0];
+      };
 
-  // Effect to prefill form with activity data
-  useEffect(() => {
-    if (!isActivitySuccess || !activityData?.result || isFormInitialized) return;
+      // Reset form with activity data
+      form.reset({
+        character: activity.courseId,
+        courseType: activity.typeId,
+        plane: activity.planeId,
+        location: activity.placeId,
+        startDate: formatDate(activity.date),
+        windSpeed: activity.windSpeed,
+        time: activity.time,
+        currentStudent: "",
+        currentTrainer1Id: "",
+        currentTrainer1Note: "",
+        currentTrainer2Id: "",
+        currentTrainer2Note: "",
+        currentTrainer3Id: "",
+        currentTrainer3Note: "",
+        currentJumpCount: "",
+        currentLandingLocation: "",
+        currentJumpType: "",
+        currentFreeFallTime: "",
+        currentParachuteOpiningTime: "",
+        currentParachuteOpinignHeight: "",
+        currentPlaneExitHeight: "",
+      });
 
-    // Wait for all select options to be loaded before prefilling
-    if (!isCoursesSuccess || !isPlanesSuccess || !isPlacesSuccess) return;
-
-    const activity = activityData.result;
-
-    // Prefill basic info - use IDs for select fields
-    form.setValue("character", activity.courseId);
-    form.setValue("plane", activity.planeId);
-    form.setValue("location", activity.placeId);
-    form.setValue("windSpeed", activity.windSpeed);
-    form.setValue("time", activity.time);
-
-    // Format date for input (YYYY-MM-DD)
-    const activityDate = new Date(activity.date);
-    const formattedDate = activityDate.toISOString().split('T')[0];
-    form.setValue("startDate", formattedDate);
-
-    // Note: courseType will be auto-set by the useEffect that watches character field
-    // We'll set jumpers later when course details are available
-
-    setIsFormInitialized(true);
-  }, [isActivitySuccess, activityData, isFormInitialized, form, isCoursesSuccess, isPlanesSuccess, isPlacesSuccess]);
-
-  // Effect to load jumpers once course details are available (after form initialization)
-  useEffect(() => {
-    // Only run this after form is initialized and course details are loaded
-    if (!isFormInitialized || !isCourseDetailsSuccess || !rawParticipants.length) return;
-
-    // Only run if jumpers haven't been loaded yet
-    if (addedJumpers.length > 0) return;
-
-    // Only run if we have activity data
-    if (!isActivitySuccess || !activityData?.result) return;
-
-    const activity = activityData.result;
-
-    // Load jumpers with student names from course participants
-    const existingJumpers: JumperWithDisplay[] = activity.jumpers.map((jumper) => {
-      const participant = rawParticipants.find(p => p.co_St_TrId === jumper.co_St_TrId);
-      return {
-        ...jumper,
-        studentName: participant?.studentName || "غير معروف",
+      // Load existing jumpers
+      const existingJumpers: JumperWithDisplay[] = activity.jumpers.map((jumper) => ({
+        co_St_TrId: jumper.co_St_TrId,
+        studentName: getStudentNameFromCoStTrId(jumper.co_St_TrId) || "طالب",
+        jumperId: jumper.id,
+        jumperCount: jumper.jumperCount,
+        freefallTime: jumper.freefallTime,
+        freefallAltitude: jumper.freefallAltitude,
+        deployAltitude: jumper.deployAltitude,
+        exitAltitude: jumper.exitAltitude,
+        landings: jumper.landings,
+        typeOfJump: jumper.typeOfJump,
+        trainer1Id: jumper.trainer1Id || undefined,
+        trainer1Note: jumper.trainer1Note || undefined,
+        trainer2Id: jumper.trainer2Id || undefined,
+        trainer2Note: jumper.trainer2Note || undefined,
+        trainer3Id: jumper.trainer3Id || undefined,
+        trainer3Note: jumper.trainer3Note || undefined,
         isNew: false,
         isModified: false,
-      };
-    });
+      }));
 
-    setAddedJumpers(existingJumpers);
-    setOriginalJumpers(JSON.parse(JSON.stringify(existingJumpers))); // Deep copy for comparison
-  }, [isFormInitialized, isCourseDetailsSuccess, rawParticipants, addedJumpers.length, isActivitySuccess, activityData]);
+      setAddedJumpers(existingJumpers);
+      setIsDataLoaded(true);
+    }
+  }, [activityData, form, isDataLoaded]);
+
+  // Update student names when course participants are loaded
+  useEffect(() => {
+    if (isCourseDetailsSuccess && rawParticipants.length > 0 && addedJumpers.length > 0) {
+      const updatedJumpers = addedJumpers.map(jumper => ({
+        ...jumper,
+        studentName: getStudentNameFromCoStTrId(jumper.co_St_TrId) || jumper.studentName
+      }));
+      setAddedJumpers(updatedJumpers);
+    }
+  }, [isCourseDetailsSuccess, rawParticipants]);
+
+  // Update courseType when character changes or courses are loaded
+  useEffect(() => {
+    if (!isCoursesSuccess) return;
+    const option = handleCourseTypeChange(watchedCharacter || "");
+    if (option.value) {
+      form.setValue("courseType", option.value, { shouldValidate: true });
+    } else {
+      form.setValue("courseType", "", { shouldValidate: true });
+    }
+  }, [watchedCharacter, isCoursesSuccess, courseData]);
 
   const handleCourseTypeChange = (value: string) => {
     let courseTypeOption = {} as { label: string, value: string };
@@ -368,7 +363,7 @@ export default function EditActivitiesForm({id}: {id: string}) {
       studentName: getStudentName(currentStudentId),
       jumperCount: jumpCount,
       freefallTime: freeFallTime,
-      freefallAltitude: parachuteOpeningTime, // Using as freefall altitude
+      freefallAltitude: parachuteOpeningTime,
       deployAltitude: parachuteOpeningHeight,
       exitAltitude: planeExitHeight,
       landings: landingLocation,
@@ -379,13 +374,23 @@ export default function EditActivitiesForm({id}: {id: string}) {
       trainer2Note: form.getValues("currentTrainer2Note") || undefined,
       trainer3Id: form.getValues("currentTrainer3Id") || undefined,
       trainer3Note: form.getValues("currentTrainer3Note") || undefined,
-      isNew: true, // Mark as new jumper for add operation
+      isNew: true, // Mark as new jumper
       isModified: false,
     };
 
     setAddedJumpers([...addedJumpers, newJumper]);
 
     // Reset current student fields
+    resetCurrentStudentFields();
+
+    toast({
+      title: "تم الإضافة",
+      description: `تم إضافة الطالب ${newJumper.studentName}`,
+    });
+  };
+
+  // Reset current student form fields
+  const resetCurrentStudentFields = () => {
     form.setValue("currentStudent", "");
     form.setValue("currentTrainer1Id", "");
     form.setValue("currentTrainer1Note", "");
@@ -400,21 +405,16 @@ export default function EditActivitiesForm({id}: {id: string}) {
     form.setValue("currentParachuteOpiningTime", "");
     form.setValue("currentParachuteOpinignHeight", "");
     form.setValue("currentPlaneExitHeight", "");
-
-    toast({
-      title: "تم الإضافة",
-      description: `تم إضافة الطالب ${newJumper.studentName}`,
-    });
   };
 
   // Handle removing student from jumpers list
   const handleRemoveStudent = (co_St_TrId: string) => {
+    const jumperToRemove = addedJumpers.find(j => j.co_St_TrId === co_St_TrId);
     const removedIndex = addedJumpers.findIndex(j => j.co_St_TrId === co_St_TrId);
-    const removedJumper = addedJumpers[removedIndex];
 
-    // If this is an existing jumper (has jumperId), track it for deletion
-    if (removedJumper && removedJumper.jumperId && !removedJumper.isNew) {
-      setDeletedJumperIds(prev => [...prev, removedJumper.jumperId!]);
+    // If this is an existing jumper (has jumperId), add to delete list
+    if (jumperToRemove?.jumperId) {
+      setJumpersToDelete([...jumpersToDelete, jumperToRemove.jumperId]);
     }
 
     setAddedJumpers(addedJumpers.filter(j => j.co_St_TrId !== co_St_TrId));
@@ -423,23 +423,8 @@ export default function EditActivitiesForm({id}: {id: string}) {
     if (selectedJumperIndex === removedIndex) {
       setSelectedJumperIndex(null);
       setIsEditingJumper(false);
-      // Clear current student fields
-      form.setValue("currentStudent", "");
-      form.setValue("currentTrainer1Id", "");
-      form.setValue("currentTrainer1Note", "");
-      form.setValue("currentTrainer2Id", "");
-      form.setValue("currentTrainer2Note", "");
-      form.setValue("currentTrainer3Id", "");
-      form.setValue("currentTrainer3Note", "");
-      form.setValue("currentJumpCount", "");
-      form.setValue("currentLandingLocation", "");
-      form.setValue("currentJumpType", "");
-      form.setValue("currentFreeFallTime", "");
-      form.setValue("currentParachuteOpiningTime", "");
-      form.setValue("currentParachuteOpinignHeight", "");
-      form.setValue("currentPlaneExitHeight", "");
+      resetCurrentStudentFields();
     } else if (selectedJumperIndex !== null && removedIndex < selectedJumperIndex) {
-      // Adjust selected index if a student before the selected one was removed
       setSelectedJumperIndex(selectedJumperIndex - 1);
     }
 
@@ -492,7 +477,7 @@ export default function EditActivitiesForm({id}: {id: string}) {
       return;
     }
 
-    // Get current form values for this student
+    // Get current form values
     const jumpCount = parseInt(form.getValues("currentJumpCount") || "0");
     const freeFallTime = parseInt(form.getValues("currentFreeFallTime") || "0");
     const parachuteOpeningTime = parseInt(form.getValues("currentParachuteOpiningTime") || "0");
@@ -511,12 +496,13 @@ export default function EditActivitiesForm({id}: {id: string}) {
       return;
     }
 
-    const co_St_TrId = getCoStTrIdForStudent(currentStudentId);
     const existingJumper = addedJumpers[selectedJumperIndex];
+    const co_St_TrId = getCoStTrIdForStudent(currentStudentId);
 
     const updatedJumper: JumperWithDisplay = {
       co_St_TrId: co_St_TrId,
       studentName: getStudentName(currentStudentId),
+      jumperId: existingJumper.jumperId, // Keep the jumperId if it exists
       jumperCount: jumpCount,
       freefallTime: freeFallTime,
       freefallAltitude: parachuteOpeningTime,
@@ -530,11 +516,8 @@ export default function EditActivitiesForm({id}: {id: string}) {
       trainer2Note: form.getValues("currentTrainer2Note") || undefined,
       trainer3Id: form.getValues("currentTrainer3Id") || undefined,
       trainer3Note: form.getValues("currentTrainer3Note") || undefined,
-      // Preserve jumperId for existing jumpers
-      jumperId: existingJumper.jumperId,
-      isNew: existingJumper.isNew || false,
-      // Mark as modified only if it's an existing jumper (has jumperId and not new)
-      isModified: !existingJumper.isNew && !!existingJumper.jumperId,
+      isNew: existingJumper.isNew, // Keep the isNew flag
+      isModified: !existingJumper.isNew, // Mark as modified if it was an existing jumper
     };
 
     // Update the jumper in the array
@@ -545,22 +528,7 @@ export default function EditActivitiesForm({id}: {id: string}) {
     // Reset editing state
     setSelectedJumperIndex(null);
     setIsEditingJumper(false);
-
-    // Reset current student fields
-    form.setValue("currentStudent", "");
-    form.setValue("currentTrainer1Id", "");
-    form.setValue("currentTrainer1Note", "");
-    form.setValue("currentTrainer2Id", "");
-    form.setValue("currentTrainer2Note", "");
-    form.setValue("currentTrainer3Id", "");
-    form.setValue("currentTrainer3Note", "");
-    form.setValue("currentJumpCount", "");
-    form.setValue("currentLandingLocation", "");
-    form.setValue("currentJumpType", "");
-    form.setValue("currentFreeFallTime", "");
-    form.setValue("currentParachuteOpiningTime", "");
-    form.setValue("currentParachuteOpinignHeight", "");
-    form.setValue("currentPlaneExitHeight", "");
+    resetCurrentStudentFields();
 
     toast({
       title: "تم التحديث",
@@ -572,22 +540,7 @@ export default function EditActivitiesForm({id}: {id: string}) {
   const handleCancelEdit = () => {
     setSelectedJumperIndex(null);
     setIsEditingJumper(false);
-
-    // Reset current student fields
-    form.setValue("currentStudent", "");
-    form.setValue("currentTrainer1Id", "");
-    form.setValue("currentTrainer1Note", "");
-    form.setValue("currentTrainer2Id", "");
-    form.setValue("currentTrainer2Note", "");
-    form.setValue("currentTrainer3Id", "");
-    form.setValue("currentTrainer3Note", "");
-    form.setValue("currentJumpCount", "");
-    form.setValue("currentLandingLocation", "");
-    form.setValue("currentJumpType", "");
-    form.setValue("currentFreeFallTime", "");
-    form.setValue("currentParachuteOpiningTime", "");
-    form.setValue("currentParachuteOpinignHeight", "");
-    form.setValue("currentPlaneExitHeight", "");
+    resetCurrentStudentFields();
   };
 
   // Handle form submission
@@ -602,35 +555,35 @@ export default function EditActivitiesForm({id}: {id: string}) {
       return;
     }
 
-    // Separate jumpers into add and update categories
-    const jumpersToAdd: ActivityJumper[] = addedJumpers
-      .filter(jumper => jumper.isNew)
-      .map(({ studentName, jumperId, isNew, isModified, ...jumper }) => jumper);
+    // Separate jumpers into add and update arrays
+    const jumpersToAdd: ActivityJumper[] = [];
+    const jumpersToUpdate: ActivityJumperToUpdate[] = [];
 
-    const jumpersToUpdate: ActivityJumperToUpdate[] = addedJumpers
-      .filter(jumper => !jumper.isNew && jumper.isModified && jumper.jumperId)
-      .map(({ studentName, isNew, isModified, ...jumper }) => ({
-        jumperId: jumper.jumperId!,
-        co_St_TrId: jumper.co_St_TrId,
-        jumperCount: jumper.jumperCount,
-        freefallTime: jumper.freefallTime,
-        freefallAltitude: jumper.freefallAltitude,
-        deployAltitude: jumper.deployAltitude,
-        exitAltitude: jumper.exitAltitude,
-        landings: jumper.landings,
-        typeOfJump: jumper.typeOfJump,
-        trainer1Id: jumper.trainer1Id,
-        trainer1Note: jumper.trainer1Note,
-        trainer2Id: jumper.trainer2Id,
-        trainer2Note: jumper.trainer2Note,
-        trainer3Id: jumper.trainer3Id,
-        trainer3Note: jumper.trainer3Note,
-      }));
+    addedJumpers.forEach(jumper => {
+      const { studentName, jumperId, isNew, isModified, ...jumperData } = jumper;
 
-    // Prepare final payload for update
+      if (isNew) {
+        // New jumper - add to jumpersToAdd
+        jumpersToAdd.push(jumperData);
+      } else if (isModified && jumperId) {
+        // Existing modified jumper - add to jumpersToUpdate
+        jumpersToUpdate.push({
+          jumperId,
+          ...jumperData
+        });
+      } else if (jumperId) {
+        // Existing unmodified jumper - still include in jumpersToUpdate to keep it
+        jumpersToUpdate.push({
+          jumperId,
+          ...jumperData
+        });
+      }
+    });
+
+    // Prepare final payload
     const payload = {
-      uniqueID: id,
-      courseId: data.character, // character field contains courseId
+      uniqueID: activityId,
+      courseId: data.character,
       placeId: data.location,
       planeId: data.plane,
       typeId: data.courseType,
@@ -639,7 +592,7 @@ export default function EditActivitiesForm({id}: {id: string}) {
       windSpeed: data.windSpeed,
       jumpersToAdd,
       jumpersToUpdate,
-      jumpersToDelete: deletedJumperIds,
+      jumpersToDelete
     };
 
     try {
@@ -650,12 +603,6 @@ export default function EditActivitiesForm({id}: {id: string}) {
           title: "نجح",
           description: "تم تحديث النشاط بنجاح",
         });
-
-        // Reset form and state
-        form.reset();
-        setAddedJumpers([]);
-        setDeletedJumperIds([]);
-        setOriginalJumpers([]);
 
         // Redirect to activities page
         router.push('/activities');
@@ -675,14 +622,33 @@ export default function EditActivitiesForm({id}: {id: string}) {
     }
   });
 
-  // Show loading state while fetching activity data
-  if (isActivityLoading) {
+  // Loading state
+  if (isLoadingActivity) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sidebaractive mx-auto mb-4"></div>
-          <p className="font-vazirmatn text-subtext">جاري تحميل بيانات النشاط...</p>
-        </div>
+      <div className="space-y-4">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-40" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isErrorActivity) {
+    return (
+      <div>
+        <Card>
+          <CardContent className="py-8 text-center">
+            <p className="text-deleteTxt font-vazirmatn">حدث خطأ أثناء تحميل بيانات النشاط</p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -721,7 +687,6 @@ export default function EditActivitiesForm({id}: {id: string}) {
                           <SelectValue placeholder="حرف الدورة" />
                         </SelectTrigger>
                         <SelectContent >
-                          {/* <SelectItem value={}>auto</SelectItem> */}
                           {coursesCharacter.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
@@ -901,6 +866,9 @@ export default function EditActivitiesForm({id}: {id: string}) {
                     >
                       <div className=' flex items-center gap-40'>
                         <span className=' text-collapsTxtClr text-[17px]'>{jumper.studentName}</span>
+                        {jumper.isNew && (
+                          <span className="text-xs text-sidebaractive">(جديد)</span>
+                        )}
                       </div>
                       <Button
                         type="button"
@@ -1143,7 +1111,7 @@ export default function EditActivitiesForm({id}: {id: string}) {
                           {...field}
                           type="number"
                           aria-invalid={fieldState.invalid}
-                          placeholder="وقت فتح المظلة"
+                          placeholder="ارتفاع السقوط الحر"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1273,13 +1241,13 @@ export default function EditActivitiesForm({id}: {id: string}) {
             >
               الغاء
             </Button>
-            
+
             <Button
               type="submit"
               disabled={isUpdating || addedJumpers.length === 0}
               className=" w-[225px] bg-sidebaractive text-white  text-[14px]"
             >
-              {isUpdating ? "جاري التحديث..." : "حفظ التغييرات"}
+              {isUpdating ? "جاري التحديث..." : "تحديث النشاط"}
             </Button>
           </div>
         </div>

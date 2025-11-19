@@ -18,7 +18,7 @@ export default function EditActivities({ params }: { params: Promise<{ id: strin
         </div>
       </header>
 
-      <EditActivitiesForm id={activityId} />
+      <EditActivitiesForm activityId={activityId} />
     </section>
   ) 
 }

@@ -18,7 +18,11 @@ export interface ActivityJumper {
 }
 
 export interface ActivityJumperWithId extends ActivityJumper {
-  jumperId: string;
+  id: string; // jumperId from API response
+  activityId?: string;
+  trainer1Name?: string;
+  trainer2Name?: string;
+  trainer3Name?: string;
 }
 
 export interface ActivityItem {
