@@ -105,12 +105,12 @@ export interface UpdateAccidentRequest {
   exitAltitude: number;
   landings: string;
   typeOfJump: string;
-  trainer1Id: string;
-  trainer1Note: string;
-  trainer2Id: string;
-  trainer2Note: string;
-  trainer3Id: string;
-  trainer3Note: string;
+  trainer1Id: string | null;
+  trainer1Note: string | null;
+  trainer2Id: string | null;
+  trainer2Note: string | null;
+  trainer3Id: string | null;
+  trainer3Note: string | null;
   finalReport: string;
   committeeMembersToAdd: CommitteeMember[];
   committeeMembersToDelete: string[];
