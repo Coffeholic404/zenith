@@ -48,7 +48,7 @@ export default function ActivityCard({ activity }: { activity: ActivityItem }) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const { data: course } = useGetCourseByIdQuery({ uniqueID: activity.courseId });
     const { data: place } = useGetPlaceByIdQuery({ uniqueID: activity.placeId });
-    const { data: plane } = useGetPlaneByIdQuery({ uniqueID: activity.planeId });
+    const { data: plane } = useGetPlaneByIdQuery({ uniqueID: activity.planeId || "" }, { skip: !activity.planeId });
     
     const courseTitle = course?.result.character || "غير متوفر"
     const placeTitle = place?.result.name || "غير متوفر"

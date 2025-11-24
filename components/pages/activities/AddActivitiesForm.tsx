@@ -116,11 +116,11 @@ export default function AddActivitiesForm() {
     pageSize: 100,
   })
   const { data: employees, isLoading: isLoadingEmployees, isError: isErrorEmployees, isSuccess: isSuccessEmployees } = useGetEmployeesQuery({
-      pageNumber: 1,
-      pageSize: 100,
-    })
-    let trainers: any = []
-    if (isSuccessEmployees) {
+    pageNumber: 1,
+    pageSize: 100,
+  })
+  let trainers: any = []
+  if (isSuccessEmployees) {
     trainers = employees?.result?.data?.filter((item) => item.employeeTypeName === "مدرب").map((item) => ({
       value: item.id,
       label: item.name,
@@ -631,6 +631,9 @@ export default function AddActivitiesForm() {
                             )}
                           </SelectContent>
                         </Select>
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
                       </Field>
                     )
                   }}
@@ -660,6 +663,9 @@ export default function AddActivitiesForm() {
                           ))}
                         </SelectContent>
                       </Select>
+                       {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
                     </Field>
                   )}
                 />
@@ -688,6 +694,9 @@ export default function AddActivitiesForm() {
                           ))}
                         </SelectContent>
                       </Select>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
                     </Field>
                   )}
                 />
@@ -700,6 +709,9 @@ export default function AddActivitiesForm() {
                         {...field}
                         placeholder="تاريخ البدء"
                       />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
                     </Field>
                   )}
                 />
@@ -1144,7 +1156,7 @@ export default function AddActivitiesForm() {
             >
               الغاء
             </Button>
-            
+
             <Button
               type="submit"
               disabled={isCreating || addedJumpers.length === 0}

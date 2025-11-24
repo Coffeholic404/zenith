@@ -259,6 +259,12 @@ export const api = createApi({
 
         //activity
         "Activity",
+
+        //accident
+        "Accident",
+
+        //CoStTr
+        "CoStTr",
     ],
     endpoints: (build) => ({}),
 });

@@ -110,8 +110,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
             <div className="grid grid-cols-[310px_435px_435px] gap-4">
                 {/* Students List */}
-                <div id="student-list">
-                    <Card>
+                <div id="student-list" className="">
+                    <Card className=" min-h-full">
                         <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2 flex flex-row justify-between items-center">
                             الطلاب
                             <span>{jumpers.length}</span>
@@ -144,7 +144,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
                 {/* Trainers List */}
                 <div id="trainer-list">
-                    <Card>
+                    <Card className=" min-h-full">
                         <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2 flex flex-row justify-between items-center">
                             المدربون
                         </CardHeader>
@@ -183,7 +183,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
                 {/* Basic Info */}
                 <div id="basic-info">
-                    <Card>
+                    <Card className=" min-h-full">
                         <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2 flex flex-row justify-between items-center">
                             المعلومات الاساسية
                         </CardHeader>

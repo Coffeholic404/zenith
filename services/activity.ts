@@ -33,8 +33,8 @@ export interface ActivityItem {
     placeName: string,
     planeId: string,
     planeName: string,
-    typeId: string,
-    typeName: string,
+    typeId: string | undefined,
+    typeName: string | undefined,
     date: string,
     time: string,
     windSpeed: string,
@@ -90,10 +90,10 @@ export interface ActivityJumperToUpdate extends ActivityJumper {
 
 export interface UpdateActivityRequest {
   uniqueID: string;
-  courseId: string;
-  placeId: string;
-  planeId: string;
-  typeId: string;
+  courseId: string | undefined;
+  placeId: string | undefined;
+  planeId: string | undefined;
+  typeId: string | undefined;
   date: string;
   time: string;
   windSpeed: string;

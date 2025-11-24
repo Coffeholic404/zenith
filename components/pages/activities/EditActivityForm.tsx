@@ -49,15 +49,9 @@ const EditActivitiesFormSchema = z.object({
   character: z.string().min(1, {
     message: "حرف الدورة مطلوب",
   }),
-  courseType: z.string().min(1, {
-    message: "نوع الدورة مطلوب",
-  }),
-  plane: z.string().min(1, {
-    message: "نوع الطائرة مطلوب",
-  }),
-  location: z.string().min(1, {
-    message: "موقع الدورة مطلوب",
-  }),
+  courseType: z.string().optional(),
+  plane: z.string().optional(),
+  location: z.string().optional(),
   startDate: z.string().min(1, {
     message: "تاريخ بداية النشاط مطلوب",
   }),
@@ -132,7 +126,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
   const [jumpersToDelete, setJumpersToDelete] = useState<string[]>([]);
   const [selectedJumperIndex, setSelectedJumperIndex] = useState<number | null>(null);
   const [isEditingJumper, setIsEditingJumper] = useState(false);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [loadedActivityId, setLoadedActivityId] = useState<string | null>(null);
 
   let placeData: PlaceItem[] = []
   if (isPlacesSuccess) {
@@ -226,7 +220,8 @@ export default function EditActivityForm({ activityId }: { activityId: string })
 
   // Pre-fill form with existing activity data
   useEffect(() => {
-    if (activityData?.isSuccess && activityData.result && !isDataLoaded) {
+    // Wait for activity data AND options to be loaded before resetting form
+    if (activityData?.isSuccess && activityData.result && loadedActivityId !== activityId && isPlanesSuccess && isPlacesSuccess && isCoursesSuccess) {
       const activity = activityData.result;
 
       // Format date to YYYY-MM-DD for date input
@@ -237,13 +232,13 @@ export default function EditActivityForm({ activityId }: { activityId: string })
 
       // Reset form with activity data
       form.reset({
-        character: activity.courseId,
-        courseType: activity.typeId,
-        plane: activity.planeId,
-        location: activity.placeId,
+        character: activity.courseId || "",
+        courseType: activity.typeId || "",
+        plane: activity.planeId || "",
+        location: activity.placeId || "",
         startDate: formatDate(activity.date),
-        windSpeed: activity.windSpeed,
-        time: activity.time,
+        windSpeed: activity.windSpeed || "",
+        time: activity.time || "",
         currentStudent: "",
         currentTrainer1Id: "",
         currentTrainer1Note: "",
@@ -283,9 +278,9 @@ export default function EditActivityForm({ activityId }: { activityId: string })
       }));
 
       setAddedJumpers(existingJumpers);
-      setIsDataLoaded(true);
+      setLoadedActivityId(activityId);
     }
-  }, [activityData, form, isDataLoaded]);
+  }, [activityData, form, loadedActivityId, activityId, isPlanesSuccess, isPlacesSuccess, isCoursesSuccess]);
 
   // Update student names when course participants are loaded
   useEffect(() => {
@@ -303,9 +298,9 @@ export default function EditActivityForm({ activityId }: { activityId: string })
     if (!isCoursesSuccess) return;
     const option = handleCourseTypeChange(watchedCharacter || "");
     if (option.value) {
-      form.setValue("courseType", option.value, { shouldValidate: true });
+      form.setValue("courseType", option.value);
     } else {
-      form.setValue("courseType", "", { shouldValidate: true });
+      form.setValue("courseType", "");
     }
   }, [watchedCharacter, isCoursesSuccess, courseData]);
 
@@ -571,12 +566,13 @@ export default function EditActivityForm({ activityId }: { activityId: string })
           jumperId,
           ...jumperData
         });
-      } else if (jumperId) {
-        // Existing unmodified jumper - still include in jumpersToUpdate to keep it
-        jumpersToUpdate.push({
-          jumperId,
-          ...jumperData
-        });
+        // } else if (jumperId) {
+        //   // Existing unmodified jumper - still include in jumpersToUpdate to keep it
+        //   jumpersToUpdate.push({
+        //     jumperId,
+        //     ...jumperData
+        //   });
+        // }
       }
     });
 
@@ -622,20 +618,87 @@ export default function EditActivityForm({ activityId }: { activityId: string })
     }
   });
 
-  // Loading state
-  if (isLoadingActivity) {
+  // Loading state - wait for all data to be loaded
+  const isLoading = isLoadingActivity || isCoursesLoading || isPlanesLoading || isPlacesLoading || isLoadingEmployees;
+
+  if (isLoading) {
     return (
-      <div className="space-y-4">
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-40" />
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8">
+        {/* Left Column Skeleton - Basic Info */}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-40" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Separator className="my-4" />
+              {/* Student Table Skeleton */}
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-full rounded-xl" />
+                <Skeleton className="h-12 w-full rounded-xl" />
+                <Skeleton className="h-12 w-full rounded-xl" />
+                <Skeleton className="h-12 w-full rounded-xl" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column Skeleton - Student & Trainer Info */}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Student Info Section */}
+              <Skeleton className="h-10 w-full" />
+
+              {/* Trainers Section */}
+              <div className="space-y-4">
+                <Skeleton className="h-6 w-24" />
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                </div>
+              </div>
+
+              {/* Basic Info Section */}
+              <div className="space-y-4">
+                <Skeleton className="h-6 w-32" />
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                  <Skeleton className="h-10" />
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <Skeleton className="h-10 w-32" />
+            </CardContent>
+          </Card>
+
+          {/* Bottom Buttons */}
+          <div className="flex justify-end items-center gap-4 py-4">
+            <Skeleton className="h-10 w-[118px]" />
+            <Skeleton className="h-10 w-[225px]" />
+          </div>
+        </div>
       </div>
     );
   }
