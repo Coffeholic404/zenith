@@ -259,6 +259,7 @@ export const api = createApi({
 
         //activity
         "Activity",
+        "deleteActivity",
 
         //accident
         "Accident",

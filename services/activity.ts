@@ -212,7 +212,7 @@ export const activityApi = api.injectEndpoints({
         url: `/api/Activity/${uniqueID}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Activity'],
+      invalidatesTags: ['deleteActivity' ,'Activity'],
     }),
 
     // GET /api/Activity/select

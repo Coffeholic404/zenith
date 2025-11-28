@@ -19,12 +19,21 @@ export interface GetCoursesRequest {
   searchQuery?: string;
 }
 
+export interface CourseDetails extends Course {
+  participantsCount: number;
+  durationDays: number;
+  participants: CourseParticipant[];
+  activities?: CourseActivity[];
+  activitiesCount?: number;
+  courseNameText?: string;
+}
+
 export interface GetCoursesResponse {
   statusCode: number;
   isSuccess: boolean;
   errorMessages: string[];
   result: {
-    data: Course[];
+    data: CourseDetails[];
     pageNumber: number;
     pageSize: number;
     totalPages: number;
@@ -53,6 +62,24 @@ export interface CourseParticipant {
   trainerId: string;
   trainerName: string;
   hasEvaluation: boolean;
+}
+
+export interface CourseActivity {
+  uniqueID: string;
+  courseId: string;
+  courseName: string;
+  placeId: string;
+  placeName: string;
+  planeId: string;
+  planeName: string;
+  typeId: string;
+  typeName: string;
+  date: string;
+  time: string;
+  windSpeed: string;
+  jumpersCount: number;
+  accidentsCount: number;
+  createdAt: string;
 }
 
 export interface CreateCourseRequest {
@@ -110,6 +137,8 @@ export interface GetCourseByIdResponse {
     participantsCount: number;
     durationDays: number;
     participants: CourseParticipant[];
+    activities?: CourseActivity[];
+    activitiesCount?: number;
   };
 }
 
@@ -150,7 +179,7 @@ export interface GetCourseStatisticsResponse {
 
 // API endpoints
 export const courseApi = api.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     // GET /api/Course - Get all courses with pagination
     getCourses: builder.query<GetCoursesResponse, GetCoursesRequest>({
       query: ({ pageNumber = 1, pageSize = 10, searchQuery }) => ({
@@ -159,20 +188,20 @@ export const courseApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['Course'],
+      providesTags: ['Course']
     }),
 
     // POST /api/Course - Create a new course
     createCourse: builder.mutation<CreateCourseResponse, CreateCourseRequest>({
-      query: (body) => ({
+      query: body => ({
         url: '/api/Course',
         method: 'POST',
-        body,
+        body
       }),
-      invalidatesTags: ['Course'],
+      invalidatesTags: ['Course']
     }),
 
     // PUT /api/Course/{id} - Update an existing course
@@ -180,54 +209,54 @@ export const courseApi = api.injectEndpoints({
       query: ({ uniqueID, ...body }) => ({
         url: `/api/Course/${uniqueID}`,
         method: 'PUT',
-        body,
+        body
       }),
-      invalidatesTags: ['Course'],
+      invalidatesTags: ['Course']
     }),
 
     // DELETE /api/Course/{id} - Delete a course
     deleteCourse: builder.mutation<DeleteCourseResponse, DeleteCourseRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/Course/${uniqueID}`,
-        method: 'DELETE',
+        method: 'DELETE'
       }),
-      invalidatesTags: ['Course'],
+      invalidatesTags: ['Course']
     }),
 
     // GET /api/Course/{id} - Get course by ID
     getCourseById: builder.query<GetCourseByIdResponse, GetCourseByIdRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/Course/${uniqueID}`,
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Course'],
+      providesTags: ['Course', 'deleteActivity']
     }),
 
     // GET /api/Course/{id}/details - Get course details by ID
     getCourseDetails: builder.query<GetCourseDetailsResponse, GetCourseDetailsRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/Course/${uniqueID}/details`,
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Course'],
+      providesTags: ['Course']
     }),
 
     // GET /api/Course/select - Get courses for select dropdown
     getCourseSelect: builder.query<GetCourseSelectResponse, void>({
       query: () => ({
         url: '/api/Course/select',
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Course'],
+      providesTags: ['Course']
     }),
 
     // GET /api/Course/statistics - Get course statistics
     getCourseStatistics: builder.query<GetCourseStatisticsResponse, void>({
       query: () => ({
         url: '/api/Course/statistics',
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Course'],
+      providesTags: ['Course']
     }),
 
     // GET /api/Course/active - Get active courses
@@ -238,10 +267,10 @@ export const courseApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['Course'],
+      providesTags: ['Course']
     }),
 
     // GET /api/Course/upcoming - Get upcoming courses
@@ -252,10 +281,10 @@ export const courseApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['Course'],
+      providesTags: ['Course']
     }),
 
     // GET /api/Course/completed - Get completed courses
@@ -266,12 +295,12 @@ export const courseApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['Course'],
-    }),
-  }),
+      providesTags: ['Course']
+    })
+  })
 });
 
 // Export hooks for use in React components
@@ -286,5 +315,5 @@ export const {
   useGetCourseStatisticsQuery,
   useGetActiveCoursesQuery,
   useGetUpcomingCoursesQuery,
-  useGetCompletedCoursesQuery,
+  useGetCompletedCoursesQuery
 } = courseApi;

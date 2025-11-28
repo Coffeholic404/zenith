@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { DevTool } from '@hookform/devtools';
@@ -17,11 +17,13 @@ import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { useGetEmployeesQuery } from '@/services/employe';
 import { useGetCoStTrQuery } from '@/services/CoStTr';
+import { useGetCoursesQuery } from '@/services/courses';
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from '@radix-ui/react-checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const EditAccidentFormSchema = z.object({
+    course: z.string().optional(),
     co_St_TrId: z.string().min(1, {
         message: 'أسم الدورة مطلوب'
     }),
@@ -85,12 +87,13 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         pageSize: 100
     });
 
-    // Fetch Co_St_Tr data
+    // Fetch courses
     const {
-        data: coStTr,
-        isLoading: isLoadingCoStTr,
-        isSuccess: isSuccessCoStTr
-    } = useGetCoStTrQuery({
+        data: courses,
+        isLoading: isLoadingCourses,
+        isError: isErrorCourses,
+        isSuccess: isSuccessCourses
+    } = useGetCoursesQuery({
         pageNumber: 1,
         pageSize: 100
     });
@@ -137,17 +140,18 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         }));
     }
 
-    let coStTrData: any = [];
-    if (isSuccessCoStTr) {
-        coStTrData = coStTr?.result?.data?.map(item => ({
+    let coursesData: any = [];
+    if (isSuccessCourses) {
+        coursesData = courses?.result?.data?.map(item => ({
             value: item.uniqueID,
-            label: item.courseCharacter
+            label: item.character
         }));
     }
 
     const form = useForm<z.infer<typeof EditAccidentFormSchema>>({
         resolver: zodResolver(EditAccidentFormSchema),
         defaultValues: {
+            course: '',
             co_St_TrId: '',
             activityId: '',
             jumperCount: undefined,
@@ -168,6 +172,31 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         }
     });
 
+    // Watch the course field to enable/disable student select and populate options
+    const selectedCourseId = useWatch({
+        control: form.control,
+        name: 'course'
+    });
+
+    // Find the selected course and extract its participants
+    let coStTrData: any = [];
+    if (selectedCourseId && isSuccessCourses && courses?.result?.data) {
+        const selectedCourse = courses.result.data.find((course: any) => course.uniqueID === selectedCourseId);
+        if (selectedCourse && selectedCourse.participants) {
+            coStTrData = selectedCourse.participants.map((participant: any) => ({
+                value: participant.co_St_TrId,
+                label: participant.studentName
+            }));
+        }
+    }
+
+    // Reset student selection when course changes (except during initial load)
+    useEffect(() => {
+        if (loadedAccidentId) {
+            form.setValue('co_St_TrId', '');
+        }
+    }, [selectedCourseId, form, loadedAccidentId]);
+
     // Prefill form with accident data
     useEffect(() => {
         if (accidentResponse?.isSuccess && accidentResponse.result && loadedAccidentId !== accidentId) {
@@ -177,8 +206,18 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
             const committeeMemberIds = accident.committeeMembers.map(member => member.employeeId);
             setOriginalCommitteeMembers(committeeMemberIds);
 
+            // Find the course that contains this student
+            let courseId = '';
+            if (isSuccessCourses && courses?.result?.data) {
+                const courseWithStudent = courses.result.data.find((course: any) =>
+                    course.participants?.some((p: any) => p.co_St_TrId === accident.co_St_TrId)
+                );
+                courseId = courseWithStudent?.uniqueID || '';
+            }
+
             // Reset form with accident data
             form.reset({
+                course: courseId,
                 co_St_TrId: accident.co_St_TrId || '',
                 activityId: accident.activityId || '',
                 jumperCount: accident.jumperCount,
@@ -200,7 +239,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
 
             setLoadedAccidentId(accidentId);
         }
-    }, [accidentResponse, form, loadedAccidentId, accidentId]);
+    }, [accidentResponse, form, loadedAccidentId, accidentId, isSuccessCourses, courses]);
 
     const onSubmit = async (values: z.infer<typeof EditAccidentFormSchema>) => {
         try {
@@ -275,11 +314,12 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
     };
 
     // Loading state
-    const isLoading = isLoadingAccident || isLoadingEmployees || isLoadingCoStTr || isLoadingActivities;
+    const isLoading = isLoadingAccident || isLoadingEmployees || isLoadingCourses || isLoadingActivities;
 
     if (isLoading) {
         return (
             <div className="space-y-4">
+            
                 <div className="max-w-5xl mx-auto">
                     <Card>
                         <CardHeader>
@@ -326,6 +366,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
     return (
         <div>
             <DevTool control={form.control} placement="top-left" />
+            <pre>accidentId: {accidentId}</pre>
             <form onSubmit={form.handleSubmit(onSubmit)} className=' space-y-4'>
                 <div className=" max-w-5xl mx-auto">
                     <Card>
@@ -335,7 +376,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                         <CardContent className=" grid grid-cols-2 gap-4">
                             <FieldGroup>
                                 <Controller
-                                    name="co_St_TrId"
+                                    name="course"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
                                         <Field orientation="responsive" data-invalid={fieldState.invalid}>
@@ -346,6 +387,37 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                                     className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                                                 >
                                                     <SelectValue placeholder="اسم الدورة" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {coursesData.map((option: { value: string; label: string }) => (
+                                                        <SelectItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        </Field>
+                                    )}
+                                />
+                                <Controller
+                                    name="co_St_TrId"
+                                    control={form.control}
+                                    render={({ field, fieldState }) => (
+                                        <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                                            <Select
+                                                name={field.name}
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                disabled={!selectedCourseId}
+                                            >
+                                                <SelectTrigger
+                                                    id="form-rhf-select-student"
+                                                    aria-invalid={fieldState.invalid}
+                                                    disabled={!selectedCourseId}
+                                                    className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    <SelectValue placeholder={selectedCourseId ? "اسم الطالب" : "اختر الدورة أولاً"} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {coStTrData.map((option: { value: string; label: string }) => (

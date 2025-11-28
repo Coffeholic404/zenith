@@ -33,6 +33,7 @@ import { Course, useGetCoursesQuery, useGetCourseByIdQuery } from "@/services/co
 import { Plane, useGetPlanesQuery } from "@/services/plane"
 import { PlaceItem, useGetPlacesQuery } from "@/services/place"
 import { useEffect, useState } from "react"
+import { useParams } from "next/navigation";
 import {
   useGetActivityByIdQuery,
   useUpdateActivityMutation,
@@ -90,9 +91,10 @@ export default function EditActivityForm({ activityId }: { activityId: string })
   const router = useRouter();
 
   // Fetch activity data
-  const { data: activityData, isLoading: isLoadingActivity, isError: isErrorActivity } = useGetActivityByIdQuery({
-    uniqueID: activityId
-  });
+  const { data: activityData, isLoading: isLoadingActivity, isError: isErrorActivity } = useGetActivityByIdQuery(
+    { uniqueID: activityId },
+    { refetchOnMountOrArgChange: true }
+  );
 
   const { data: courses, isLoading: isCoursesLoading, isSuccess: isCoursesSuccess } = useGetCoursesQuery({
     pageNumber: 1,
@@ -127,6 +129,15 @@ export default function EditActivityForm({ activityId }: { activityId: string })
   const [selectedJumperIndex, setSelectedJumperIndex] = useState<number | null>(null);
   const [isEditingJumper, setIsEditingJumper] = useState(false);
   const [loadedActivityId, setLoadedActivityId] = useState<string | null>(null);
+
+  // Reset all state when activityId changes (navigating to different activity)
+  useEffect(() => {
+    setAddedJumpers([]);
+    setJumpersToDelete([]);
+    setSelectedJumperIndex(null);
+    setIsEditingJumper(false);
+    setLoadedActivityId(null);
+  }, [activityId]);
 
   let placeData: PlaceItem[] = []
   if (isPlacesSuccess) {
@@ -221,7 +232,16 @@ export default function EditActivityForm({ activityId }: { activityId: string })
   // Pre-fill form with existing activity data
   useEffect(() => {
     // Wait for activity data AND options to be loaded before resetting form
-    if (activityData?.isSuccess && activityData.result && loadedActivityId !== activityId && isPlanesSuccess && isPlacesSuccess && isCoursesSuccess) {
+    // CRITICAL: Check that activityData.result.uniqueID matches activityId to avoid using stale cached data
+    if (
+      activityData?.isSuccess &&
+      activityData.result &&
+      activityData.result.uniqueID === activityId &&
+      loadedActivityId !== activityId &&
+      isPlanesSuccess &&
+      isPlacesSuccess &&
+      isCoursesSuccess
+    ) {
       const activity = activityData.result;
 
       // Format date to YYYY-MM-DD for date input
@@ -285,13 +305,26 @@ export default function EditActivityForm({ activityId }: { activityId: string })
   // Update student names when course participants are loaded
   useEffect(() => {
     if (isCourseDetailsSuccess && rawParticipants.length > 0 && addedJumpers.length > 0) {
-      const updatedJumpers = addedJumpers.map(jumper => ({
-        ...jumper,
-        studentName: getStudentNameFromCoStTrId(jumper.co_St_TrId) || jumper.studentName
-      }));
-      setAddedJumpers(updatedJumpers);
+      const updatedJumpers = addedJumpers.map(jumper => {
+        const newName = getStudentNameFromCoStTrId(jumper.co_St_TrId);
+        // Only update if the name actually changed to avoid infinite loops
+        if (newName && newName !== jumper.studentName) {
+          return { ...jumper, studentName: newName };
+        }
+        return jumper;
+      });
+
+      // Only set state if something actually changed
+      const hasChanges = updatedJumpers.some((jumper, index) =>
+        jumper.studentName !== addedJumpers[index].studentName
+      );
+
+      if (hasChanges) {
+        setAddedJumpers(updatedJumpers);
+      }
     }
-  }, [isCourseDetailsSuccess, rawParticipants]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCourseDetailsSuccess, rawParticipants.length]);
 
   // Update courseType when character changes or courses are loaded
   useEffect(() => {
@@ -302,7 +335,8 @@ export default function EditActivityForm({ activityId }: { activityId: string })
     } else {
       form.setValue("courseType", "");
     }
-  }, [watchedCharacter, isCoursesSuccess, courseData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchedCharacter, isCoursesSuccess]);
 
   const handleCourseTypeChange = (value: string) => {
     let courseTypeOption = {} as { label: string, value: string };
@@ -618,10 +652,11 @@ export default function EditActivityForm({ activityId }: { activityId: string })
     }
   });
 
-  // Loading state - wait for all data to be loaded
+  // Loading state - wait for all data to be loaded AND form to be populated
   const isLoading = isLoadingActivity || isCoursesLoading || isPlanesLoading || isPlacesLoading || isLoadingEmployees;
+  const isFormReady = loadedActivityId === activityId;
 
-  if (isLoading) {
+  if (isLoading || !isFormReady) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8">
         {/* Left Column Skeleton - Basic Info */}
@@ -717,7 +752,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
   }
 
   return (
-    <div >
+    <div>
       <DevTool control={form.control} placement="top-left" />
       <form onSubmit={onSubmit} className="grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8">
         <div className="" id="basic-info">
@@ -728,6 +763,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
             <CardContent>
               <FieldGroup>
                 <Controller
+                  key={`character-${activityId}`}
                   name="character"
                   control={form.control}
                   render={({ field, fieldState }) => (
@@ -761,6 +797,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                   )}
                 />
                 <Controller
+                  key={`courseType-${activityId}`}
                   name="courseType"
                   control={form.control}
                   render={({ field, fieldState }) => {
@@ -771,7 +808,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                           name={field.name}
                           value={field.value}
                           onValueChange={field.onChange}
-                          disabled
+                          // disabled
                         >
                           <SelectTrigger
                             id="form-rhf-select-language"
@@ -793,6 +830,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                   }}
                 />
                 <Controller
+                  key={`plane-${activityId}`}
                   name="plane"
                   control={form.control}
                   render={({ field, fieldState }) => (
@@ -821,6 +859,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                   )}
                 />
                 <Controller
+                  key={`location-${activityId}`}
                   name="location"
                   control={form.control}
                   render={({ field, fieldState }) => (

@@ -36,3 +36,4 @@ components/pages/courses/TestForm.tsx
 .gitignore
 # prompt.md
 prompt.md
+PREFILL_FIX_GUIDE.md
