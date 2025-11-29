@@ -38,6 +38,7 @@ import { toast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { useGetEmployeesQuery } from "@/services/employe";
 
+
 // Schema for individual jumper entry (student with trainers)
 const jumperSchema = z.object({
   co_St_TrId: z.string().min(1, { message: "معرف الطالب مطلوب" }),
@@ -101,7 +102,7 @@ interface JumperWithDisplay extends ActivityJumper {
   studentName: string;
 }
 
-export default function AddActivitiesForm() {
+export default function AddActivitiesForm({ courseId }: { courseId: string }) {
   const router = useRouter();
   const { data: courses, isLoading: isCoursesLoading, isSuccess: isCoursesSuccess } = useGetCoursesQuery({
     pageNumber: 1,
@@ -134,6 +135,15 @@ export default function AddActivitiesForm() {
   // State for tracking which jumper is selected for editing
   const [selectedJumperIndex, setSelectedJumperIndex] = useState<number | null>(null);
   const [isEditingJumper, setIsEditingJumper] = useState(false);
+  const [loadedCourseId, setLoadedCourseId] = useState<string | null>(null);
+
+  // Reset state when courseId changes (navigating to different course)
+  useEffect(() => {
+    setAddedJumpers([]);
+    setSelectedJumperIndex(null);
+    setIsEditingJumper(false);
+    setLoadedCourseId(null);
+  }, [courseId]);
 
   let placeData: PlaceItem[] = []
   if (isPlacesSuccess) {
@@ -163,7 +173,7 @@ export default function AddActivitiesForm() {
   const form = useForm<z.infer<typeof AddActivitiesFormSchema>>({
     resolver: zodResolver(AddActivitiesFormSchema),
     defaultValues: {
-      character: "",
+      character: courseId || "",
       courseType: "",
       plane: "",
       location: "",
@@ -191,9 +201,27 @@ export default function AddActivitiesForm() {
   const watchedStudent = useWatch({ control: form.control, name: "currentStudent" })
 
   const { data: courseById, isFetching: isCourseDetailsFetching, isSuccess: isCourseDetailsSuccess } = useGetCourseByIdQuery(
-    { uniqueID: watchedCharacter || "" },
-    { skip: !watchedCharacter }
+    { uniqueID: courseId || "" },
+    { skip: !courseId }
   )
+
+  // Set the character and course type when courseId is available
+  useEffect(() => {
+    if (courseId && isCoursesSuccess && loadedCourseId !== courseId) {
+      // Set character field
+      form.setValue("character", courseId, { shouldValidate: true });
+
+      // Set course type
+      const option = handleCourseTypeChange(courseId);
+      if (option.value) {
+        form.setValue("courseType", option.value, { shouldValidate: true });
+      } else {
+        form.setValue("courseType", "", { shouldValidate: true });
+      }
+
+      setLoadedCourseId(courseId);
+    }
+  }, [courseId, isCoursesSuccess, form, loadedCourseId]);
 
   const rawParticipants = isCourseDetailsSuccess ? courseById?.result?.participants || [] : []
 
@@ -229,16 +257,6 @@ export default function AddActivitiesForm() {
     return student?.label || "";
   }
 
-  useEffect(() => {
-    if (!isCoursesSuccess) return
-    const option = handleCourseTypeChange(watchedCharacter || "")
-    if (option.value) {
-      form.setValue("courseType", option.value, { shouldValidate: true })
-    } else {
-      form.setValue("courseType", "", { shouldValidate: true })
-    }
-
-  }, [watchedCharacter, isCoursesSuccess, courseData])
 
   const handleCourseTypeChange = (value: string) => {
     let courseTypeOption = {} as { label: string, value: string };
@@ -501,6 +519,23 @@ export default function AddActivitiesForm() {
     form.setValue("currentPlaneExitHeight", "");
   };
 
+  // Loading state - wait for all data to be loaded AND form to be populated
+  const isLoading = isCoursesLoading || isPlanesLoading || isPlacesLoading || isLoadingEmployees;
+  const isFormReady = loadedCourseId === courseId && isCoursesSuccess;
+
+  if (isLoading || !isFormReady) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8">
+        <div className="space-y-4">
+          <div className="h-[600px] bg-searchBg/20 rounded-xl animate-pulse"></div>
+        </div>
+        <div className="space-y-4">
+          <div className="h-[600px] bg-searchBg/20 rounded-xl animate-pulse"></div>
+        </div>
+      </div>
+    );
+  }
+
   // Handle form submission
   const onSubmit = form.handleSubmit(async (data) => {
     // Validate that at least one jumper is added
@@ -571,50 +606,55 @@ export default function AddActivitiesForm() {
             <CardContent>
               <FieldGroup>
                 <Controller
+                  key={`character-${courseId}`}
                   name="character"
                   control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field orientation="responsive" data-invalid={fieldState.invalid}>
-                      <Select
-                        name={field.name}
-                        value={field.value}
-                        onValueChange={(value) => {
-                          field.onChange(value)
-                          const option = handleCourseTypeChange(value)
-                          form.setValue("courseType", option.value, { shouldValidate: true })
-                        }}
-                        disabled={isCoursesLoading || !isCoursesSuccess}
-                      >
-                        <SelectTrigger
-                          id="form-rhf-select-language"
-                          aria-invalid={fieldState.invalid}
-                          className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  render={({ field, fieldState }) => {
+                    const selectedCourse = courseData.find((course) => course.uniqueID === courseId);
+                    return (
+                      <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                        <Select
+                          name={field.name}
+                          value={field.value}
+                          onValueChange={(value) => {
+                            field.onChange(value)
+                            const option = handleCourseTypeChange(value)
+                            form.setValue("courseType", option.value, { shouldValidate: true })
+                          }}
+                          disabled={true}
                         >
-                          <SelectValue placeholder="حرف الدورة" />
-                        </SelectTrigger>
-                        <SelectContent >
-                          {coursesCharacter.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </Field>
-                  )}
+                          <SelectTrigger
+                            id="form-rhf-select-language"
+                            aria-invalid={fieldState.invalid}
+                            className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                          >
+                            <SelectValue placeholder="حرف الدورة" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {selectedCourse && (
+                              <SelectItem key={selectedCourse.uniqueID} value={selectedCourse.uniqueID}>
+                                {selectedCourse.character}
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </Field>
+                    );
+                  }}
                 />
                 <Controller
+                  key={`courseType-${courseId}`}
                   name="courseType"
                   control={form.control}
                   render={({ field, fieldState }) => {
-                    const selectedType = handleCourseTypeChange(watchedCharacter || "")
+                    const selectedType = handleCourseTypeChange(courseId || "")
                     return (
                       <Field orientation="responsive" data-invalid={fieldState.invalid}>
                         <Select
                           name={field.name}
                           value={field.value}
                           onValueChange={field.onChange}
-                          disabled
+                          disabled={true}
                         >
                           <SelectTrigger
                             id="form-rhf-select-language"

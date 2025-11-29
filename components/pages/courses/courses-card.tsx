@@ -36,11 +36,12 @@ import trash2 from "@/public/employees/TrashBin.svg"
 import { BadgeInfo } from 'lucide-react';
 
 import { useRouter } from "next/navigation"
-import { useDeleteCourseMutation, Course } from "@/services/courses"
+import { useDeleteCourseMutation, Course, CourseDetails } from "@/services/courses"
 import { useState } from "react";
 import { EllipsisVertical } from "lucide-react";
-export default function CoursesCard({ course }: { course: Course }) {
+export default function CoursesCard({ course }: { course: CourseDetails }) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isActivitiesPopoverOpen, setIsActivitiesPopoverOpen] = useState(false);
 
     const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
     const { toast } = useToast();
@@ -78,6 +79,27 @@ export default function CoursesCard({ course }: { course: Course }) {
 
             // Close the dialog even on error
             setIsDeleteDialogOpen(false);
+        }
+    };
+
+    const handleShowActivities = () => {
+        const activities = course.activities || [];
+
+        if (activities.length === 0) {
+            toast({
+                title: "تنبيه",
+                description: "لا توجد نشاطات لهذا المقرر",
+                variant: "default",
+            });
+            return;
+        }
+
+        if (activities.length === 1) {
+            // Navigate directly to the single activity
+            router.push(`/activities/${activities[0].uniqueID}`);
+        } else {
+            // Open popover to show multiple activities
+            setIsActivitiesPopoverOpen(true);
         }
     };
 
@@ -121,6 +143,45 @@ export default function CoursesCard({ course }: { course: Course }) {
                                 {course.status}
                             </Badge>
                         </div>
+                    </div>
+                    <div className=" flex justify-center items-center gap-4">
+                        <Button variant="outline" className=" font-vazirmatn text-sm rounded-xl">عرض التقييمات</Button>
+                        <Popover open={isActivitiesPopoverOpen} onOpenChange={setIsActivitiesPopoverOpen}>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className=" font-vazirmatn text-sm rounded-xl"
+                                    onClick={handleShowActivities}
+                                >
+                                    عرض النشاطات
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className=" w-[280px] rounded-xl">
+                                <div className="space-y-2">
+                                    <p className="font-vazirmatn font-semibold text-sm text-cardTxt mb-3">
+                                        اختر نشاط
+                                    </p>
+                                    {course.activities && course.activities.map((activity) => (
+                                        <Button
+                                            key={activity.uniqueID}
+                                            variant="ghost"
+                                            className="w-full justify-start font-vazirmatn text-sm"
+                                            onClick={() => {
+                                                router.push(`/activities/${activity.uniqueID}`);
+                                                setIsActivitiesPopoverOpen(false);
+                                            }}
+                                        >
+                                            <div className="flex flex-col items-start w-full">
+                                                <span className="font-medium">{activity.typeName}</span>
+                                                <span className="text-xs text-[#868585]">
+                                                    {activity.date?.substring(0, 10)} - {activity.time}
+                                                </span>
+                                            </div>
+                                        </Button>
+                                    ))}
+                                </div>
+                            </PopoverContent>
+                        </Popover>
                     </div>
                 </CardContent>
             </Card>

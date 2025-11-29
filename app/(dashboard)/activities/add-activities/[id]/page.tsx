@@ -3,7 +3,9 @@
 import Image from "next/image"
 import medal from "@/public/activities/Medal.svg"
 import AddActivitiesForm from "@/components/pages/activities/AddActivitiesForm"
-export default function AddActivities({params}: {params: {id: string}}) {
+import React from "react";
+export default function AddActivities({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
   return (
     <section className=" space-y-4">
       <header className=" flex items-center gap-3 max-w-[334px]">
@@ -16,7 +18,7 @@ export default function AddActivities({params}: {params: {id: string}}) {
         </div>
       </header>
 
-      <AddActivitiesForm />
+      <AddActivitiesForm courseId={id}/>
     </section>
   )
 }

@@ -16,8 +16,14 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import add from "@/public/employees/plus.svg";
 import eye from '@/public/courses/Eye.svg';
 import plain from '@/public/courses/Plain.svg';
 import map from '@/public/courses/map.svg';
@@ -26,8 +32,8 @@ import { useGetCourseByIdQuery, CourseDetails } from '@/services/courses';
 import Loading from '@/components/pages/courses/loading';
 import Error from '@/components/pages/courses/error';
 import { useRouter } from 'next/navigation';
-import { useDeleteActivityMutation, ActivityItem } from "@/services/activity"
-import { useToast } from "@/hooks/use-toast";
+import { useDeleteActivityMutation, ActivityItem } from '@/services/activity';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -73,9 +79,9 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
       // Show success toast
       toast({
-        title: "تم بنجاح",
+        title: 'تم بنجاح',
         description: `تم حذف النشاط بنجاح`,
-        variant: "default",
+        variant: 'default'
       });
 
       // Close the dialog
@@ -84,18 +90,15 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
       // Refresh the page to update the activity list
       router.refresh();
-
     } catch (error: any) {
       // Show error toast with the exact error message from API
-      const errorMessage = error?.data?.errorMessages?.[0] ||
-        error?.data?.message ||
-        error?.message ||
-        "حدث خطأ أثناء حذف النشاط";
+      const errorMessage =
+        error?.data?.errorMessages?.[0] || error?.data?.message || error?.message || 'حدث خطأ أثناء حذف النشاط';
 
       toast({
-        title: "خطأ",
+        title: 'خطأ',
         description: errorMessage,
-        variant: "destructive",
+        variant: 'destructive'
       });
 
       // Close the dialog even on error
@@ -165,16 +168,28 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         <Card className=" rounded-lg px-3 pb-2 space-y-4">
           <CardHeader className=" flex -mx-3 flex-row items-center justify-between p-2 px-3 border-b border-solid border-[#DCDACE] mb-2">
             <p className=" font-vazirmatn text-subtext text-sm">النشاطات</p>
-            <p className=" font-vazirmatn text-subtext text-sm">
-              {data?.result?.activitiesCount || data?.result?.activities?.length || 0}
-            </p>
+            <div className=' flex gap-4 items-center'>
+              <p className=" font-vazirmatn text-subtext text-sm">
+                {data?.result?.activitiesCount || data?.result?.activities?.length || 0}
+              </p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className=" bg-sidebaractive  px-3 rounded-2xl "
+                    onClick={() => router.push(`/activities/add-activities/${data?.result?.uniqueID}`)}
+                  >
+                    <Image src={add} alt="add icon" className=" size-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
+                  <p className=" font-normal text-sm text-white font-vazirmatn">إضافة نشاط</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </CardHeader>
           {data?.result?.activities && data.result.activities.length > 0 ? (
-            data.result.activities.map((activity) => (
-              <CardContent
-                key={activity.uniqueID}
-                className=" border border-[#E8E8E8] py-3 px-3 rounded-lg space-y-3"
-              >
+            data.result.activities.map(activity => (
+              <CardContent key={activity.uniqueID} className=" border border-[#E8E8E8] py-3 px-3 rounded-lg space-y-3">
                 <div className=" font-vazirmatn flex justify-between items-center">
                   <div>
                     <p className=" font-semibold text-sm">{activity.typeName}</p>
@@ -241,9 +256,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent className="font-vazirmatn">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-right text-cardTxt">
-              تأكيد الحذف
-            </AlertDialogTitle>
+            <AlertDialogTitle className="text-right text-cardTxt">تأكيد الحذف</AlertDialogTitle>
             <AlertDialogDescription className="text-right text-subtext">
               هل أنت متأكد من حذف هذا النشاط؟
               <br />
@@ -251,15 +264,13 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex gap-2">
-            <AlertDialogCancel className="font-vazirmatn">
-              إلغاء
-            </AlertDialogCancel>
+            <AlertDialogCancel className="font-vazirmatn">إلغاء</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteActivity}
               disabled={isDeleting}
               className="bg-red-600 hover:bg-red-700 font-vazirmatn"
             >
-              {isDeleting ? "جاري الحذف..." : "حذف"}
+              {isDeleting ? 'جاري الحذف...' : 'حذف'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
