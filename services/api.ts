@@ -266,6 +266,10 @@ export const api = createApi({
 
         //CoStTr
         "CoStTr",
+
+        //evaluation
+        "Evaluation",
+        "deleteEvaluation",
     ],
     endpoints: (build) => ({}),
 });

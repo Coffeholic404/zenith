@@ -1,5 +1,5 @@
-"use client" 
-import React, { useRef, useState } from "react"
+"use client"
+import React, { useRef, useState, useEffect } from "react"
 import { Control, Controller, FieldPath, FieldValues } from "react-hook-form"
 import {
   Card,
@@ -32,6 +32,7 @@ interface FileUploaderProps<
   className?: string
   disabled?: boolean
   onFileChange?: (file: File | null) => void
+  previewUrl?: string | null
 }
 
 export default function FileUploader<
@@ -48,9 +49,16 @@ export default function FileUploader<
   className = "",
   disabled = false,
   onFileChange,
+  previewUrl: initialPreviewUrl,
 }: FileUploaderProps<TFieldValues, TName>) {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initialPreviewUrl || null)
+
+  useEffect(() => {
+    if (initialPreviewUrl) {
+      setPreviewUrl(initialPreviewUrl)
+    }
+  }, [initialPreviewUrl])
 
   const handleFileSelect = (onChange: (value: File | null) => void) => {
     const input = fileInputRef.current
@@ -81,7 +89,7 @@ export default function FileUploader<
     // Create preview URL
     const url = URL.createObjectURL(file)
     setPreviewUrl(url)
-    
+
     onChange(file)
     onFileChange?.(file)
   }
@@ -123,14 +131,14 @@ export default function FileUploader<
               name={name}
               render={({ field: { onChange }, fieldState: { error } }) => (
                 <div className="space-y-2">
-                  <Button 
+                  <Button
                     type="button"
-                    variant="ghost" 
+                    variant="ghost"
                     className="border border-sidebaractive"
                     onClick={handleButtonClick}
                     disabled={disabled}
                   >
-                    <Image src={archive} alt="archive" className="size-6"/>
+                    <Image src={archive} alt="archive" className="size-6" />
                     {buttonText}
                   </Button>
                   <input

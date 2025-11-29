@@ -68,14 +68,21 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
     const [originalCommitteeMembers, setOriginalCommitteeMembers] = useState<string[]>([]);
     const [loadedAccidentId, setLoadedAccidentId] = useState<string | null>(null);
 
+    // Reset state when accidentId changes (navigating to different accident)
+    useEffect(() => {
+        setOriginalCommitteeMembers([]);
+        setLoadedAccidentId(null);
+    }, [accidentId]);
+
     // Fetch accident data
     const {
         data: accidentResponse,
         isLoading: isLoadingAccident,
         isError: isErrorAccident,
-    } = useGetAccidentByIdQuery({
-        id: accidentId
-    });
+    } = useGetAccidentByIdQuery(
+        { id: accidentId },
+        { refetchOnMountOrArgChange: true }
+    );
 
     // Fetch employees
     const {
@@ -199,7 +206,15 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
 
     // Prefill form with accident data
     useEffect(() => {
-        if (accidentResponse?.isSuccess && accidentResponse.result && loadedAccidentId !== accidentId) {
+        if (
+            accidentResponse?.isSuccess &&
+            accidentResponse.result &&
+            accidentResponse.result.id === accidentId &&
+            loadedAccidentId !== accidentId &&
+            isSuccessCourses &&
+            isSuccessActivities &&
+            isSuccessEmployees
+        ) {
             const accident = accidentResponse.result;
 
             // Extract committee member IDs
@@ -239,7 +254,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
 
             setLoadedAccidentId(accidentId);
         }
-    }, [accidentResponse, form, loadedAccidentId, accidentId, isSuccessCourses, courses]);
+    }, [accidentResponse, form, loadedAccidentId, accidentId, isSuccessCourses, isSuccessActivities, isSuccessEmployees, courses]);
 
     const onSubmit = async (values: z.infer<typeof EditAccidentFormSchema>) => {
         try {
@@ -313,10 +328,11 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         }
     };
 
-    // Loading state
+    // Loading state - wait for all data to be loaded AND form to be populated
     const isLoading = isLoadingAccident || isLoadingEmployees || isLoadingCourses || isLoadingActivities;
+    const isFormReady = loadedAccidentId === accidentId;
 
-    if (isLoading) {
+    if (isLoading || !isFormReady) {
         return (
             <div className="space-y-4">
             
@@ -366,7 +382,6 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
     return (
         <div>
             <DevTool control={form.control} placement="top-left" />
-            <pre>accidentId: {accidentId}</pre>
             <form onSubmit={form.handleSubmit(onSubmit)} className=' space-y-4'>
                 <div className=" max-w-5xl mx-auto">
                     <Card>
@@ -376,6 +391,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                         <CardContent className=" grid grid-cols-2 gap-4">
                             <FieldGroup>
                                 <Controller
+                                    key={`course-${accidentId}`}
                                     name="course"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
@@ -401,6 +417,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     )}
                                 />
                                 <Controller
+                                    key={`co_St_TrId-${accidentId}`}
                                     name="co_St_TrId"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
@@ -491,6 +508,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                             </FieldGroup>
                             <FieldGroup>
                                 <Controller
+                                    key={`activityId-${accidentId}`}
                                     name="activityId"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
@@ -609,6 +627,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                         <CardContent className=' grid grid-cols-2 gap-2'>
 
                             <Controller
+                                key={`trainer1Id-${accidentId}`}
                                 name="trainer1Id"
                                 control={form.control}
                                 render={({ field, fieldState }) => (
@@ -650,6 +669,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                             />
 
                             <Controller
+                                key={`trainer2Id-${accidentId}`}
                                 name="trainer2Id"
                                 control={form.control}
                                 render={({ field, fieldState }) => (
@@ -692,6 +712,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                             />
 
                             <Controller
+                                key={`trainer3Id-${accidentId}`}
                                 name="trainer3Id"
                                 control={form.control}
                                 render={({ field, fieldState }) => (

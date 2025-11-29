@@ -94,7 +94,7 @@ export default function AccidentCard({ accident }: { accident: AccidentItem }) {
                     <div className=" flex justify-between items-start">
                         <div className=" flex flex-col gap-2">
                             <div className=" font-vazirmatn space-y-1">
-                                <p className=" text-cardTxt font-semibold">{accident.activityName}</p>
+                                <p className=" text-cardTxt font-semibold">{accident.studentName}</p>
                                 <p className=" text-[#868585] font-light text-sm">{accident.activityDate?.substring(0, 10)}</p>
                             </div>
                             <div className=" font-vazirmatn space-y-2">

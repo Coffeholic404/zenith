@@ -108,7 +108,10 @@
     /* course trainer table */
     --trainer-table-bg: 0, 0%, 95%, 1;
     --trainer-table-header-txt: 0, 0%, 59%, 1;
-    --student-checkbox-clr: 248, 1%, 70%, 1
+    --student-checkbox-clr: 248, 1%, 70%, 1;
+
+    /*evaluation*/
+    --evaluation-txt-clr: 0, 1%, 63%, 1
   }
 
   /* Color themes */
@@ -333,6 +336,11 @@
   border-bottom-right-radius: var(--radius);
 }
 
+.evaluation-card {
+  background: linear-gradient(116.99deg, rgba(192, 238, 253, 0.2) 1.09%, rgba(194, 178, 253, 0.2) 33.87%, rgba(221, 186, 228, 0.2) 72.11%, rgba(220, 218, 206, 0.2) 99.45%, rgba(61, 83, 184, 0.2) 99.45%);
+  border-radius: 22px;
+}
+
 /* Subtle animations */
 @keyframes fadeIn {
   from {
@@ -433,8 +441,10 @@ input:-webkit-autofill,
 textarea:-webkit-autofill,
 select:-webkit-autofill {
   background-color: transparent !important;
-  -webkit-box-shadow: 0 0 0 1000px rgb(255 255 255 / 0%) inset !important; /* transparent */
-  -webkit-text-fill-color: rgb(17 24 39) !important; /* matches text-gray-900 */
+  -webkit-box-shadow: 0 0 0 1000px rgb(255 255 255 / 0%) inset !important;
+  /* transparent */
+  -webkit-text-fill-color: rgb(17 24 39) !important;
+  /* matches text-gray-900 */
   transition: background-color 9999s ease-in-out 0s;
 }
 

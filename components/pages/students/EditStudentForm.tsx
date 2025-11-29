@@ -95,7 +95,10 @@ interface ExistingAttachment extends StudentAttachment {
 
 function EditStudentForm({ id }: { id: string }) {
   // API queries
-  const { data: studentData, isLoading: isStudentLoading, error: studentError } = useGetStudentByIdQuery({ uniqueID: id });
+  const { data: studentData, isLoading: isStudentLoading, error: studentError } = useGetStudentByIdQuery(
+    { uniqueID: id },
+    { refetchOnMountOrArgChange: true }
+  );
   const { data: nominatedParties, isLoading: isNominatedPartiesLoading } = useGetNominatedPartiesQuery({});
   const { data: attachmentTypes, isLoading: isAttachmentTypesLoading } = useGetAttachmentTypesQuery({});
   const { data: subscriptions, isLoading: isSubscriptionsLoading } = useGetSubscriptionsQuery({});
@@ -107,6 +110,19 @@ function EditStudentForm({ id }: { id: string }) {
   const [originalSkills, setOriginalSkills] = useState<string[]>([]);
   const [originalCourses, setOriginalCourses] = useState<string[]>([]);
   const [existingAttachments, setExistingAttachments] = useState<ExistingAttachment[]>([]);
+  const [loadedStudentId, setLoadedStudentId] = useState<string | null>(null);
+
+  // Reset state when student id changes (navigating to different student)
+  useEffect(() => {
+    setOriginalSkills([]);
+    setOriginalCourses([]);
+    setExistingAttachments([]);
+    setLoadedStudentId(null);
+    setNewAttachments([]);
+    setSelectedFiles([]);
+    setSelectedAttachmentType("");
+    setIsAddingAttachment(false);
+  }, [id]);
 
   let subscriptionOptions: { value: string; label: string }[] = [];
   if (!isSubscriptionsLoading) {
@@ -166,7 +182,16 @@ function EditStudentForm({ id }: { id: string }) {
 
   // Populate form when student data is loaded
   useEffect(() => {
-    if (studentData?.result) {
+    if (
+      studentData?.result &&
+      studentData.result.uniqueID === id &&
+      loadedStudentId !== id &&
+      !isNominatedPartiesLoading &&
+      !isAttachmentTypesLoading &&
+      !isSubscriptionsLoading &&
+      !isSkillsLoading &&
+      !isTrainingCoursesLoading
+    ) {
       const student = studentData.result;
 
       // Format date to YYYY-MM-DD
@@ -201,8 +226,10 @@ function EditStudentForm({ id }: { id: string }) {
         skills: skillIds,
         courses: courseIds,
       });
+
+      setLoadedStudentId(id);
     }
-  }, [studentData, form]);
+  }, [studentData, form, loadedStudentId, id, isNominatedPartiesLoading, isAttachmentTypesLoading, isSubscriptionsLoading, isSkillsLoading, isTrainingCoursesLoading]);
 
   // Handle file selection
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -389,8 +416,11 @@ function EditStudentForm({ id }: { id: string }) {
     }
   };
 
-  // Loading state
-  if (isStudentLoading) {
+  // Loading state - wait for all data to be loaded AND form to be populated
+  const isLoading = isStudentLoading || isNominatedPartiesLoading || isAttachmentTypesLoading || isSubscriptionsLoading || isSkillsLoading || isTrainingCoursesLoading;
+  const isFormReady = loadedStudentId === id;
+
+  if (isLoading || !isFormReady) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">
@@ -415,7 +445,7 @@ function EditStudentForm({ id }: { id: string }) {
     );
   }
 
-    const attachmentsOptions = attachmentTypes?.result.data?.filter(type => type.name !== "صورة شخصية")?.map((type) => ({
+  const attachmentsOptions = attachmentTypes?.result.data?.filter(type => type.name !== "صورة شخصية")?.map((type) => ({
     value: type.uniqueID,
     label: type.name,
   })) || [];
@@ -429,7 +459,7 @@ function EditStudentForm({ id }: { id: string }) {
           <div className='space-y-4'>
             <Card>
               <CardContent>
-                <FileUploader previewUrl={profileImage?.file || ""} className='border-none shadow-none' control={control} name="AttachmentFile" />
+                <FileUploader previewUrl={profileImage?.file ? getAttachmentUrl(profileImage.file) : ""} className='border-none shadow-none' control={control} name="AttachmentFile" />
                 {/* Show current profile picture */}
                 {existingAttachments.find(att => att.typeId === "11111111-1111-1111-1111-111111111111") && (
                   <div className="mt-2 text-sm text-subtext font-vazirmatn">
@@ -959,6 +989,7 @@ function EditStudentForm({ id }: { id: string }) {
                 </div>
 
                 <FormField
+                  key={`bodyCondition-${id}`}
                   control={control}
                   name="bodyCondition"
                   render={({ field }) => (
@@ -1076,6 +1107,7 @@ function EditStudentForm({ id }: { id: string }) {
               <CardContent className='flex flex-col sm:flex-row items-center gap-2'>
                 <div className='flex-1 w-full'>
                   <FormField
+                    key={`subscriptionTypeId-${id}`}
                     control={control}
                     name="subscriptionTypeId"
                     render={({ field }) => (

@@ -165,11 +165,11 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                                             <p className="font-vazirmatn font-normal text-[16px] text-[#7B7B7B]">
                                                 {trainer.name}
                                             </p>
-                                            {/* {trainer.note && (
+                                            {trainer.note && (
                                                 <p className="font-vazirmatn font-light text-[14px] text-subtext">
                                                     {trainer.note}
                                                 </p>
-                                            )} */}
+                                            )}
                                         </div>
                                         {index < getTrainers(selectedJumper).length - 1 && (
                                             <Separator className="my-2" />

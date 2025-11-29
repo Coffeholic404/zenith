@@ -66,9 +66,10 @@ export default function EditCourseForm({ courseId }: { courseId: string }) {
   const router = useRouter();
 
   // Fetch course data
-  const { data: courseData, isLoading: isLoadingCourse, isError: isErrorCourse } = useGetCourseByIdQuery({
-    uniqueID: courseId
-  });
+  const { data: courseData, isLoading: isLoadingCourse, isError: isErrorCourse } = useGetCourseByIdQuery(
+    { uniqueID: courseId },
+    { refetchOnMountOrArgChange: true }
+  );
 
   const { data: employees, isLoading: isLoadingEmployees, isError: isErrorEmployees, isSuccess: isSuccessEmployees } = useGetEmployeesQuery({
     pageNumber: 1,
@@ -91,7 +92,17 @@ export default function EditCourseForm({ courseId }: { courseId: string }) {
   const [addedTrainers, setAddedTrainers] = useState<TrainerWithStudents[]>([]);
   const [activeTrainerId, setActiveTrainerId] = useState<string | null>(null);
   const [deletedCoStTrIds, setDeletedCoStTrIds] = useState<string[]>([]);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [loadedCourseId, setLoadedCourseId] = useState<string | null>(null);
+
+  // Reset state when courseId changes (navigating to different course)
+  useEffect(() => {
+    setSelectedTrainerId("");
+    setSelectedTrainerName("");
+    setAddedTrainers([]);
+    setActiveTrainerId(null);
+    setDeletedCoStTrIds([]);
+    setLoadedCourseId(null);
+  }, [courseId]);
 
   const form = useForm<z.infer<typeof editCoursesSchema>>({
     resolver: zodResolver(editCoursesSchema),
@@ -142,7 +153,15 @@ export default function EditCourseForm({ courseId }: { courseId: string }) {
 
   // Pre-fill form with existing course data
   useEffect(() => {
-    if (courseData?.isSuccess && courseData.result && !isDataLoaded) {
+    if (
+      courseData?.isSuccess &&
+      courseData.result &&
+      courseData.result.uniqueID === courseId &&
+      loadedCourseId !== courseId &&
+      isSuccessEmployees &&
+      isSuccessStudents &&
+      isSuccessTypes
+    ) {
       const course = courseData.result;
 
       // Format dates to YYYY-MM-DD for date inputs
@@ -181,9 +200,9 @@ export default function EditCourseForm({ courseId }: { courseId: string }) {
 
       // Set added trainers
       setAddedTrainers(Array.from(trainerMap.values()));
-      setIsDataLoaded(true);
+      setLoadedCourseId(courseId);
     }
-  }, [courseData, reset, isDataLoaded]);
+  }, [courseData, reset, loadedCourseId, courseId, isSuccessEmployees, isSuccessStudents, isSuccessTypes]);
 
   // Get students that are already assigned to any trainer
   const assignedStudentIds = addedTrainers.flatMap(trainer =>
@@ -372,8 +391,11 @@ export default function EditCourseForm({ courseId }: { courseId: string }) {
     }
   });
 
-  // Loading state
-  if (isLoadingCourse) {
+  // Loading state - wait for all data to be loaded AND form to be populated
+  const isLoading = isLoadingCourse || isLoadingEmployees || isLoadingStudents || isLoadingTypes;
+  const isFormReady = loadedCourseId === courseId;
+
+  if (isLoading || !isFormReady) {
     return (
       <div className='scroll-smooth space-y-4'>
         <Card>
@@ -437,6 +459,7 @@ export default function EditCourseForm({ courseId }: { courseId: string }) {
 
                   <div className='flex-1 w-full'>
                     <FormField
+                      key={`typeId-${courseId}`}
                       control={control}
                       name="typeId"
                       render={({ field }) => (

@@ -33,6 +33,7 @@ import { Separator } from "@/components/ui/separator"
 import pen from "@/public/table/Pen.svg"
 import trash from "@/public/table/trash.svg"
 import trash2 from "@/public/employees/TrashBin.svg"
+import { BadgeInfo } from 'lucide-react';
 
 import { useRouter } from "next/navigation"
 import { useDeleteCourseMutation, Course } from "@/services/courses"
@@ -109,6 +110,10 @@ export default function CoursesCard({ course }: { course: Course }) {
                             <Button variant="ghost" className="" onClick={() => router.push(`/courses/${course.uniqueID}`)}>
                                 <Image src={eye} alt="eye" className="size-[18px]" />
                                 <p className=" font-vazirmatn text-sm">عرض</p>
+                            </Button>
+                            <Button variant="ghost" className="" onClick={() => router.push(`/evaluation/add-evaluation/${course.uniqueID}`)}>
+                                <BadgeInfo className=" " />
+                                <p className=" font-vazirmatn text-sm">تقييم</p>
                             </Button>
                         </PopoverContent>
                     </Popover>
