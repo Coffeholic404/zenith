@@ -60,6 +60,7 @@ const config = {
         trainerTableHeaderTxt: "hsla(var(--trainer-table-header-txt))",
         studentCheckboxClr: "hsla(var(--student-checkbox-clr))",
         evaluationTxtClr: "hsla(var(--evaluation-txt-clr))",
+        evaluationBorderClr: "hsla(var(--evaluation-border-clr))",
         /*employ card*/
         deleteTxt: "hsla(var(--delete-txt))",
         primary: {

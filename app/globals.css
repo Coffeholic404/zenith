@@ -111,7 +111,8 @@
     --student-checkbox-clr: 248, 1%, 70%, 1;
 
     /*evaluation*/
-    --evaluation-txt-clr: 0, 1%, 63%, 1
+    --evaluation-txt-clr: 0, 1%, 63%, 1;
+    --evaluation-border-clr: 0, 0%, 91%, 1;
   }
 
   /* Color themes */
