@@ -145,7 +145,7 @@ export default function CoursesCard({ course }: { course: CourseDetails }) {
                         </div>
                     </div>
                     <div className=" flex justify-center items-center gap-4">
-                        <Button variant="outline" className=" font-vazirmatn text-sm rounded-xl">عرض التقييمات</Button>
+                        <Button variant="outline" onClick={() => router.push(`/evaluation/${course.uniqueID}`)} className=" font-vazirmatn text-sm rounded-xl">عرض التقييمات</Button>
                         <Popover open={isActivitiesPopoverOpen} onOpenChange={setIsActivitiesPopoverOpen}>
                             <PopoverTrigger asChild>
                                 <Button

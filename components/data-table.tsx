@@ -52,6 +52,7 @@ import SkillAddModel from "./pages/adds/skills/add-skills";
 import TrainingCourseAddModel from "./pages/adds/TrainingCourses/addTrainingCourses";
 import AddPlaneModel from "./pages/adds/plane/addPlane-model";
 import PlaceAddModel from "./pages/adds/places/addPlaces-model";
+import type {EvaluationRow} from "@/components/pages/evaluation/evaluation-columns"
 
 interface DataTableProps<TData, TValue, TNames> {
   columns: ColumnDef<TData, TValue>[];
@@ -61,7 +62,7 @@ interface DataTableProps<TData, TValue, TNames> {
   expandedStatus?: boolean;
   type?: string;
 }
-type adds = planes | NominatedParty | subscriptionsColumns 
+type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow
 export function DataTable<TData extends adds, TValue, TNames>({
   columns,
   data,

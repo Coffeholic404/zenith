@@ -103,6 +103,39 @@ export interface DeleteEvaluationResponse {
   result: boolean | null;
 }
 
+// Course Evaluation Item
+export interface CourseEvaluationItem {
+  uniqueID: string;
+  co_St_TrId: string;
+  studentName: string;
+  studentCode: string;
+  courseName: string;
+  courseCharacter: string;
+  trainerName: string;
+  evaluation1: string;
+  evaluation2: string;
+  evaluation3: string;
+  overallRating: string;
+  evaluationDate: string;
+  note: string;
+}
+
+// Get Course Evaluations Response
+export interface GetCourseEvaluationsResponse {
+  statusCode: number;
+  isSuccess: boolean;
+  errorMessages: string[];
+  result: {
+    courseId: string;
+    courseCharacter: string;
+    evaluations: CourseEvaluationItem[];
+    totalStudents: number;
+    evaluatedStudents: number;
+    evaluationCompletionRate: number;
+    averageRating: number;
+  };
+}
+
 export const evaluationApi = api.injectEndpoints({
   endpoints: builder => ({
     // GET /api/Evaluation - list evaluations
@@ -146,6 +179,15 @@ export const evaluationApi = api.injectEndpoints({
         method: 'DELETE'
       }),
       invalidatesTags: ['deleteEvaluation', 'Evaluation']
+    }),
+
+    // GET /api/Evaluation/course/{courseId} - get course evaluations
+    getCourseEvaluations: builder.query<GetCourseEvaluationsResponse, string>({
+      query: courseId => ({
+        url: `/api/Evaluation/course/${courseId}`,
+        method: 'GET'
+      }),
+      providesTags: ['Evaluation']
     })
   })
 });
@@ -154,5 +196,6 @@ export const {
   useGetEvaluationsQuery,
   useCreateEvaluationMutation,
   useUpdateEvaluationMutation,
-  useDeleteEvaluationMutation
+  useDeleteEvaluationMutation,
+  useGetCourseEvaluationsQuery
 } = evaluationApi;
