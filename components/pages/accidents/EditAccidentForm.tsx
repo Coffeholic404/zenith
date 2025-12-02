@@ -10,7 +10,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGetAccidentByIdQuery, useUpdateAccidentMutation } from '@/services/accident';
 import { useGetActivitiesQuery } from '@/services/activity';
 import { toast } from '@/hooks/use-toast';
@@ -216,35 +216,42 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         name: 'activityId'
     });
 
-    // Filter activities by selected course
-    let activitiesData: any = [];
-    if (selectedCourseId && isSuccessActivities) {
-        activitiesData = activities?.result?.data
-            ?.filter(item => item.courseId === selectedCourseId)
-            .map(item => ({
-                value: item.uniqueID,
-                label: `${item.courseName} - ${item.date}`
-            }));
-    }
-
-    let studentsData: any = [];
-    if (selectedActivityId && isSuccessActivities && activities?.result?.data && isSuccessCoStTr) {
-        const selectedActivity = activities.result.data.find(
-            (activity: any) => activity.uniqueID === selectedActivityId
-        );
-        if (selectedActivity && selectedActivity.jumpers && coStTr?.result?.data) {
-            studentsData = selectedActivity.jumpers.map((jumper: any) => {
-                // Find the matching CoStTr record to get student name
-                const coStTrRecord = coStTr.result.data.find(
-                    (record: any) => record.uniqueID === jumper.co_St_TrId
-                );
-                return {
-                    value: jumper.co_St_TrId,
-                    label: coStTrRecord?.studentName || jumper.co_St_TrId
-                };
-            });
+    // Memoize activitiesData to prevent recalculation on every render
+    const activitiesData = React.useMemo(() => {
+        let data: any = [];
+        if (selectedCourseId && isSuccessActivities) {
+            data = activities?.result?.data
+                ?.filter(item => item.courseId === selectedCourseId)
+                .map(item => ({
+                    value: item.uniqueID,
+                    label: `${item.courseName} - ${item.date}`
+                })) || [];
         }
-    }
+        return data;
+    }, [selectedCourseId, isSuccessActivities, activities?.result?.data]);
+
+    // Memoize studentsData to prevent recalculation on every render
+    const studentsData = React.useMemo(() => {
+        let data: any = [];
+        if (selectedActivityId && isSuccessActivities && activities?.result?.data && isSuccessCoStTr) {
+            const selectedActivity = activities.result.data.find(
+                (activity: any) => activity.uniqueID === selectedActivityId
+            );
+            if (selectedActivity && selectedActivity.jumpers && coStTr?.result?.data) {
+                data = selectedActivity.jumpers.map((jumper: any) => {
+                    // Find the matching CoStTr record to get student name
+                    const coStTrRecord = coStTr.result.data.find(
+                        (record: any) => record.uniqueID === jumper.co_St_TrId
+                    );
+                    return {
+                        value: jumper.co_St_TrId,
+                        label: coStTrRecord?.studentName || jumper.co_St_TrId
+                    };
+                });
+            }
+        }
+        return data;
+    }, [selectedActivityId, isSuccessActivities, activities?.result?.data, isSuccessCoStTr, coStTr?.result?.data]);
 
 
 
@@ -321,19 +328,58 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         ) {
             const accident = accidentResponse.result;
 
+            // Debug logging
+            console.log('=== Checking Cascading Data Readiness ===');
+            console.log('selectedCourseId:', selectedCourseId);
+            console.log('selectedActivityId:', selectedActivityId);
+            console.log('activitiesData:', activitiesData);
+            console.log('studentsData:', studentsData);
+            console.log('studentsData values:', studentsData.map((s: any) => s.value));
+            console.log('Expected co_St_TrId:', accident.co_St_TrId);
+            console.log('Form co_St_TrId value:', form.getValues('co_St_TrId'));
+
             // Check if cascading data has been computed correctly
             const hasMatchingActivity = activitiesData.some(
                 (activity: any) => activity.value === accident.activityId
             );
 
-            const hasMatchingStudent = studentsData.some(
-                (student: any) => student.value === accident.co_St_TrId
-            );
+            // For students, we need to check if the activity is selected and if studentsData is populated
+            const hasActivitySelected = !!selectedActivityId && selectedActivityId === accident.activityId;
+
+            // Check if student data is available AND contains the student we're looking for
+            const hasMatchingStudent = hasActivitySelected &&
+                studentsData.length > 0 &&
+                studentsData.some((student: any) => student.value === accident.co_St_TrId);
+
+            console.log('hasMatchingActivity:', hasMatchingActivity);
+            console.log('hasMatchingStudent:', hasMatchingStudent);
+            console.log('hasActivitySelected:', hasActivitySelected);
 
             // Only mark ready when cascading data is available
             if (hasMatchingActivity && hasMatchingStudent) {
+                console.log('✅ Form marked as ready');
+                console.log('Final form values:', {
+                    course: form.getValues('course'),
+                    activityId: form.getValues('activityId'),
+                    co_St_TrId: form.getValues('co_St_TrId')
+                });
+                console.log('Final studentsData for Select:', studentsData);
+
+                // Force update the co_St_TrId field to ensure Select recognizes the value
+                const currentCoStTrId = accident.co_St_TrId;
+                setTimeout(() => {
+                    form.setValue('co_St_TrId', currentCoStTrId, {
+                        shouldValidate: false,
+                        shouldDirty: false,
+                        shouldTouch: false
+                    });
+                    console.log('🔄 Force-updated co_St_TrId to:', currentCoStTrId);
+                }, 50);
+
                 setIsCascadingDataReady(true);
                 setLoadedAccidentId(accidentId);
+            } else {
+                console.log('⏳ Waiting for cascading data...');
             }
         }
     }, [selectedCourseId, selectedActivityId, activitiesData, studentsData, accidentResponse, loadedAccidentId, accidentId, isCascadingDataReady]);
@@ -499,7 +545,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     )}
                                 />
                                 <Controller
-                                    key={`co_St_TrId-${accidentId}-${selectedActivityId}`}
+                                    key={`co_St_TrId-${accidentId}-${selectedActivityId}-${studentsData.length}`}
                                     name="co_St_TrId"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
