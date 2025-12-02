@@ -328,16 +328,6 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         ) {
             const accident = accidentResponse.result;
 
-            // Debug logging
-            console.log('=== Checking Cascading Data Readiness ===');
-            console.log('selectedCourseId:', selectedCourseId);
-            console.log('selectedActivityId:', selectedActivityId);
-            console.log('activitiesData:', activitiesData);
-            console.log('studentsData:', studentsData);
-            console.log('studentsData values:', studentsData.map((s: any) => s.value));
-            console.log('Expected co_St_TrId:', accident.co_St_TrId);
-            console.log('Form co_St_TrId value:', form.getValues('co_St_TrId'));
-
             // Check if cascading data has been computed correctly
             const hasMatchingActivity = activitiesData.some(
                 (activity: any) => activity.value === accident.activityId
@@ -351,21 +341,10 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                 studentsData.length > 0 &&
                 studentsData.some((student: any) => student.value === accident.co_St_TrId);
 
-            console.log('hasMatchingActivity:', hasMatchingActivity);
-            console.log('hasMatchingStudent:', hasMatchingStudent);
-            console.log('hasActivitySelected:', hasActivitySelected);
-
             // Only mark ready when cascading data is available
             if (hasMatchingActivity && hasMatchingStudent) {
-                console.log('✅ Form marked as ready');
-                console.log('Final form values:', {
-                    course: form.getValues('course'),
-                    activityId: form.getValues('activityId'),
-                    co_St_TrId: form.getValues('co_St_TrId')
-                });
-                console.log('Final studentsData for Select:', studentsData);
-
                 // Force update the co_St_TrId field to ensure Select recognizes the value
+                // This setTimeout ensures the Select has rendered with correct options before setting the value
                 const currentCoStTrId = accident.co_St_TrId;
                 setTimeout(() => {
                     form.setValue('co_St_TrId', currentCoStTrId, {
@@ -373,13 +352,10 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                         shouldDirty: false,
                         shouldTouch: false
                     });
-                    console.log('🔄 Force-updated co_St_TrId to:', currentCoStTrId);
                 }, 50);
 
                 setIsCascadingDataReady(true);
                 setLoadedAccidentId(accidentId);
-            } else {
-                console.log('⏳ Waiting for cascading data...');
             }
         }
     }, [selectedCourseId, selectedActivityId, activitiesData, studentsData, accidentResponse, loadedAccidentId, accidentId, isCascadingDataReady]);
