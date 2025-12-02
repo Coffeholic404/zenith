@@ -137,14 +137,6 @@ export default function AddAccidentForm() {
             }));
     }
 
-    let activitiesData: any = [];
-    if (isSuccessActivities) {
-        activitiesData = activities?.result?.data?.map(item => ({
-            value: item.uniqueID,
-            label: item.courseName
-        }));
-    }
-
     const form = useForm<z.infer<typeof AddAccidentFormSchema>>({
         resolver: zodResolver(AddAccidentFormSchema),
         defaultValues: {
@@ -172,15 +164,40 @@ export default function AddAccidentForm() {
         name: 'course'
     });
 
-    // Find the selected course and extract its participants
-    let coStTrData: any = [];
-    if (selectedCourseId && isSuccessCourses && courses?.result?.data) {
-        const selectedCourse = courses.result.data.find((course: any) => course.uniqueID === selectedCourseId);
-        if (selectedCourse && selectedCourse.participants) {
-            coStTrData = selectedCourse.participants.map((participant: any) => ({
-                value: participant.co_St_TrId,
-                label: participant.studentName
+    // Watch the activity field to enable/disable student select
+    const selectedActivityId = useWatch({
+        control: form.control,
+        name: 'activityId'
+    });
+
+    // Filter activities by selected course
+    let activitiesData: any = [];
+    if (selectedCourseId && isSuccessActivities) {
+        activitiesData = activities?.result?.data
+            ?.filter(item => item.courseId === selectedCourseId)
+            .map(item => ({
+                value: item.uniqueID,
+                label: `${item.courseName} - ${item.date}`
             }));
+    }
+
+    // Find the selected activity and extract students from its jumpers
+    let studentsData: any = [];
+    if (selectedActivityId && isSuccessActivities && activities?.result?.data && isSuccessCoStTr) {
+        const selectedActivity = activities.result.data.find(
+            (activity: any) => activity.uniqueID === selectedActivityId
+        );
+        if (selectedActivity && selectedActivity.jumpers && coStTr?.result?.data) {
+            studentsData = selectedActivity.jumpers.map((jumper: any) => {
+                // Find the matching CoStTr record to get student name
+                const coStTrRecord = coStTr.result.data.find(
+                    (record: any) => record.uniqueID === jumper.co_St_TrId
+                );
+                return {
+                    value: jumper.co_St_TrId,
+                    label: coStTrRecord?.studentName || jumper.co_St_TrId
+                };
+            });
         }
     }
 
@@ -191,10 +208,16 @@ export default function AddAccidentForm() {
         { isLoading: isLoadingCreateAccident, isError: isErrorCreateAccident, isSuccess: isSuccessCreateAccident }
     ] = useCreateAccidentMutation();
 
-    // Reset student selection when course changes
+    // Reset activity and student when course changes
     useEffect(() => {
+        form.setValue('activityId', '');
         form.setValue('co_St_TrId', '');
     }, [selectedCourseId, form]);
+
+    // Reset student when activity changes
+    useEffect(() => {
+        form.setValue('co_St_TrId', '');
+    }, [selectedActivityId, form]);
 
     const onSubmit = async (values: z.infer<typeof AddAccidentFormSchema>) => {
         try {
@@ -298,18 +321,18 @@ export default function AddAccidentForm() {
                                                 name={field.name}
                                                 value={field.value}
                                                 onValueChange={field.onChange}
-                                                disabled={!selectedCourseId}
+                                                disabled={!selectedActivityId}
                                             >
                                                 <SelectTrigger
-                                                    id="form-rhf-select-language"
+                                                    id="form-rhf-select-student"
                                                     aria-invalid={fieldState.invalid}
-                                                    disabled={!selectedCourseId}
+                                                    disabled={!selectedActivityId}
                                                     className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
-                                                    <SelectValue placeholder={selectedCourseId ? "اسم الطالب" : "اختر الدورة أولاً"} />
+                                                    <SelectValue placeholder={selectedActivityId ? "اسم الطالب" : "اختر النشاط أولاً"} />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {coStTrData.map((option: { value: string; label: string }) => (
+                                                    {studentsData.map((option: { value: string; label: string }) => (
                                                         <SelectItem key={option.value} value={option.value}>
                                                             {option.label}
                                                         </SelectItem>
@@ -384,13 +407,19 @@ export default function AddAccidentForm() {
                                     control={form.control}
                                     render={({ field, fieldState }) => (
                                         <Field orientation="responsive" data-invalid={fieldState.invalid}>
-                                            <Select name={field.name} value={field.value} onValueChange={field.onChange}>
+                                            <Select
+                                                name={field.name}
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                disabled={!selectedCourseId}
+                                            >
                                                 <SelectTrigger
-                                                    id="form-rhf-select-language"
+                                                    id="form-rhf-select-activity"
                                                     aria-invalid={fieldState.invalid}
-                                                    className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                                    disabled={!selectedCourseId}
+                                                    className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
-                                                    <SelectValue placeholder="النشاط" />
+                                                    <SelectValue placeholder={selectedCourseId ? "النشاط" : "اختر الدورة أولاً"} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {activitiesData.map((option: { value: string; label: string }) => (

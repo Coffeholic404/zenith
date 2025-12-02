@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from '@radix-ui/react-checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 
+
 const EditAccidentFormSchema = z.object({
     course: z.string().optional(),
     co_St_TrId: z.string().min(1, {
@@ -67,11 +68,13 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
     // State for tracking committee members changes
     const [originalCommitteeMembers, setOriginalCommitteeMembers] = useState<string[]>([]);
     const [loadedAccidentId, setLoadedAccidentId] = useState<string | null>(null);
+    const [isCascadingDataReady, setIsCascadingDataReady] = useState(false);
 
     // Reset state when accidentId changes (navigating to different accident)
     useEffect(() => {
         setOriginalCommitteeMembers([]);
         setLoadedAccidentId(null);
+        setIsCascadingDataReady(false);
     }, [accidentId]);
 
     // Fetch accident data
@@ -101,6 +104,16 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         isError: isErrorCourses,
         isSuccess: isSuccessCourses
     } = useGetCoursesQuery({
+        pageNumber: 1,
+        pageSize: 100
+    });
+
+    const {
+        data: coStTr,
+        isLoading: isLoadingCoStTr,
+        isError: isErrorCoStTr,
+        isSuccess: isSuccessCoStTr
+    } = useGetCoStTrQuery({
         pageNumber: 1,
         pageSize: 100
     });
@@ -139,13 +152,13 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
             }));
     }
 
-    let activitiesData: any = [];
-    if (isSuccessActivities) {
-        activitiesData = activities?.result?.data?.map(item => ({
-            value: item.uniqueID,
-            label: item.courseName
-        }));
-    }
+    // let activitiesData: any = [];
+    // if (isSuccessActivities) {
+    //     activitiesData = activities?.result?.data?.map(item => ({
+    //         value: item.uniqueID,
+    //         label: item.courseName
+    //     }));
+    // }
 
     let coursesData: any = [];
     if (isSuccessCourses) {
@@ -197,6 +210,45 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         }
     }
 
+    // Watch the activity field to enable/disable student select
+    const selectedActivityId = useWatch({
+        control: form.control,
+        name: 'activityId'
+    });
+
+    // Filter activities by selected course
+    let activitiesData: any = [];
+    if (selectedCourseId && isSuccessActivities) {
+        activitiesData = activities?.result?.data
+            ?.filter(item => item.courseId === selectedCourseId)
+            .map(item => ({
+                value: item.uniqueID,
+                label: `${item.courseName} - ${item.date}`
+            }));
+    }
+
+    let studentsData: any = [];
+    if (selectedActivityId && isSuccessActivities && activities?.result?.data && isSuccessCoStTr) {
+        const selectedActivity = activities.result.data.find(
+            (activity: any) => activity.uniqueID === selectedActivityId
+        );
+        if (selectedActivity && selectedActivity.jumpers && coStTr?.result?.data) {
+            studentsData = selectedActivity.jumpers.map((jumper: any) => {
+                // Find the matching CoStTr record to get student name
+                const coStTrRecord = coStTr.result.data.find(
+                    (record: any) => record.uniqueID === jumper.co_St_TrId
+                );
+                return {
+                    value: jumper.co_St_TrId,
+                    label: coStTrRecord?.studentName || jumper.co_St_TrId
+                };
+            });
+        }
+    }
+
+
+
+
     // Reset student selection when course changes (except during initial load)
     useEffect(() => {
         if (loadedAccidentId) {
@@ -204,7 +256,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         }
     }, [selectedCourseId, form, loadedAccidentId]);
 
-    // Prefill form with accident data
+    // Phase 1: Prefill form with accident data (set form values)
     useEffect(() => {
         if (
             accidentResponse?.isSuccess &&
@@ -213,7 +265,8 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
             loadedAccidentId !== accidentId &&
             isSuccessCourses &&
             isSuccessActivities &&
-            isSuccessEmployees
+            isSuccessEmployees &&
+            isSuccessCoStTr
         ) {
             const accident = accidentResponse.result;
 
@@ -252,9 +305,38 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                 committeeMembers: committeeMemberIds
             });
 
-            setLoadedAccidentId(accidentId);
+            // DO NOT set loadedAccidentId yet - wait for cascading data to be ready
+            setIsCascadingDataReady(false);
         }
-    }, [accidentResponse, form, loadedAccidentId, accidentId, isSuccessCourses, isSuccessActivities, isSuccessEmployees, courses]);
+    }, [accidentResponse, form, loadedAccidentId, accidentId, isSuccessCourses, isSuccessActivities, isSuccessEmployees, isSuccessCoStTr, courses]);
+
+    // Phase 2: Verify cascading data is ready and mark form as loaded
+    useEffect(() => {
+        // Only run after form values are set but before marking ready
+        if (
+            loadedAccidentId !== accidentId &&
+            accidentResponse?.result &&
+            !isCascadingDataReady &&
+            accidentResponse.result.id === accidentId
+        ) {
+            const accident = accidentResponse.result;
+
+            // Check if cascading data has been computed correctly
+            const hasMatchingActivity = activitiesData.some(
+                (activity: any) => activity.value === accident.activityId
+            );
+
+            const hasMatchingStudent = studentsData.some(
+                (student: any) => student.value === accident.co_St_TrId
+            );
+
+            // Only mark ready when cascading data is available
+            if (hasMatchingActivity && hasMatchingStudent) {
+                setIsCascadingDataReady(true);
+                setLoadedAccidentId(accidentId);
+            }
+        }
+    }, [selectedCourseId, selectedActivityId, activitiesData, studentsData, accidentResponse, loadedAccidentId, accidentId, isCascadingDataReady]);
 
     const onSubmit = async (values: z.infer<typeof EditAccidentFormSchema>) => {
         try {
@@ -329,7 +411,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
     };
 
     // Loading state - wait for all data to be loaded AND form to be populated
-    const isLoading = isLoadingAccident || isLoadingEmployees || isLoadingCourses || isLoadingActivities;
+    const isLoading = isLoadingAccident || isLoadingEmployees || isLoadingCourses || isLoadingActivities || isLoadingCoStTr;
     const isFormReady = loadedAccidentId === accidentId;
 
     if (isLoading || !isFormReady) {
@@ -417,7 +499,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     )}
                                 />
                                 <Controller
-                                    key={`co_St_TrId-${accidentId}`}
+                                    key={`co_St_TrId-${accidentId}-${selectedActivityId}`}
                                     name="co_St_TrId"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
@@ -437,7 +519,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                                     <SelectValue placeholder={selectedCourseId ? "اسم الطالب" : "اختر الدورة أولاً"} />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {coStTrData.map((option: { value: string; label: string }) => (
+                                                    {studentsData.map((option: { value: string; label: string }) => (
                                                         <SelectItem key={option.value} value={option.value}>
                                                             {option.label}
                                                         </SelectItem>
@@ -508,7 +590,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                             </FieldGroup>
                             <FieldGroup>
                                 <Controller
-                                    key={`activityId-${accidentId}`}
+                                    key={`activityId-${accidentId}-${selectedCourseId}`}
                                     name="activityId"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
