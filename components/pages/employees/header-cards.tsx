@@ -5,52 +5,52 @@ import Dep from "@/public/employees/Diploma.svg"
 import people from "@/public/employees/UserHYellow.svg"
 import Image from "next/image";
 export default function HeaderCards() {
-  return (
-    <div className=" flex items-center  w-full gap-12">
-        <Card className=" min-w-[16.875rem] flex-1  shadow-none bg-cardOne p-4">
-            <div className=" flex items-center justify-start gap-[14px]">
-                <div className=" size-12 flex items-center justify-center bg-studentClr rounded-xl">
-                    <Image src={UserRounded} alt="user rounded" width={24} height={24} />
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 xl:gap-6 w-full">
+            <Card className="w-full shadow-none bg-cardOne p-4">
+                <div className=" flex items-center justify-start gap-[14px]">
+                    <div className=" size-12 flex items-center justify-center bg-studentClr rounded-xl">
+                        <Image src={UserRounded} alt="user rounded" width={24} height={24} />
+                    </div>
+                    <div className=" font-vazirmatn space-y-2">
+                        <p className="font-normal text-base text-cardTxt">إجمالي الموظفين</p>
+                        <p className=" font-bold text-xl">5</p>
+                    </div>
                 </div>
-                <div className=" font-vazirmatn space-y-2">
-                    <p className="font-normal text-base text-cardTxt">إجمالي الموظفين</p>
-                    <p className=" font-bold text-xl">5</p>
+            </Card>
+            <Card className="w-full shadow-none bg-cardTwo p-4">
+                <div className=" flex items-center justify-start gap-[14px]">
+                    <div className=" size-12 flex items-center justify-center bg-studentClr rounded-xl">
+                        <Image src={Dep} alt="user rounded" width={24} height={24} />
+                    </div>
+                    <div className=" font-vazirmatn space-y-2">
+                        <p className="font-normal text-base text-cardTxt">إجمالي الموظفين</p>
+                        <p className=" font-bold text-xl">5</p>
+                    </div>
                 </div>
-            </div>
-        </Card>
-        <Card className=" min-w-[16.875rem] flex-1  shadow-none bg-cardTwo p-4">
-            <div className=" flex items-center justify-start gap-[14px]">
-                <div className=" size-12 flex items-center justify-center bg-studentClr rounded-xl">
-                    <Image src={Dep} alt="user rounded" width={24} height={24} />
+            </Card>
+            <Card className="w-full shadow-none bg-cardThree p-4">
+                <div className=" flex items-center justify-start gap-[14px]">
+                    <div className=" size-12 flex items-center justify-center bg-couresClr rounded-xl">
+                        <Image src={people} alt="user rounded" width={24} height={24} />
+                    </div>
+                    <div className=" font-vazirmatn space-y-2">
+                        <p className="font-normal text-base text-cardTxt">إجمالي الموظفين</p>
+                        <p className=" font-bold text-xl">5</p>
+                    </div>
                 </div>
-                <div className=" font-vazirmatn space-y-2">
-                    <p className="font-normal text-base text-cardTxt">إجمالي الموظفين</p>
-                    <p className=" font-bold text-xl">5</p>
+            </Card>
+            <Card className="w-full shadow-none bg-cardFour p-4">
+                <div className=" flex items-center justify-start gap-[14px]">
+                    <div className=" size-12 flex items-center justify-center bg-employeeClr rounded-xl">
+
+                    </div>
+                    <div className=" font-vazirmatn space-y-2">
+                        <p className="font-normal text-base text-cardTxt">إجمالي الموظفين</p>
+                        <p className=" font-bold text-xl">5</p>
+                    </div>
                 </div>
-            </div>
-        </Card>
-        <Card className=" min-w-[16.875rem] flex-1  shadow-none bg-cardThree p-4">
-            <div className=" flex items-center justify-start gap-[14px]">
-                <div className=" size-12 flex items-center justify-center bg-couresClr rounded-xl">
-                    <Image src={people} alt="user rounded" width={24} height={24} />
-                </div>
-                <div className=" font-vazirmatn space-y-2">
-                    <p className="font-normal text-base text-cardTxt">إجمالي الموظفين</p>
-                    <p className=" font-bold text-xl">5</p>
-                </div>
-            </div>
-        </Card>
-        <Card className=" min-w-[16.875rem] flex-1  shadow-none bg-cardFour p-4">
-            <div className=" flex items-center justify-start gap-[14px]">
-                <div className=" size-12 flex items-center justify-center bg-employeeClr rounded-xl">
-                    
-                </div>
-                <div className=" font-vazirmatn space-y-2">
-                    <p className="font-normal text-base text-cardTxt">إجمالي الموظفين</p>
-                    <p className=" font-bold text-xl">5</p>
-                </div>
-            </div>
-        </Card>
-    </div>
-  );
+            </Card>
+        </div>
+    );
 }

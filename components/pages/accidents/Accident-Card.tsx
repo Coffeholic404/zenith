@@ -89,7 +89,7 @@ export default function AccidentCard({ accident }: { accident: AccidentItem }) {
     const router = useRouter();
     return (
         <>
-            <Card className="min-w-[363px] max-w-[25rem] p-[17px] flex-1 min-h-36">
+            <Card className="w-full p-[17px] min-h-36">
                 <CardContent className=" p-0 space-y-4">
                     <div className=" flex justify-between items-start">
                         <div className=" flex flex-col gap-2">

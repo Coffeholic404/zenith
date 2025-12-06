@@ -106,7 +106,7 @@ export default function CoursesCard({ course }: { course: CourseDetails }) {
     const router = useRouter();
     return (
         <>
-            <Card className="min-w-[363px] max-w-[25rem] p-[17px] flex-1 min-h-36">
+            <Card className="w-full p-[17px] min-h-36">
                 <CardContent className=" p-0 space-y-4">
                     <div className=" flex justify-between items-center">
                         <div className=" font-vazirmatn space-y-1">
@@ -116,35 +116,35 @@ export default function CoursesCard({ course }: { course: CourseDetails }) {
                         </div>
                         <div className=" flex flex-col items-end gap-4 justify-center">
                             <Popover>
-                        <PopoverTrigger>
-                            <EllipsisVertical className=" size-5 text-[#7B7B7B] hover:text-[#222222] cursor-pointer" />
-                        </PopoverTrigger>
-                        <PopoverContent className=" w-[120px] rounded-xl">
-                            <Button variant="ghost" className=" w-full" onClick={() => router.push(`/courses/edit-course/${course.uniqueID}`)}>
-                                <Image src={pen} alt="pen" className=" size-[18px]" />
-                                <p className=" font-vazirmatn text-sm">تعديل</p>
-                            </Button >
-                            <Button  variant="ghost" className=" hover:bg-red-400" onClick={() => setIsDeleteDialogOpen(true)}>
-                                <Image src={trash} alt="trash" className="size-[18px]" />
-                                <p className=" font-vazirmatn text-sm" >حذف</p>
-                            </Button>
+                                <PopoverTrigger>
+                                    <EllipsisVertical className=" size-5 text-[#7B7B7B] hover:text-[#222222] cursor-pointer" />
+                                </PopoverTrigger>
+                                <PopoverContent className=" w-[120px] rounded-xl">
+                                    <Button variant="ghost" className=" w-full" onClick={() => router.push(`/courses/edit-course/${course.uniqueID}`)}>
+                                        <Image src={pen} alt="pen" className=" size-[18px]" />
+                                        <p className=" font-vazirmatn text-sm">تعديل</p>
+                                    </Button >
+                                    <Button variant="ghost" className=" hover:bg-red-400" onClick={() => setIsDeleteDialogOpen(true)}>
+                                        <Image src={trash} alt="trash" className="size-[18px]" />
+                                        <p className=" font-vazirmatn text-sm" >حذف</p>
+                                    </Button>
 
-                            <Button variant="ghost" className="" onClick={() => router.push(`/courses/${course.uniqueID}`)}>
-                                <Image src={eye} alt="eye" className="size-[18px]" />
-                                <p className=" font-vazirmatn text-sm">عرض</p>
-                            </Button>
-                            <Button variant="ghost" className="" onClick={() => router.push(`/evaluation/add-evaluation/${course.uniqueID}`)}>
-                                <BadgeInfo className=" " />
-                                <p className=" font-vazirmatn text-sm">تقييم</p>
-                            </Button>
-                        </PopoverContent>
-                    </Popover>
+                                    <Button variant="ghost" className="" onClick={() => router.push(`/courses/${course.uniqueID}`)}>
+                                        <Image src={eye} alt="eye" className="size-[18px]" />
+                                        <p className=" font-vazirmatn text-sm">عرض</p>
+                                    </Button>
+                                    <Button variant="ghost" className="" onClick={() => router.push(`/evaluation/add-evaluation/${course.uniqueID}`)}>
+                                        <BadgeInfo className=" " />
+                                        <p className=" font-vazirmatn text-sm">تقييم</p>
+                                    </Button>
+                                </PopoverContent>
+                            </Popover>
                             <Badge className=" bg-badgeClr cursor-pointer  text-sidebaractive py-[3px] px-[17px] rounded-[8px] font-vazirmatn font-light text-sm hover:bg-badgeClr">
                                 {course.status}
                             </Badge>
                         </div>
                     </div>
-                    <div className=" flex justify-center items-center gap-4">
+                    <div className=" flex justify-center items-center gap-4 flex-wrap">
                         <Button variant="outline" onClick={() => router.push(`/evaluation/${course.uniqueID}`)} className=" font-vazirmatn text-sm rounded-xl">عرض التقييمات</Button>
                         <Popover open={isActivitiesPopoverOpen} onOpenChange={setIsActivitiesPopoverOpen}>
                             <PopoverTrigger asChild>

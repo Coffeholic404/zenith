@@ -66,24 +66,24 @@ export default function Page() {
     error,
     refetch,
   } = useGetCoursesQuery({ searchQuery: debouncedSearchTerm });
-  
+
   return (
     <section className=" space-y-6">
       <HeaderCards />
-      <div className=" flex items-center justify-between flex-1">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
         <div className=" font-vazirmatn">
           <p className=" font-bold text-cardTxt text-[23px]"> الدورات</p>
           <p className=" font-light text-subtext text-lg">
-              إدارة وتنظيم الدورات التدريبية
+            إدارة وتنظيم الدورات التدريبية
           </p>
         </div>
 
-        <div className=" flex items-center gap-4">
-          <div className=" relative" aria-label="بحث عن الدورات" aria-busy={isFetching}>
+        <div className="flex flex-wrap items-center gap-3 lg:gap-4">
+          <div className="relative flex-1 min-w-[200px] sm:min-w-[280px] lg:min-w-0 lg:flex-initial" aria-label="بحث عن الدورات" aria-busy={isFetching}>
             <Image
               src={searchIcon}
               alt="magnifier icon"
-              className=" absolute inset-y-2  start-2 flex items-center  pointer-events-none"
+              className="absolute inset-y-2 start-2 flex items-center pointer-events-none"
             />
             <Input
               id="search"
@@ -104,7 +104,7 @@ export default function Page() {
                   setDebouncedSearchTerm(searchTerm);
                 }
               }}
-              className=" bg-white rounded-xl block w-full p-4 ps-10 sm:min-w-[21rem] min-w-0 font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
+              className="bg-white rounded-xl w-full p-4 ps-10 lg:min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
             />
             {isFetching && (
               <div
@@ -127,12 +127,12 @@ export default function Page() {
               </button>
             )}
           </div>
-          <div className=" bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg">
+          <div className="bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg shrink-0">
             <Image src={filterIcon} alt="filter icon" className=" size-6" />
           </div>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button className=" bg-sidebaractive  px-3 rounded-2xl" onClick={() => router.push("/courses/add-courses")}>
+              <Button className="bg-sidebaractive px-3 rounded-2xl shrink-0" onClick={() => router.push("/courses/add-courses")}>
                 <Image src={add} alt="add icon" className=" size-5" />
               </Button>
             </TooltipTrigger>
@@ -155,33 +155,33 @@ export default function Page() {
         )}
         {/* Loading state */}
         {isLoading ? (
-        <div className="flex items-center justify-start gap-y-4 flex-wrap">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="flex-1">
-              <Card className="w-[22.375rem] rounded-2xl">
-                <CardHeader className="flex items-center justify-start flex-row gap-2 p-2 px-3">
-                  <Skeleton className="size-14 rounded-full" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-3 w-24" />
-                  </div>
-                </CardHeader>
-                <Separator className="my-8 mb-6 text-[#CCCCCC] max-w-[284px] mx-auto border rounded-2xl border-[#CCCCCC]" />
-                <CardFooter className="flex items-center justify-center flex-row gap-2 p-2">
-                  <Skeleton className="w-[130px] h-10 rounded-xl" />
-                  <Skeleton className="w-[130px] h-10 rounded-xl" />
-                </CardFooter>
-              </Card>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className=" flex items-center gap-4 flex-wrap">
-          {data?.result?.data?.map((course) => (
-            <CoursesCard key={course.uniqueID} course={course} />
-          ))}
-        </div>
-      )}
+          <div className="flex items-center justify-start gap-y-4 flex-wrap">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="flex-1">
+                <Card className="w-[22.375rem] rounded-2xl">
+                  <CardHeader className="flex items-center justify-start flex-row gap-2 p-2 px-3">
+                    <Skeleton className="size-14 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
+                  </CardHeader>
+                  <Separator className="my-8 mb-6 text-[#CCCCCC] max-w-[284px] mx-auto border rounded-2xl border-[#CCCCCC]" />
+                  <CardFooter className="flex items-center justify-center flex-row gap-2 p-2">
+                    <Skeleton className="w-[130px] h-10 rounded-xl" />
+                    <Skeleton className="w-[130px] h-10 rounded-xl" />
+                  </CardFooter>
+                </Card>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+            {data?.result?.data?.map((course) => (
+              <CoursesCard key={course.uniqueID} course={course} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
 

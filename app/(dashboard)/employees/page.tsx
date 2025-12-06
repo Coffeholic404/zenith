@@ -56,8 +56,8 @@ export default function Page() {
     searchQuery: debouncedSearchTerm,
   });
 
-  
-  
+
+
   const handleAddEmployee = () => {
     router.push('/employees/add-employe');
   };
@@ -66,26 +66,26 @@ export default function Page() {
   };
 
 
-  if(!employees) return null;
+  if (!employees) return null;
 
 
   return (
     <div className=" space-y-6">
       <HeaderCards />
-      <div className=" flex items-center justify-between flex-1">
-        <div className=" font-vazirmatn">
-          <p className=" font-bold text-cardTxt ">إدارة الموظفين</p>
-          <p className=" font-light text-subtext text-lg">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+        <div className="font-vazirmatn">
+          <p className="font-bold text-cardTxt">إدارة الموظفين</p>
+          <p className="font-light text-subtext text-lg">
             دليل الموظفين والمدربين
           </p>
         </div>
 
-        <div className=" flex items-center gap-4">
-          <div className=" relative" aria-label="بحث عن الموظفين" aria-busy={isFetching}>
+        <div className="flex flex-wrap items-center gap-3 lg:gap-4">
+          <div className="relative flex-1 min-w-[200px] sm:min-w-[280px] lg:min-w-0 lg:flex-initial" aria-label="بحث عن الموظفين" aria-busy={isFetching}>
             <Image
               src={searchIcon}
               alt="magnifier icon"
-              className=" absolute inset-y-2  start-2 flex items-center  pointer-events-none"
+              className="absolute inset-y-2 start-2 flex items-center pointer-events-none"
             />
             <Input
               id="search"
@@ -103,7 +103,7 @@ export default function Page() {
                   setDebouncedSearchTerm(searchTerm);
                 }
               }}
-              className=" bg-white rounded-xl block w-full p-4 ps-10 sm:min-w-[21rem] min-w-0 font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
+              className="bg-white rounded-xl w-full p-4 ps-10 lg:min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
             />
             {isFetching && (
               <div aria-hidden className="absolute inset-y-0 end-10 my-auto size-4 rounded-full border-2 border-searchBg border-t-transparent animate-spin" />
@@ -123,29 +123,29 @@ export default function Page() {
               </button>
             )}
           </div>
-          <div className=" bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg">
-            <Image src={filterIcon} alt="filter icon" className=" size-6" />
+          <div className="bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg shrink-0">
+            <Image src={filterIcon} alt="filter icon" className="size-6" />
           </div>
           <Popover>
             <PopoverTrigger asChild>
-              <Button className=" bg-sidebaractive  px-3 rounded-2xl">
-                <Image src={add} alt="add icon" className=" size-5" />
-                <Image src={ploy} alt="ploy icon" className=" size-3" />
+              <Button className="bg-sidebaractive px-3 rounded-2xl shrink-0">
+                <Image src={add} alt="add icon" className="size-5" />
+                <Image src={ploy} alt="ploy icon" className="size-3" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className=" max-w-24 font-vazirmatn p-2 py-4 rounded-xl">
-              <div className=" flex flex-col gap-4">
-                <div 
-                 className=" flex items-center gap-2 cursor-pointer"
-                 onClick={handleAddEmployee}>
-                  <Image src={userrounded} alt="user rounded icon" className=" size-6" />
-                  <p className=" font-normal text-base text-subtext">موظف</p>
+            <PopoverContent className="max-w-24 font-vazirmatn p-2 py-4 rounded-xl">
+              <div className="flex flex-col gap-4">
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={handleAddEmployee}>
+                  <Image src={userrounded} alt="user rounded icon" className="size-6" />
+                  <p className="font-normal text-base text-subtext">موظف</p>
                 </div>
-                <div 
-                 className=" flex items-center gap-2 cursor-pointer"
-                 onClick={handleAddTrainer}>
-                  <Image src={userhearted} alt="user hearted icon" className=" size-6" />
-                  <p className=" font-normal text-base text-sidebaractive">مدرب</p>
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={handleAddTrainer}>
+                  <Image src={userhearted} alt="user hearted icon" className="size-6" />
+                  <p className="font-normal text-base text-sidebaractive">مدرب</p>
                 </div>
               </div>
               <PopoverArrow />
@@ -162,11 +162,11 @@ export default function Page() {
           </Button>
         </div>
       )}
-      <div className=" flex flex-wrap gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
         {employees.result.data.map((employee) => (
-          <EmployeeCard key={employee.id} employee={employee} isEdit={isEdit} setIsEdit={setIsEdit}  />
+          <EmployeeCard key={employee.id} employee={employee} isEdit={isEdit} setIsEdit={setIsEdit} />
         ))}
-        
+
       </div>
     </div>
   );

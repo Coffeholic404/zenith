@@ -54,7 +54,7 @@ export default function Page() {
   return (
     <div className=" space-y-6 ">
       <HeaderCards />
-      <div className=" flex items-center justify-between flex-1">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
         <div className=" font-vazirmatn">
           <p className=" font-bold text-cardTxt ">إدارة الطلاب</p>
           <p className=" font-light text-subtext text-lg">
@@ -62,12 +62,12 @@ export default function Page() {
           </p>
         </div>
 
-        <div className=" flex items-center gap-4">
-          <div className=" relative" aria-label="بحث عن الطلاب" aria-busy={isFetching}>
+        <div className="flex flex-wrap items-center gap-3 lg:gap-4">
+          <div className="relative flex-1 min-w-[200px] sm:min-w-[280px] lg:min-w-0 lg:flex-initial" aria-label="بحث عن الطلاب" aria-busy={isFetching}>
             <Image
               src={searchIcon}
               alt="magnifier icon"
-              className=" absolute inset-y-2  start-2 flex items-center  pointer-events-none"
+              className="absolute inset-y-2 start-2 flex items-center pointer-events-none"
             />
             <Input
               id="search"
@@ -85,7 +85,7 @@ export default function Page() {
                   setDebouncedSearchTerm(searchTerm);
                 }
               }}
-              className=" bg-white rounded-xl block w-full p-4 ps-10 sm:min-w-[21rem] min-w-0 font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
+              className="bg-white rounded-xl w-full p-4 ps-10 lg:min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
             />
             {isFetching && (
               <div aria-hidden className="absolute inset-y-0 end-10 my-auto size-4 rounded-full border-2 border-searchBg border-t-transparent animate-spin" />
@@ -105,12 +105,12 @@ export default function Page() {
               </button>
             )}
           </div>
-          <div className=" bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg">
+          <div className="bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg shrink-0">
             <Image src={filterIcon} alt="filter icon" className=" size-6" />
           </div>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button className=" bg-sidebaractive  px-3 rounded-2xl" onClick={() => router.push("/students/add-student")}>
+              <Button className="bg-sidebaractive px-3 rounded-2xl shrink-0" onClick={() => router.push("/students/add-student")}>
                 <Image src={add} alt="add icon" className=" size-5" />
               </Button>
             </TooltipTrigger>
@@ -143,19 +143,19 @@ export default function Page() {
         </div>
       ) : (
         <>
-        {isError && (
-          <div role="alert" className="bg-[#FDECEC] border border-red-200 text-red-700 rounded-xl p-3 font-vazirmatn">
-            حدث خطأ أثناء تحميل الطلاب. يرجى المحاولة مرة أخرى.
-            <Button variant="outline" className="ml-2 rounded-xl" onClick={() => refetch()}>
-              إعادة المحاولة
-            </Button>
+          {isError && (
+            <div role="alert" className="bg-[#FDECEC] border border-red-200 text-red-700 rounded-xl p-3 font-vazirmatn">
+              حدث خطأ أثناء تحميل الطلاب. يرجى المحاولة مرة أخرى.
+              <Button variant="outline" className="ml-2 rounded-xl" onClick={() => refetch()}>
+                إعادة المحاولة
+              </Button>
+            </div>
+          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+            {data?.result?.data?.map((student) => (
+              <StudentCard key={student.uniqueID} student={student} />
+            ))}
           </div>
-        )}
-        <div className=" flex items-center justify-start gap-4 flex-wrap">
-          {data?.result?.data?.map((student) => (
-            <StudentCard key={student.uniqueID} student={student} />
-          ))}
-        </div>
         </>
       )}
     </div>

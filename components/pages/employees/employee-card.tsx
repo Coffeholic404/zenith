@@ -34,8 +34,8 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
 
-export default function EmployeeCard({ employee, isEdit, setIsEdit}: { employee: Employee, isEdit: boolean, setIsEdit: (value: boolean) => void }) {
-    
+export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee: Employee, isEdit: boolean, setIsEdit: (value: boolean) => void }) {
+
   const router = useRouter();
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -45,41 +45,41 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit}: { employee:
   const handleDeleteEmployee = async (id: string) => {
     try {
       await deleteEmployee(id).unwrap();
-      
+
       // Show success toast
       toast({
         title: "تم بنجاح",
         description: `تم حذف الموظف ${employee.name} بنجاح`,
         variant: "default",
       });
-      
+
       // Close the dialog
       setIsDeleteDialogOpen(false);
-      
+
       // Refresh the page to update the employee list
       router.refresh();
-      
+
     } catch (error: any) {
       // Show error toast with the exact error message from API
-      const errorMessage = error?.data?.errorMessages?.[0] || 
-                          error?.data?.message || 
-                          error?.message || 
-                          "حدث خطأ أثناء حذف الموظف";
-      
+      const errorMessage = error?.data?.errorMessages?.[0] ||
+        error?.data?.message ||
+        error?.message ||
+        "حدث خطأ أثناء حذف الموظف";
+
       toast({
         title: "خطأ",
         description: errorMessage,
         variant: "destructive",
       });
-      
+
       // Close the dialog even on error
       setIsDeleteDialogOpen(false);
     }
   };
-  
+
   const handleEditEmployee = () => {
     setIsEdit(true);
-    if(employee.employeeTypeName === "مدرب") {
+    if (employee.employeeTypeName === "مدرب") {
       router.push(`/employees/edit-trainer/${employee.id}`);
     } else {
       router.push(`/employees/edit-employe/${employee.id}`);
@@ -92,7 +92,7 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit}: { employee:
 
   return (
     <>
-      <Card className=" min-w-[22.625rem] max-w-[24.625rem] flex-1 shadow-none p-2">
+      <Card className="w-full shadow-none p-2">
         <CardContent className="  p-0 space-y-4">
           <div className=" flex items-center justify-between ">
             <div className=" flex gap-2">
@@ -104,7 +104,7 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit}: { employee:
                 <p className=" font-medium text-lg text-cardTxt">{employee.name}</p>
                 <p className=" text-sm text-subtext font-normal">
                   {" "}
-                   {employee.jobTitle}
+                  {employee.jobTitle}
                 </p>
               </div>
             </div>
@@ -113,7 +113,7 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit}: { employee:
                 <PopoverTrigger className=" size-6 text-subtext">
                   <EllipsisVertical className=" size-6 text-subtext" />
                 </PopoverTrigger>
-                <PopoverContent  className=" max-w-24 font-vazirmatn p-2 py-4 rounded-xl">
+                <PopoverContent className=" max-w-24 font-vazirmatn p-2 py-4 rounded-xl">
                   <div className=" flex flex-col gap-4">
                     <div
                       onClick={handleEditEmployee}
@@ -128,7 +128,7 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit}: { employee:
                         تعديل
                       </p>
                     </div>
-                    <div 
+                    <div
                       onClick={() => setIsDeleteDialogOpen(true)}
                       className=" flex items-center gap-2 cursor-pointer"
                     >

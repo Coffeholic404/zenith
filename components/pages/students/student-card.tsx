@@ -76,8 +76,8 @@ function StudentCard({ student }: { student: Student }) {
     const profileImage = student.attachments?.filter(attachment => attachment.typeName === "صورة شخصية")[0];
     console.log(profileImage)
     return (
-        <div className="flex-1 basis-1/4">
-            <Card className=" rounded-2xl ">
+        <>
+            <Card className="rounded-2xl">
                 <CardHeader className=" flex items-center justify-between flex-row gap-2 p-2 px-3 ">
                     <div className=" flex items-center justify-start flex-row gap-2">
                         <Avatar className=" size-14">
@@ -97,7 +97,7 @@ function StudentCard({ student }: { student: Student }) {
                                 <Image src={pen} alt="pen" className=" size-[18px]" />
                                 <p className=" font-vazirmatn text-sm">تعديل</p>
                             </Button >
-                            <Button  variant="ghost" className=" hover:bg-red-400" onClick={handleDeleteClick}>
+                            <Button variant="ghost" className=" hover:bg-red-400" onClick={handleDeleteClick}>
                                 <Image src={trash} alt="trash" className="size-[18px]" />
                                 <p className=" font-vazirmatn text-sm" >حذف</p>
                             </Button>
@@ -120,10 +120,10 @@ function StudentCard({ student }: { student: Student }) {
                             <p className=" font-vazirmatn text-sm">حذف</p>
                         </Button> */}
                     <Badge className=" bg-sidebaractive">
-                       {student.hight}cm
+                        {student.hight}cm
                     </Badge>
                     <Badge className=" bg-sidebaractive">
-                       {student.width}kg
+                        {student.width}kg
                     </Badge>
                 </CardFooter>
             </Card>
@@ -134,7 +134,7 @@ function StudentCard({ student }: { student: Student }) {
                 itemName={itemName}
                 isDeleting={isDeleting}
             />
-        </div>
+        </>
     )
 }
 

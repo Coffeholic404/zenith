@@ -82,11 +82,11 @@ const menuItems = [
     href: "/courses",
     icon: DiplomaIcon,
   },
-  {
-    title: "التقيم",
-    href: "/evaluation",
-    icon: StarIcon,
-  },
+  // {
+  //   title: "التقيم",
+  //   href: "/evaluation",
+  //   icon: StarIcon,
+  // },
   {
     title: "النشاطات",
     href: "/activities",
