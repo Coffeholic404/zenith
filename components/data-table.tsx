@@ -1,6 +1,7 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -12,47 +13,36 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { planes } from "@/components/pages/adds/plane/plane-columns";
-import { NominatedParty } from "@/components/pages/adds/nominated/nominated-columns";
-import { subscriptionsColumns } from "@/components/pages/adds/subscriptions/subscriptions-columns"
-import { ChevronDown, Filter, SlidersHorizontal, Plus } from "lucide-react";
-import Image from "next/image";
-import searchIcon from "@/public/table/Magnifer.svg";
-import filterIcon from "@/public/table/Filter.svg";
-import { Button } from "@/components/ui/button";
+  useReactTable
+} from '@tanstack/react-table';
+import { planes } from '@/components/pages/adds/plane/plane-columns';
+import { NominatedParty } from '@/components/pages/adds/nominated/nominated-columns';
+import { subscriptionsColumns } from '@/components/pages/adds/subscriptions/subscriptions-columns';
+import { ChevronDown, Filter, SlidersHorizontal, Plus } from 'lucide-react';
+import Image from 'next/image';
+import searchIcon from '@/public/table/Magnifer.svg';
+import filterIcon from '@/public/table/Filter.svg';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import NominatedModel from "./pages/adds/nominated/nominatedModel";
-import SubscriptionAddModel from "./pages/adds/subscriptions/add-subscription";
-import AttachmentAddModel from "./pages/adds/attachment/add-attachment";
-import SkillAddModel from "./pages/adds/skills/add-skills";
-import TrainingCourseAddModel from "./pages/adds/TrainingCourses/addTrainingCourses";
-import AddPlaneModel from "./pages/adds/plane/addPlane-model";
-import PlaceAddModel from "./pages/adds/places/addPlaces-model";
-import type {EvaluationRow} from "@/components/pages/evaluation/evaluation-columns"
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import add from '@/public/employees/plus.svg';
+import { Skeleton } from '@/components/ui/skeleton';
+import NominatedModel from './pages/adds/nominated/nominatedModel';
+import SubscriptionAddModel from './pages/adds/subscriptions/add-subscription';
+import AttachmentAddModel from './pages/adds/attachment/add-attachment';
+import SkillAddModel from './pages/adds/skills/add-skills';
+import TrainingCourseAddModel from './pages/adds/TrainingCourses/addTrainingCourses';
+import AddPlaneModel from './pages/adds/plane/addPlane-model';
+import PlaceAddModel from './pages/adds/places/addPlaces-model';
+import type { EvaluationRow } from '@/components/pages/evaluation/evaluation-columns';
 
 interface DataTableProps<TData, TValue, TNames> {
   columns: ColumnDef<TData, TValue>[];
@@ -61,8 +51,9 @@ interface DataTableProps<TData, TValue, TNames> {
   loading?: boolean;
   expandedStatus?: boolean;
   type?: string;
+  uniqueID?: string;
 }
-type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow
+type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow;
 export function DataTable<TData extends adds, TValue, TNames>({
   columns,
   data,
@@ -70,15 +61,11 @@ export function DataTable<TData extends adds, TValue, TNames>({
   loading = false,
   expandedStatus,
   type,
-}: DataTableProps<TData, TValue, TNames>) 
-
-{
+  uniqueID,
+}: DataTableProps<TData, TValue, TNames>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [expanded, setExpanded] = React.useState({});
 
@@ -100,8 +87,8 @@ export function DataTable<TData extends adds, TValue, TNames>({
       columnFilters,
       columnVisibility,
       rowSelection,
-      expanded,
-    },
+      expanded
+    }
   });
 
   // const toggleRowExpanded = (id: string) => {
@@ -112,8 +99,9 @@ export function DataTable<TData extends adds, TValue, TNames>({
   // };
   onExpandedChange: (updaterOrValue: React.SetStateAction<{}>) => {
     setExpanded(updaterOrValue);
-    console.log("Updated expanded state:", updaterOrValue);
+    console.log('Updated expanded state:', updaterOrValue);
   };
+  const router = useRouter();
   return (
     <Card>
       <CardHeader></CardHeader>
@@ -130,12 +118,8 @@ export function DataTable<TData extends adds, TValue, TNames>({
                 <Input
                   id="search"
                   placeholder="بحث ..."
-                  value={
-                    (table.getColumn("name")?.getFilterValue() as string) ?? ""
-                  }
-                  onChange={(event) =>
-                    table.getColumn("name")?.setFilterValue(event.target.value)
-                  }
+                  value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+                  onChange={event => table.getColumn('name')?.setFilterValue(event.target.value)}
                   className=" bg-searchBg rounded-xl block w-full p-4 ps-10 min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
                 />
               </div>
@@ -147,78 +131,39 @@ export function DataTable<TData extends adds, TValue, TNames>({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuCheckboxItem
-                    checked={(
-                      table.getColumn("name")?.getFilterValue() as
-                      | string[]
-                      | undefined
-                    )?.includes("نشط")}
-                    onCheckedChange={(value) => {
-                      const filterValues =
-                        (table
-                          .getColumn("name")
-                          ?.getFilterValue() as string[]) || [];
+                    checked={(table.getColumn('name')?.getFilterValue() as string[] | undefined)?.includes('نشط')}
+                    onCheckedChange={value => {
+                      const filterValues = (table.getColumn('name')?.getFilterValue() as string[]) || [];
                       if (value) {
-                        table
-                          .getColumn("name")
-                          ?.setFilterValue([...filterValues, "نشط"]);
+                        table.getColumn('name')?.setFilterValue([...filterValues, 'نشط']);
                       } else {
-                        table
-                          .getColumn("name")
-                          ?.setFilterValue(
-                            filterValues.filter((val) => val !== "نشط")
-                          );
+                        table.getColumn('name')?.setFilterValue(filterValues.filter(val => val !== 'نشط'));
                       }
                     }}
                   >
                     نشط
                   </DropdownMenuCheckboxItem>
                   <DropdownMenuCheckboxItem
-                    checked={(
-                      table.getColumn("name")?.getFilterValue() as
-                      | string[]
-                      | undefined
-                    )?.includes("غير نشط")}
-                    onCheckedChange={(value) => {
-                      const filterValues =
-                        (table
-                          .getColumn("name")
-                          ?.getFilterValue() as string[]) || [];
+                    checked={(table.getColumn('name')?.getFilterValue() as string[] | undefined)?.includes('غير نشط')}
+                    onCheckedChange={value => {
+                      const filterValues = (table.getColumn('name')?.getFilterValue() as string[]) || [];
                       if (value) {
-                        table
-                          .getColumn("name")
-                          ?.setFilterValue([...filterValues, "غير نشط"]);
+                        table.getColumn('name')?.setFilterValue([...filterValues, 'غير نشط']);
                       } else {
-                        table
-                          .getColumn("name")
-                          ?.setFilterValue(
-                            filterValues.filter((val) => val !== "غير نشط")
-                          );
+                        table.getColumn('name')?.setFilterValue(filterValues.filter(val => val !== 'غير نشط'));
                       }
                     }}
                   >
                     غير نشط
                   </DropdownMenuCheckboxItem>
                   <DropdownMenuCheckboxItem
-                    checked={(
-                      table.getColumn("name")?.getFilterValue() as
-                      | string[]
-                      | undefined
-                    )?.includes("معلق")}
-                    onCheckedChange={(value) => {
-                      const filterValues =
-                        (table
-                          .getColumn("name")
-                          ?.getFilterValue() as string[]) || [];
+                    checked={(table.getColumn('name')?.getFilterValue() as string[] | undefined)?.includes('معلق')}
+                    onCheckedChange={value => {
+                      const filterValues = (table.getColumn('name')?.getFilterValue() as string[]) || [];
                       if (value) {
-                        table
-                          .getColumn("name")
-                          ?.setFilterValue([...filterValues, "معلق"]);
+                        table.getColumn('name')?.setFilterValue([...filterValues, 'معلق']);
                       } else {
-                        table
-                          .getColumn("name")
-                          ?.setFilterValue(
-                            filterValues.filter((val) => val !== "معلق")
-                          );
+                        table.getColumn('name')?.setFilterValue(filterValues.filter(val => val !== 'معلق'));
                       }
                     }}
                   >
@@ -346,45 +291,43 @@ export function DataTable<TData extends adds, TValue, TNames>({
               {/* <Button className=" P-0 size-10 rounded-xl bg-btnTxtClr hover:bg-btnTxtClr hover:brightness-110">
                 <Plus strokeWidth={4} />
               </Button> */}
-              {
-                type === "nominated" && <NominatedModel btnClassName=""/>
-                }
-                {
-                type === "subscriptions" && <SubscriptionAddModel />
-                }
-                {
-                  type === "attachmentTypes" && <AttachmentAddModel />
-                }
-                {
-                  type === "skills" && <SkillAddModel />
-                }
-                {
-                  type === "trainingCourses" && <TrainingCourseAddModel />
-                }
+              {type === 'nominated' && <NominatedModel btnClassName="" />}
+              {type === 'subscriptions' && <SubscriptionAddModel />}
+              {type === 'attachmentTypes' && <AttachmentAddModel />}
+              {type === 'skills' && <SkillAddModel />}
+              {type === 'trainingCourses' && <TrainingCourseAddModel />}
 
-                {
-                  type === "plane" && <AddPlaneModel />
-                }
-                {
-                  type === "place" && <PlaceAddModel />
-                }
+              {type === 'plane' && <AddPlaneModel />}
+              {type === 'place' && <PlaceAddModel />}
+              {type === 'evaluation' && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      className="bg-sidebaractive px-3 rounded-2xl shrink-0"
+                      onClick={() => router.push(`/evaluation/add-evaluation/${uniqueID}`)}
+                    >
+                      <Image src={add} alt="add icon" className=" size-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
+                    <p className=" font-normal text-sm text-white font-vazirmatn">إضافة نشاط</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </div>
           </div>
 
           <div className="rounded-md ">
-            <Table >
+            <Table>
               <TableHeader className=" bg-searchBg ">
-                {table.getHeaderGroups().map((headerGroup) => (
+                {table.getHeaderGroups().map(headerGroup => (
                   <TableRow key={headerGroup.id} className=" border-none">
-                    {headerGroup.headers.map((header) => {
+                    {headerGroup.headers.map(header => {
                       return (
                         <TableHead key={header.id} className="first:rounded-s-lg last:rounded-e-lg last:text-left">
                           {header.isPlaceholder
                             ? null
-                            : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                            : flexRender(header.column.columnDef.header, header.getContext())}
                         </TableHead>
                       );
                     })}
@@ -395,22 +338,19 @@ export function DataTable<TData extends adds, TValue, TNames>({
                 {loading ? (
                   Array.from({ length: 5 }).map((_, index) => (
                     <TableRow key={index}>
-                      {Array.from({ length: columns.length }).map(
-                        (_, cellIndex) => (
-                          <TableCell key={cellIndex}>
-                            <Skeleton className="h-6 w-full" />
-                          </TableCell>
-                        )
-                      )}
+                      {Array.from({ length: columns.length }).map((_, cellIndex) => (
+                        <TableCell key={cellIndex}>
+                          <Skeleton className="h-6 w-full" />
+                        </TableCell>
+                      ))}
                     </TableRow>
                   ))
                 ) : table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
+                  table.getRowModel().rows.map(row => (
                     <React.Fragment key={row.id}>
                       <TableRow
-
-                        data-state={row.getIsSelected() && "selected"}
-                        onClick={(e) => {
+                        data-state={row.getIsSelected() && 'selected'}
+                        onClick={e => {
                           e.stopPropagation();
 
                           // Check if the row is already expanded
@@ -422,19 +362,12 @@ export function DataTable<TData extends adds, TValue, TNames>({
                           }
                         }}
                         className={
-                          expandedStatus
-                            ? "cursor-pointer hover:bg-muted/50 border-none"
-                            : "border-none text-tableRow"
+                          expandedStatus ? 'cursor-pointer hover:bg-muted/50 border-none' : 'border-none text-tableRow'
                         }
                       >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell
-                            className=" "
-                            key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
+                        {row.getVisibleCells().map(cell => (
+                          <TableCell className=" " key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </TableCell>
                         ))}
                       </TableRow>
@@ -452,10 +385,7 @@ export function DataTable<TData extends adds, TValue, TNames>({
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
                       لا توجد نتائج.
                     </TableCell>
                   </TableRow>
@@ -468,8 +398,8 @@ export function DataTable<TData extends adds, TValue, TNames>({
             <div className="flex-1 text-sm text-muted-foreground">
               {table.getFilteredSelectedRowModel().rows.length > 0 && (
                 <div>
-                  تم تحديد {table.getFilteredSelectedRowModel().rows.length} من
-                  أصل {table.getFilteredRowModel().rows.length} صف.
+                  تم تحديد {table.getFilteredSelectedRowModel().rows.length} من أصل{' '}
+                  {table.getFilteredRowModel().rows.length} صف.
                 </div>
               )}
             </div>
@@ -482,12 +412,7 @@ export function DataTable<TData extends adds, TValue, TNames>({
               >
                 السابق
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
+              <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
                 التالي
               </Button>
             </div>

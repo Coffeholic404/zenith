@@ -32,6 +32,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     columns={evaluationColumns}
                     data={evaluationsData}
                     columnsNames={evaluationColumnsNames}
+                    type='evaluation'
+                    uniqueID={courseId}
                 />
             )}
         </div>

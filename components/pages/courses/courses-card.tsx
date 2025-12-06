@@ -133,10 +133,6 @@ export default function CoursesCard({ course }: { course: CourseDetails }) {
                                         <Image src={eye} alt="eye" className="size-[18px]" />
                                         <p className=" font-vazirmatn text-sm">عرض</p>
                                     </Button>
-                                    <Button variant="ghost" className="" onClick={() => router.push(`/evaluation/add-evaluation/${course.uniqueID}`)}>
-                                        <BadgeInfo className=" " />
-                                        <p className=" font-vazirmatn text-sm">تقييم</p>
-                                    </Button>
                                 </PopoverContent>
                             </Popover>
                             <Badge className=" bg-badgeClr cursor-pointer  text-sidebaractive py-[3px] px-[17px] rounded-[8px] font-vazirmatn font-light text-sm hover:bg-badgeClr">
