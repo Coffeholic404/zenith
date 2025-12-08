@@ -58,9 +58,9 @@ export default function Page() {
     <div className=" space-y-6 ">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
         <div className=" font-vazirmatn">
-          <p className=" font-bold text-cardTxt ">إدارة النشاطات</p>
+          <p className=" font-bold text-cardTxt ">إدارة الحوادث</p>
           <p className=" font-light text-subtext text-lg">
-            تنظيم وإدارة نشاطات التدريب والقفز
+            تنظيم وإدارة الحوادث
           </p>
         </div>
 

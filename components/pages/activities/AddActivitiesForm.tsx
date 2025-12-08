@@ -613,6 +613,7 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     const selectedCourse = courseData.find((course) => course.uniqueID === courseId);
                     return (
                       <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                        <Label htmlFor="form-rhf-select-character-add" className="font-vazirmatn text-[14px]  block">حرف الدورة</Label>
                         <Select
                           name={field.name}
                           value={field.value}
@@ -624,11 +625,11 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                           disabled={true}
                         >
                           <SelectTrigger
-                            id="form-rhf-select-language"
+                            id="form-rhf-select-character-add"
                             aria-invalid={fieldState.invalid}
                             className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           >
-                            <SelectValue placeholder="حرف الدورة" />
+                            <SelectValue placeholder="اختر حرف الدورة" />
                           </SelectTrigger>
                           <SelectContent>
                             {selectedCourse && (
@@ -650,6 +651,7 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     const selectedType = handleCourseTypeChange(courseId || "")
                     return (
                       <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                        <Label htmlFor="form-rhf-select-coursetype-add" className="font-vazirmatn text-[14px]  block">نوع الدورة</Label>
                         <Select
                           name={field.name}
                           value={field.value}
@@ -657,11 +659,11 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                           disabled={true}
                         >
                           <SelectTrigger
-                            id="form-rhf-select-language"
+                            id="form-rhf-select-coursetype-add"
                             aria-invalid={fieldState.invalid}
                             className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           >
-                            <SelectValue placeholder="نوع الدورة" />
+                            <SelectValue placeholder="اختر نوع الدورة" />
                           </SelectTrigger>
                           <SelectContent >
                             {selectedType.value && (
@@ -683,17 +685,18 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                      <Label htmlFor="form-rhf-select-plane-add" className="font-vazirmatn text-[14px]  block">الطائرة</Label>
                       <Select
                         name={field.name}
                         value={field.value}
                         onValueChange={field.onChange}
                       >
                         <SelectTrigger
-                          id="form-rhf-select-language"
+                          id="form-rhf-select-plane-add"
                           aria-invalid={fieldState.invalid}
                           className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         >
-                          <SelectValue placeholder="الطائرة" />
+                          <SelectValue placeholder="اختر الطائرة" />
                         </SelectTrigger>
                         <SelectContent >
                           {planesOptions.map((option) => (
@@ -703,9 +706,9 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                           ))}
                         </SelectContent>
                       </Select>
-                       {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
                     </Field>
                   )}
                 />
@@ -714,17 +717,18 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                      <Label htmlFor="form-rhf-select-location-add" className="font-vazirmatn text-[14px]  block">المكان</Label>
                       <Select
                         name={field.name}
                         value={field.value}
                         onValueChange={field.onChange}
                       >
                         <SelectTrigger
-                          id="form-rhf-select-language"
+                          id="form-rhf-select-location-add"
                           aria-invalid={fieldState.invalid}
                           className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         >
-                          <SelectValue placeholder="المكان" />
+                          <SelectValue placeholder="اختر المكان" />
                         </SelectTrigger>
                         <SelectContent >
                           {placesOptions.map((option) => (
@@ -745,9 +749,10 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                      <Label htmlFor="startDate-add" className="font-vazirmatn text-[14px]  block">تاريخ البدء</Label>
                       <BirthdayDate
                         {...field}
-                        placeholder="تاريخ البدء"
+                        placeholder="اختر تاريخ البدء"
                       />
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
@@ -761,10 +766,12 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
+                      <Label htmlFor="windSpeed-add" className="font-vazirmatn text-[14px]  block">سرعة الرياح</Label>
                       <Input
                         {...field}
+                        id="windSpeed-add"
                         aria-invalid={fieldState.invalid}
-                        placeholder="سرعة الرياح "
+                        placeholder="أدخل سرعة الرياح"
                         autoComplete="off"
                         className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                       />
@@ -859,6 +866,7 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                        <Label htmlFor="form-rhf-select-student" className="font-vazirmatn text-[14px]  block">الطالب</Label>
                         <Select
                           name={field.name}
                           value={field.value}
@@ -866,11 +874,11 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                           disabled={!watchedCharacter || isCourseDetailsFetching}
                         >
                           <SelectTrigger
-                            id="form-rhf-select-language"
+                            id="form-rhf-select-student"
                             aria-invalid={fieldState.invalid}
                             className="char-select max-w-[320px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           >
-                            <SelectValue placeholder="الطالب" />
+                            <SelectValue placeholder="اختر الطالب" />
                           </SelectTrigger>
                           <SelectContent >
                             {studentOptions.map((option) => (
@@ -894,15 +902,17 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field orientation="responsive" data-invalid={fieldState.invalid} className="col-start-1">
+                        <Label htmlFor="currentTrainer1Id" className="font-vazirmatn text-[14px]  block">المدرب 1</Label>
                         <Select
                           value={field.value || ""}
                           onValueChange={(value) => field.onChange(value)}
                           disabled={!watchedCharacter || isCourseDetailsFetching}
                         >
                           <SelectTrigger
+                            id="currentTrainer1Id"
                             className="char-select max-w-[317px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 "
                           >
-                            <SelectValue placeholder="المدرب 1" />
+                            <SelectValue placeholder="اختر المدرب 1" />
                           </SelectTrigger>
                           <SelectContent>
                             {trainers.map((option: { value: string; label: string }) => (
@@ -920,10 +930,12 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-1">
+                        <Label htmlFor="currentTrainer1Note" className="font-vazirmatn text-[14px]  block">ملاحظات المدرب 1</Label>
                         <Input
                           {...field}
+                          id="currentTrainer1Note"
                           aria-invalid={fieldState.invalid}
-                          placeholder="ملاحظات المدرب 1"
+                          placeholder="أدخل ملاحظات المدرب 1"
                           autoComplete="off"
                           className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -936,15 +948,17 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field orientation="responsive" data-invalid={fieldState.invalid} className="col-start-1">
+                        <Label htmlFor="currentTrainer2Id" className="font-vazirmatn text-[14px]  block">المدرب 2</Label>
                         <Select
                           value={field.value || ""}
                           onValueChange={(value) => field.onChange(value)}
                           disabled={!watchedCharacter || isCourseDetailsFetching}
                         >
                           <SelectTrigger
+                            id="currentTrainer2Id"
                             className="char-select max-w-[317px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 "
                           >
-                            <SelectValue placeholder="المدرب 2" />
+                            <SelectValue placeholder="اختر المدرب 2" />
                           </SelectTrigger>
                           <SelectContent>
                             {trainers.map((option: { value: string; label: string }) => (
@@ -962,10 +976,12 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-2">
+                        <Label htmlFor="currentTrainer2Note" className="font-vazirmatn text-[14px]  block">ملاحظات المدرب 2</Label>
                         <Input
                           {...field}
+                          id="currentTrainer2Note"
                           aria-invalid={fieldState.invalid}
-                          placeholder="ملاحظات المدرب 2"
+                          placeholder="أدخل ملاحظات المدرب 2"
                           autoComplete="off"
                           className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -978,15 +994,17 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field orientation="responsive" data-invalid={fieldState.invalid} className="col-start-1">
+                        <Label htmlFor="currentTrainer3Id" className="font-vazirmatn text-[14px]  block">المدرب 3</Label>
                         <Select
                           value={field.value || ""}
                           onValueChange={(value) => field.onChange(value)}
                           disabled={!watchedCharacter || isCourseDetailsFetching}
                         >
                           <SelectTrigger
+                            id="currentTrainer3Id"
                             className="char-select max-w-[317px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 "
                           >
-                            <SelectValue placeholder="المدرب 3" />
+                            <SelectValue placeholder="اختر المدرب 3" />
                           </SelectTrigger>
                           <SelectContent>
                             {trainers.map((option: { value: string; label: string }) => (
@@ -1004,10 +1022,12 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-3">
+                        <Label htmlFor="currentTrainer3Note" className="font-vazirmatn text-[14px]  block">ملاحظات المدرب 3</Label>
                         <Input
                           {...field}
+                          id="currentTrainer3Note"
                           aria-invalid={fieldState.invalid}
-                          placeholder="ملاحظات المدرب 3"
+                          placeholder="أدخل ملاحظات المدرب 3"
                           autoComplete="off"
                           className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1025,11 +1045,13 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                        <Label htmlFor="currentJumpCount" className="font-vazirmatn text-[14px]  block">عدد القفزات</Label>
                         <Input
                           {...field}
+                          id="currentJumpCount"
                           type="number"
                           aria-invalid={fieldState.invalid}
-                          placeholder="عدد القفزات"
+                          placeholder="أدخل عدد القفزات"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1044,10 +1066,12 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                        <Label htmlFor="currentJumpType" className="font-vazirmatn text-[14px]  block">نوع القفز</Label>
                         <Input
                           {...field}
+                          id="currentJumpType"
                           aria-invalid={fieldState.invalid}
-                          placeholder="نوع القفز"
+                          placeholder="أدخل نوع القفز"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1062,11 +1086,13 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                        <Label htmlFor="currentParachuteOpiningTime" className="font-vazirmatn text-[14px]  block">وقت فتح المظلة</Label>
                         <Input
                           {...field}
+                          id="currentParachuteOpiningTime"
                           type="number"
                           aria-invalid={fieldState.invalid}
-                          placeholder="وقت فتح المظلة"
+                          placeholder="أدخل وقت فتح المظلة"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1081,11 +1107,13 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                        <Label htmlFor="currentParachuteOpinignHeight" className="font-vazirmatn text-[14px]  block">ارتفاع فتح المظلة</Label>
                         <Input
                           {...field}
+                          id="currentParachuteOpinignHeight"
                           type="number"
                           aria-invalid={fieldState.invalid}
-                          placeholder="ارتفاع فتح المظلة"
+                          placeholder="أدخل ارتفاع فتح المظلة"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1100,10 +1128,12 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-1 block">
+                        <Label htmlFor="currentLandingLocation" className="font-vazirmatn text-[14px]  block">موقع الهبوط</Label>
                         <Input
                           {...field}
+                          id="currentLandingLocation"
                           aria-invalid={fieldState.invalid}
-                          placeholder="موقع الهبوط"
+                          placeholder="أدخل موقع الهبوط"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px]  rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1119,11 +1149,13 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-2 block">
+                        <Label htmlFor="currentFreeFallTime" className="font-vazirmatn text-[14px]  block">وقت السقوط الحر</Label>
                         <Input
                           {...field}
+                          id="currentFreeFallTime"
                           type="number"
                           aria-invalid={fieldState.invalid}
-                          placeholder="وقت السقوط الحر"
+                          placeholder="أدخل وقت السقوط الحر"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1138,11 +1170,13 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-3 block">
+                        <Label htmlFor="currentPlaneExitHeight" className="font-vazirmatn text-[14px]  block">ارتفاع الخروج من الطائرة</Label>
                         <Input
                           {...field}
+                          id="currentPlaneExitHeight"
                           type="number"
                           aria-invalid={fieldState.invalid}
-                          placeholder="ارتفاع الخروج من الطائرة"
+                          placeholder="أدخل ارتفاع الخروج من الطائرة"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />

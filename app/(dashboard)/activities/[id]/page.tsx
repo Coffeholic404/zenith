@@ -7,15 +7,31 @@ import React from "react"
 import { useGetActivityByIdQuery, ActivityJumperWithId } from "@/services/activity"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
+import { useGetCoStTrQuery } from '@/services/CoStTr';
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
     const { id: activityId } = React.use(params);
     const [selectedJumperIndex, setSelectedJumperIndex] = useState<number | null>(null);
     const { data, isLoading, isError } = useGetActivityByIdQuery({ uniqueID: activityId });
-
+    const {
+        data: coStTr,
+        isLoading: isLoadingCoStTr,
+        isError: isErrorCoStTr,
+        isSuccess: isSuccessCoStTr
+    } = useGetCoStTrQuery({
+        pageNumber: 1,
+        pageSize: 100
+    });
     const activity = data?.result;
     const jumpers = activity?.jumpers || [];
     const selectedJumper = selectedJumperIndex !== null ? jumpers[selectedJumperIndex] : null;
+
+    // Find the matching CoStTr record to get student name for the selected jumper
+    let studentName: string | null = null;
+    if (selectedJumper && isSuccessCoStTr && coStTr?.result?.data) {
+        const coStTrRecord = coStTr.result.data.find((record: any) => record.uniqueID === selectedJumper.co_St_TrId);
+        studentName = coStTrRecord?.studentName || null;
+    }
 
     // Format date for display
     const formatDate = (dateString: string) => {
@@ -42,11 +58,13 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         return trainers;
     };
 
+
+
     if (isLoading) {
         return (
             <div className="space-y-4">
                 <Card className="flex justify-center items-center py-4">
-                    <CardContent className="min-w-[1170px] p-0 px-5 py-4">
+                    <CardContent className="w-full max-w-[1170px] p-0 px-5 py-4">
                         <Skeleton className="h-8 w-20 mb-2" />
                         <Skeleton className="h-6 w-40 mb-2" />
                         <Skeleton className="h-6 w-24 mb-4" />
@@ -76,8 +94,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
     return (
         <div className="space-y-4">
-            <Card className="flex justify-center items-center py-4">
-                <CardContent className="course-card min-w-[1170px] p-0 rounded-xl px-5 py-4 flex flex-col gap-3 items-start justify-center border border-solid border-image-[linear-gradient(116.99deg,_#C0EEFD_1.09%,_#C2B2FD_33.87%,_#DDBAE4_72.11%,_#DCDACE_99.45%,_#3D53B8_99.45%)]">
+            <Card className="flex justify-center items-center py-4 px-4">
+                <CardContent className="course-card w-full max-w-[1170px] p-0 rounded-xl px-5 py-4 flex flex-col gap-3 items-start justify-center border border-solid border-image-[linear-gradient(116.99deg,_#C0EEFD_1.09%,_#C2B2FD_33.87%,_#DDBAE4_72.11%,_#DCDACE_99.45%,_#3D53B8_99.45%)]">
                     <div className="space-y-2">
                         <p className="font-vazirmatn font-semibold text-[25px]">{activity.courseName}</p>
                         <p className="font-vazirmatn font-light text-base text-[#868585]">
@@ -87,20 +105,20 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                             {activity.typeName}
                         </Badge>
                     </div>
-                    <div className="flex items-center justify-center gap-4 w-full font-vazirmatn">
-                        <div className="bg-white flex-1 p-2 rounded-lg flex items-center justify-between px-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full font-vazirmatn">
+                        <div className="bg-white p-2 rounded-lg flex items-center justify-between px-3">
                             <p className="text-studentCheckboxClr">المكان</p>
                             <p>{activity.placeName}</p>
                         </div>
-                        <div className="bg-white flex-1 p-2 rounded-lg flex items-center justify-between px-3">
+                        <div className="bg-white p-2 rounded-lg flex items-center justify-between px-3">
                             <p className="text-studentCheckboxClr">الطائرة</p>
                             <p>{activity.planeName}</p>
                         </div>
-                        <div className="bg-white flex-1 p-2 rounded-lg flex items-center justify-between px-3">
+                        <div className="bg-white p-2 rounded-lg flex items-center justify-between px-3">
                             <p className="text-studentCheckboxClr">سرعة الرياح</p>
                             <p>{activity.windSpeed}</p>
                         </div>
-                        <div className="bg-white flex-1 p-2 rounded-lg flex items-center justify-between px-3">
+                        <div className="bg-white p-2 rounded-lg flex items-center justify-between px-3">
                             <p className="text-studentCheckboxClr">الوقت</p>
                             <p>{activity.time}</p>
                         </div>
@@ -108,7 +126,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 </CardContent>
             </Card>
 
-            <div className="grid grid-cols-[310px_435px_435px] gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(250px,1fr)_1fr] xl:grid-cols-[minmax(310px,1fr)_435px_435px] gap-4">
                 {/* Students List */}
                 <div id="student-list" className="">
                     <Card className=" min-h-full">
@@ -123,20 +141,28 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                                     لا يوجد طلاب
                                 </p>
                             ) : (
-                                jumpers.map((jumper, index) => (
-                                    <div
-                                        key={jumper.id}
-                                        className={cn(
-                                            "flex flex-row justify-between items-center hover:bg-mainBg p-3 py-2 rounded-lg cursor-pointer transition-colors",
-                                            selectedJumperIndex === index && "bg-[#8870E733]/20 border border-sidebaractive"
-                                        )}
-                                        onClick={() => setSelectedJumperIndex(index)}
-                                    >
-                                        <p className="font-vazirmatn font-normal text-[16px] text-[#7B7B7B]">
-                                            طالب {index + 1}
-                                        </p>
-                                    </div>
-                                ))
+                                jumpers.map((jumper, index) => {
+                                    // Find the matching CoStTr record to get student name for this jumper
+                                    const coStTrRecord = isSuccessCoStTr && coStTr?.result?.data
+                                        ? coStTr.result.data.find((record: any) => record.uniqueID === jumper.co_St_TrId)
+                                        : null;
+                                    const jumperStudentName = coStTrRecord?.studentName || `طالب ${index + 1}`;
+
+                                    return (
+                                        <div
+                                            key={jumper.id}
+                                            className={cn(
+                                                "flex flex-row justify-between items-center hover:bg-mainBg p-3 py-2 rounded-lg cursor-pointer transition-colors",
+                                                selectedJumperIndex === index && "bg-[#8870E733]/20 border border-sidebaractive"
+                                            )}
+                                            onClick={() => setSelectedJumperIndex(index)}
+                                        >
+                                            <p className="font-vazirmatn font-normal text-[16px] text-[#7B7B7B]">
+                                                {jumperStudentName}
+                                            </p>
+                                        </div>
+                                    );
+                                })
                             )}
                         </CardContent>
                     </Card>

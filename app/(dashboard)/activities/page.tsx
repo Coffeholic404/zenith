@@ -109,16 +109,6 @@ export default function Page() {
           <div className="bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg shrink-0">
             <Image src={filterIcon} alt="filter icon" className=" size-6" />
           </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button className="bg-sidebaractive px-3 rounded-2xl shrink-0" onClick={() => router.push("/activities/add-activities")}>
-                <Image src={add} alt="add icon" className=" size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
-              <p className=" font-normal text-sm text-white font-vazirmatn">إضافة نشاط</p>
-            </TooltipContent>
-          </Tooltip>
         </div>
       </div>
       {isLoading ? (

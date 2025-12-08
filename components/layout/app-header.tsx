@@ -25,13 +25,13 @@ export function AppHeader() {
         <SidebarTrigger className="hover:bg-primary/10 transition-colors" />
       </div>
       <div className="w-full flex items-center justify-between gap-4 shrink-1">
-        <div className="relative ">
+        {/* <div className="relative ">
           <input
             type="search"
             placeholder="بحث..."
             className="h-11 lg:w-[441px] rounded-full bg-searchBg px-4 text-sm border border-searchBg focus:border-searchBg focus:outline-none focus:ring-1 focus:ring-blue-300 "
           />
-        </div>
+        </div> */}
         <div className="w-full flex items-center justify-end gap-4">
           {/* <ThemeToggle /> */}
           

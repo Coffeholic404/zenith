@@ -768,6 +768,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                      <Label htmlFor="form-rhf-select-character-edit" className="font-vazirmatn text-[14px]  block">حرف الدورة</Label>
                       <Select
                         name={field.name}
                         value={field.value}
@@ -779,11 +780,11 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                         disabled={isCoursesLoading || !isCoursesSuccess}
                       >
                         <SelectTrigger
-                          id="form-rhf-select-language"
+                          id="form-rhf-select-character-edit"
                           aria-invalid={fieldState.invalid}
                           className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         >
-                          <SelectValue placeholder="حرف الدورة" />
+                          <SelectValue placeholder="اختر حرف الدورة" />
                         </SelectTrigger>
                         <SelectContent >
                           {coursesCharacter.map((option) => (
@@ -804,18 +805,19 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     const selectedType = handleCourseTypeChange(watchedCharacter || "")
                     return (
                       <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                        <Label htmlFor="form-rhf-select-coursetype-edit" className="font-vazirmatn text-[14px]  block">نوع الدورة</Label>
                         <Select
                           name={field.name}
                           value={field.value}
                           onValueChange={field.onChange}
-                          // disabled
+                        // disabled
                         >
                           <SelectTrigger
-                            id="form-rhf-select-language"
+                            id="form-rhf-select-coursetype-edit"
                             aria-invalid={fieldState.invalid}
                             className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           >
-                            <SelectValue placeholder="نوع الدورة" />
+                            <SelectValue placeholder="اختر نوع الدورة" />
                           </SelectTrigger>
                           <SelectContent >
                             {selectedType.value && (
@@ -835,17 +837,18 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                      <Label htmlFor="form-rhf-select-plane-edit" className="font-vazirmatn text-[14px]  block">الطائرة</Label>
                       <Select
                         name={field.name}
                         value={field.value}
                         onValueChange={field.onChange}
                       >
                         <SelectTrigger
-                          id="form-rhf-select-language"
+                          id="form-rhf-select-plane-edit"
                           aria-invalid={fieldState.invalid}
                           className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         >
-                          <SelectValue placeholder="الطائرة" />
+                          <SelectValue placeholder="اختر الطائرة" />
                         </SelectTrigger>
                         <SelectContent >
                           {planesOptions.map((option) => (
@@ -864,17 +867,18 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                      <Label htmlFor="form-rhf-select-location-edit" className="font-vazirmatn text-[14px]  block">المكان</Label>
                       <Select
                         name={field.name}
                         value={field.value}
                         onValueChange={field.onChange}
                       >
                         <SelectTrigger
-                          id="form-rhf-select-language"
+                          id="form-rhf-select-location-edit"
                           aria-invalid={fieldState.invalid}
                           className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         >
-                          <SelectValue placeholder="المكان" />
+                          <SelectValue placeholder="اختر المكان" />
                         </SelectTrigger>
                         <SelectContent >
                           {placesOptions.map((option) => (
@@ -892,9 +896,10 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                      <Label htmlFor="startDate-edit" className="font-vazirmatn text-[14px]  block">تاريخ البدء</Label>
                       <BirthdayDate
                         {...field}
-                        placeholder="تاريخ البدء"
+                        placeholder="اختر تاريخ البدء"
                       />
                     </Field>
                   )}
@@ -905,10 +910,12 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field data-invalid={fieldState.invalid}>
+                      <Label htmlFor="windSpeed-edit" className="font-vazirmatn text-[14px]  block">سرعة الرياح</Label>
                       <Input
                         {...field}
+                        id="windSpeed-edit"
                         aria-invalid={fieldState.invalid}
-                        placeholder="سرعة الرياح "
+                        placeholder="أدخل سرعة الرياح"
                         autoComplete="off"
                         className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                       />
@@ -1006,6 +1013,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                        <Label htmlFor="form-rhf-select-student-edit" className="font-vazirmatn text-[14px]  block">الطالب</Label>
                         <Select
                           name={field.name}
                           value={field.value}
@@ -1013,11 +1021,11 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                           disabled={!watchedCharacter || isCourseDetailsFetching}
                         >
                           <SelectTrigger
-                            id="form-rhf-select-language"
+                            id="form-rhf-select-student-edit"
                             aria-invalid={fieldState.invalid}
                             className="char-select max-w-[320px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           >
-                            <SelectValue placeholder="الطالب" />
+                            <SelectValue placeholder="اختر الطالب" />
                           </SelectTrigger>
                           <SelectContent >
                             {studentOptions.map((option) => (
@@ -1041,15 +1049,17 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field orientation="responsive" data-invalid={fieldState.invalid} className="col-start-1">
+                        <Label htmlFor="currentTrainer1Id-edit" className="font-vazirmatn text-[14px]  block">المدرب 1</Label>
                         <Select
                           value={field.value || ""}
                           onValueChange={(value) => field.onChange(value)}
                           disabled={!watchedCharacter || isCourseDetailsFetching}
                         >
                           <SelectTrigger
+                            id="currentTrainer1Id-edit"
                             className="char-select max-w-[317px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 "
                           >
-                            <SelectValue placeholder="المدرب 1" />
+                            <SelectValue placeholder="اختر المدرب 1" />
                           </SelectTrigger>
                           <SelectContent>
                             {trainers.map((option: { value: string; label: string }) => (
@@ -1067,10 +1077,12 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-1">
+                        <Label htmlFor="currentTrainer1Note-edit" className="font-vazirmatn text-[14px]  block">ملاحظات المدرب 1</Label>
                         <Input
                           {...field}
+                          id="currentTrainer1Note-edit"
                           aria-invalid={fieldState.invalid}
-                          placeholder="ملاحظات المدرب 1"
+                          placeholder="أدخل ملاحظات المدرب 1"
                           autoComplete="off"
                           className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1083,15 +1095,17 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field orientation="responsive" data-invalid={fieldState.invalid} className="col-start-1">
+                        <Label htmlFor="currentTrainer2Id-edit" className="font-vazirmatn text-[14px]  block">المدرب 2</Label>
                         <Select
                           value={field.value || ""}
                           onValueChange={(value) => field.onChange(value)}
                           disabled={!watchedCharacter || isCourseDetailsFetching}
                         >
                           <SelectTrigger
+                            id="currentTrainer2Id-edit"
                             className="char-select max-w-[317px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 "
                           >
-                            <SelectValue placeholder="المدرب 2" />
+                            <SelectValue placeholder="اختر المدرب 2" />
                           </SelectTrigger>
                           <SelectContent>
                             {trainers.map((option: { value: string; label: string }) => (
@@ -1109,10 +1123,12 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-2">
+                        <Label htmlFor="currentTrainer2Note-edit" className="font-vazirmatn text-[14px]  block">ملاحظات المدرب 2</Label>
                         <Input
                           {...field}
+                          id="currentTrainer2Note-edit"
                           aria-invalid={fieldState.invalid}
-                          placeholder="ملاحظات المدرب 2"
+                          placeholder="أدخل ملاحظات المدرب 2"
                           autoComplete="off"
                           className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1125,15 +1141,17 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field orientation="responsive" data-invalid={fieldState.invalid} className="col-start-1">
+                        <Label htmlFor="currentTrainer3Id-edit" className="font-vazirmatn text-[14px]  block">المدرب 3</Label>
                         <Select
                           value={field.value || ""}
                           onValueChange={(value) => field.onChange(value)}
                           disabled={!watchedCharacter || isCourseDetailsFetching}
                         >
                           <SelectTrigger
+                            id="currentTrainer3Id-edit"
                             className="char-select max-w-[317px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 "
                           >
-                            <SelectValue placeholder="المدرب 3" />
+                            <SelectValue placeholder="اختر المدرب 3" />
                           </SelectTrigger>
                           <SelectContent>
                             {trainers.map((option: { value: string; label: string }) => (
@@ -1151,10 +1169,12 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-3">
+                        <Label htmlFor="currentTrainer3Note-edit" className="font-vazirmatn text-[14px]  block">ملاحظات المدرب 3</Label>
                         <Input
                           {...field}
+                          id="currentTrainer3Note-edit"
                           aria-invalid={fieldState.invalid}
-                          placeholder="ملاحظات المدرب 3"
+                          placeholder="أدخل ملاحظات المدرب 3"
                           autoComplete="off"
                           className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1172,11 +1192,13 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                        <Label htmlFor="currentJumpCount-edit" className="font-vazirmatn text-[14px]  block">عدد القفزات</Label>
                         <Input
                           {...field}
+                          id="currentJumpCount-edit"
                           type="number"
                           aria-invalid={fieldState.invalid}
-                          placeholder="عدد القفزات"
+                          placeholder="أدخل عدد القفزات"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1191,10 +1213,12 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                        <Label htmlFor="currentJumpType-edit" className="font-vazirmatn text-[14px]  block">نوع القفز</Label>
                         <Input
                           {...field}
+                          id="currentJumpType-edit"
                           aria-invalid={fieldState.invalid}
-                          placeholder="نوع القفز"
+                          placeholder="أدخل نوع القفز"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1209,11 +1233,13 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                        <Label htmlFor="currentParachuteOpiningTime-edit" className="font-vazirmatn text-[14px]  block">ارتفاع السقوط الحر</Label>
                         <Input
                           {...field}
+                          id="currentParachuteOpiningTime-edit"
                           type="number"
                           aria-invalid={fieldState.invalid}
-                          placeholder="ارتفاع السقوط الحر"
+                          placeholder="أدخل ارتفاع السقوط الحر"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1228,11 +1254,13 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                        <Label htmlFor="currentParachuteOpinignHeight-edit" className="font-vazirmatn text-[14px]  block">ارتفاع فتح المظلة</Label>
                         <Input
                           {...field}
+                          id="currentParachuteOpinignHeight-edit"
                           type="number"
                           aria-invalid={fieldState.invalid}
-                          placeholder="ارتفاع فتح المظلة"
+                          placeholder="أدخل ارتفاع فتح المظلة"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1247,10 +1275,12 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-1 block">
+                        <Label htmlFor="currentLandingLocation-edit" className="font-vazirmatn text-[14px]  block">موقع الهبوط</Label>
                         <Input
                           {...field}
+                          id="currentLandingLocation-edit"
                           aria-invalid={fieldState.invalid}
-                          placeholder="موقع الهبوط"
+                          placeholder="أدخل موقع الهبوط"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px]  rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1266,11 +1296,13 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-2 block">
+                        <Label htmlFor="currentFreeFallTime-edit" className="font-vazirmatn text-[14px]  block">وقت السقوط الحر</Label>
                         <Input
                           {...field}
+                          id="currentFreeFallTime-edit"
                           type="number"
                           aria-invalid={fieldState.invalid}
-                          placeholder="وقت السقوط الحر"
+                          placeholder="أدخل وقت السقوط الحر"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -1285,11 +1317,13 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-3 block">
+                        <Label htmlFor="currentPlaneExitHeight-edit" className="font-vazirmatn text-[14px]  block">ارتفاع الخروج من الطائرة</Label>
                         <Input
                           {...field}
+                          id="currentPlaneExitHeight-edit"
                           type="number"
                           aria-invalid={fieldState.invalid}
-                          placeholder="ارتفاع الخروج من الطائرة"
+                          placeholder="أدخل ارتفاع الخروج من الطائرة"
                           autoComplete="off"
                           className="  bg-searchBg max-w-[311px] rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />

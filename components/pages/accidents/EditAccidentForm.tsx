@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import React, { useEffect, useState } from 'react';
 import { useGetAccidentByIdQuery, useUpdateAccidentMutation } from '@/services/accident';
@@ -439,7 +440,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
     if (isLoading || !isFormReady) {
         return (
             <div className="space-y-4">
-            
+
                 <div className="max-w-5xl mx-auto">
                     <Card>
                         <CardHeader>
@@ -500,13 +501,14 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     control={form.control}
                                     render={({ field, fieldState }) => (
                                         <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                                            <Label htmlFor="form-rhf-select-language" className="font-vazirmatn text-[14px] mb-2 block">اسم الدورة</Label>
                                             <Select name={field.name} value={field.value} onValueChange={field.onChange}>
                                                 <SelectTrigger
                                                     id="form-rhf-select-language"
                                                     aria-invalid={fieldState.invalid}
                                                     className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                                                 >
-                                                    <SelectValue placeholder="اسم الدورة" />
+                                                    <SelectValue placeholder="اختر الدورة" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {coursesData.map((option: { value: string; label: string }) => (
@@ -526,6 +528,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     control={form.control}
                                     render={({ field, fieldState }) => (
                                         <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                                            <Label htmlFor="form-rhf-select-student" className="font-vazirmatn text-[14px] mb-2 block">اسم الطالب</Label>
                                             <Select
                                                 name={field.name}
                                                 value={field.value}
@@ -538,7 +541,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                                     disabled={!selectedCourseId}
                                                     className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
-                                                    <SelectValue placeholder={selectedCourseId ? "اسم الطالب" : "اختر الدورة أولاً"} />
+                                                    <SelectValue placeholder={selectedCourseId ? "اختر الطالب" : "اختر الدورة أولاً"} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {studentsData.map((option: { value: string; label: string }) => (
@@ -557,12 +560,14 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     name="freefallTime"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
-                                        <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                                        <Field data-invalid={fieldState.invalid}>
+                                            <Label htmlFor="freefallTime" className="font-vazirmatn text-[14px] mb-2 block">وقت السقوط الحر</Label>
                                             <Input
                                                 {...field}
+                                                id="freefallTime"
                                                 type="number"
                                                 aria-invalid={fieldState.invalid}
-                                                placeholder="وقت السقوط الحر"
+                                                placeholder="أدخل وقت السقوط الحر"
                                                 autoComplete="off"
                                                 onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                                 value={field.value || ''}
@@ -578,10 +583,12 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     control={form.control}
                                     render={({ field, fieldState }) => (
                                         <Field data-invalid={fieldState.invalid}>
+                                            <Label htmlFor="landings" className="font-vazirmatn text-[14px] mb-2 block">موقع الهبوط</Label>
                                             <Input
                                                 {...field}
+                                                id="landings"
                                                 aria-invalid={fieldState.invalid}
-                                                placeholder="موقع الهبوط"
+                                                placeholder="أدخل موقع الهبوط"
                                                 autoComplete="off"
                                                 className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                                             />
@@ -594,12 +601,14 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     name="jumperCount"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
-                                        <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                                        <Field data-invalid={fieldState.invalid}>
+                                            <Label htmlFor="jumperCount" className="font-vazirmatn text-[14px] mb-2 block">عدد القفزات</Label>
                                             <Input
                                                 {...field}
+                                                id="jumperCount"
                                                 type="number"
                                                 aria-invalid={fieldState.invalid}
-                                                placeholder=" عدد القفزات"
+                                                placeholder="أدخل عدد القفزات"
                                                 autoComplete="off"
                                                 onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                                 value={field.value || ''}
@@ -617,13 +626,14 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     control={form.control}
                                     render={({ field, fieldState }) => (
                                         <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                                            <Label htmlFor="form-rhf-select-activity" className="font-vazirmatn text-[14px] mb-2 block">النشاط</Label>
                                             <Select name={field.name} value={field.value} onValueChange={field.onChange}>
                                                 <SelectTrigger
-                                                    id="form-rhf-select-language"
+                                                    id="form-rhf-select-activity"
                                                     aria-invalid={fieldState.invalid}
                                                     className="char-select min-w-[120px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                                                 >
-                                                    <SelectValue placeholder="النشاط" />
+                                                    <SelectValue placeholder="اختر النشاط" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {activitiesData.map((option: { value: string; label: string }) => (
@@ -642,12 +652,14 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     name="freefallAltitude"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
-                                        <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                                        <Field data-invalid={fieldState.invalid}>
+                                            <Label htmlFor="freefallAltitude" className="font-vazirmatn text-[14px] mb-2 block">ارتفاع السقوط الحر</Label>
                                             <Input
                                                 {...field}
+                                                id="freefallAltitude"
                                                 type="number"
                                                 aria-invalid={fieldState.invalid}
-                                                placeholder="ارتفاع السقوط الحر"
+                                                placeholder="أدخل ارتفاع السقوط الحر"
                                                 autoComplete="off"
                                                 onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                                 value={field.value || ''}
@@ -662,12 +674,14 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     name="exitAltitude"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
-                                        <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                                        <Field data-invalid={fieldState.invalid}>
+                                            <Label htmlFor="exitAltitude" className="font-vazirmatn text-[14px] mb-2 block">ارتفاع الخروج من الطائرة</Label>
                                             <Input
                                                 {...field}
+                                                id="exitAltitude"
                                                 type="number"
                                                 aria-invalid={fieldState.invalid}
-                                                placeholder="ارتفاع الخروج من الطائرة"
+                                                placeholder="أدخل ارتفاع الخروج من الطائرة"
                                                 autoComplete="off"
                                                 onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                                 value={field.value || ''}
@@ -683,10 +697,12 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     control={form.control}
                                     render={({ field, fieldState }) => (
                                         <Field data-invalid={fieldState.invalid}>
+                                            <Label htmlFor="typeOfJump" className="font-vazirmatn text-[14px] mb-2 block">نوع القفز</Label>
                                             <Input
                                                 {...field}
+                                                id="typeOfJump"
                                                 aria-invalid={fieldState.invalid}
-                                                placeholder="نوع القفز"
+                                                placeholder="أدخل نوع القفز"
                                                 autoComplete="off"
                                                 className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                                             />
@@ -701,12 +717,14 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                     name="deployAltitude"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
-                                        <Field data-invalid={fieldState.invalid} className="col-start-1 block">
+                                        <Field data-invalid={fieldState.invalid}>
+                                            <Label htmlFor="deployAltitude" className="font-vazirmatn text-[14px] mb-2 block">ارتفاع فتح المظلة</Label>
                                             <Input
                                                 {...field}
+                                                id="deployAltitude"
                                                 type="number"
                                                 aria-invalid={fieldState.invalid}
-                                                placeholder="ارتفاع فتح المظلة"
+                                                placeholder="أدخل ارتفاع فتح المظلة"
                                                 autoComplete="off"
                                                 onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                                 value={field.value || ''}
@@ -736,14 +754,16 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field orientation="responsive" data-invalid={fieldState.invalid} className="col-start-1">
+                                        <Label htmlFor="trainer1Id" className="font-vazirmatn text-[14px]  block">المدرب 1</Label>
                                         <Select
                                             value={field.value || ""}
                                             onValueChange={(value) => field.onChange(value)}
                                         >
                                             <SelectTrigger
+                                                id="trainer1Id"
                                                 className="char-select  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 "
                                             >
-                                                <SelectValue placeholder="المدرب 1" />
+                                                <SelectValue placeholder="اختر المدرب 1" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {trainers.map((option: { value: string; label: string }) => (
@@ -761,10 +781,12 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-1">
+                                        <Label htmlFor="trainer1Note" className="font-vazirmatn text-[14px]  block">ملاحظات المدرب 1</Label>
                                         <Input
                                             {...field}
+                                            id="trainer1Note"
                                             aria-invalid={fieldState.invalid}
-                                            placeholder="ملاحظات المدرب 1"
+                                            placeholder="أدخل ملاحظات المدرب 1"
                                             autoComplete="off"
                                             className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                                         />
@@ -778,15 +800,17 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field orientation="responsive" data-invalid={fieldState.invalid} className="col-start-1">
+                                        <Label htmlFor="trainer2Id" className="font-vazirmatn text-[14px]  block">المدرب 2</Label>
                                         <Select
                                             value={field.value || ""}
                                             onValueChange={(value) => field.onChange(value)}
 
                                         >
                                             <SelectTrigger
+                                                id="trainer2Id"
                                                 className="char-select  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 "
                                             >
-                                                <SelectValue placeholder="المدرب 2" />
+                                                <SelectValue placeholder="اختر المدرب 2" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {trainers.map((option: { value: string; label: string }) => (
@@ -804,10 +828,12 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-2">
+                                        <Label htmlFor="trainer2Note" className="font-vazirmatn text-[14px]  block">ملاحظات المدرب 2</Label>
                                         <Input
                                             {...field}
+                                            id="trainer2Note"
                                             aria-invalid={fieldState.invalid}
-                                            placeholder="ملاحظات المدرب 2"
+                                            placeholder="أدخل ملاحظات المدرب 2"
                                             autoComplete="off"
                                             className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                                         />
@@ -821,14 +847,16 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field orientation="responsive" data-invalid={fieldState.invalid} className="col-start-1">
+                                        <Label htmlFor="trainer3Id" className="font-vazirmatn text-[14px]  block">المدرب 3</Label>
                                         <Select
                                             value={field.value || ""}
                                             onValueChange={(value) => field.onChange(value)}
                                         >
                                             <SelectTrigger
+                                                id="trainer3Id"
                                                 className="char-select  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 "
                                             >
-                                                <SelectValue placeholder="المدرب 3" />
+                                                <SelectValue placeholder="اختر المدرب 3" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {trainers.map((option: { value: string; label: string }) => (
@@ -846,10 +874,12 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid} className="col-start-2 row-start-3">
+                                        <Label htmlFor="trainer3Note" className="font-vazirmatn text-[14px]  block">ملاحظات المدرب 3</Label>
                                         <Input
                                             {...field}
+                                            id="trainer3Note"
                                             aria-invalid={fieldState.invalid}
-                                            placeholder="ملاحظات المدرب 3"
+                                            placeholder="أدخل ملاحظات المدرب 3"
                                             autoComplete="off"
                                             className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                                         />
@@ -925,11 +955,12 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                 control={form.control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
+                                        <Label htmlFor="form-rhf-textarea-about" className="font-vazirmatn text-[14px]  block">التقرير النهائي</Label>
                                         <Textarea
                                             {...field}
                                             id="form-rhf-textarea-about"
                                             aria-invalid={fieldState.invalid}
-                                            placeholder="اكتب تقرير الحادث هنا..."
+                                            placeholder="أدخل التقرير النهائي للحادث"
                                             className="min-h-[120px] bg-searchBg"
                                         />
 
