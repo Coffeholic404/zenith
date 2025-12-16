@@ -47,7 +47,7 @@ export default function AccidentDetails({ params }: { params: Promise<{ id: stri
 
     return (
         <div className="p-6 w-full max-w-[1600px] mx-auto font-vazirmatn" dir="rtl">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
                 {/* Right Column (Basic Info) - Takes 2 columns in the grid */}
                 <div className="md:col-span-2 md:order-1">
@@ -96,22 +96,21 @@ export default function AccidentDetails({ params }: { params: Promise<{ id: stri
                 </div>
 
                 {/* Side Content (Stack) - Left Side in RTL */}
-                <div className="md:col-span-1 md:order-2 space-y-6">
+                <div className="md:col-span-2 md:order-2 space-y-6">
 
                     {/* Equipment Card */}
-                    <Card className="border-none shadow-sm bg-white rounded-3xl">
+                    {/* <Card className="border-none shadow-sm bg-white rounded-3xl">
                         <CardHeader className="pb-2 pt-6 px-6">
                             <CardTitle className="text-lg font-bold text-gray-400 text-right">المعدات</CardTitle>
                         </CardHeader>
                         <CardContent className="px-6 pb-6">
                             <div className="space-y-3">
-                                {/* Hardcoded placeholders as per screenshot since data is missing */}
                                 <div className="text-right text-gray-500 font-medium pb-2 border-b border-gray-50 last:border-0">خوذة</div>
                                 <div className="text-right text-gray-500 font-medium pb-2 border-b border-gray-50 last:border-0">خوذة</div>
                                 <div className="text-right text-gray-500 font-medium pb-2 border-b border-gray-50 last:border-0">خوذة</div>
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
 
                     {/* Committee Card */}
                     <Card className="border-none shadow-sm bg-white rounded-3xl">
@@ -139,8 +138,8 @@ export default function AccidentDetails({ params }: { params: Promise<{ id: stri
                             <CardTitle className="text-lg font-bold text-gray-400 text-right">تقرير الحادث</CardTitle>
                         </CardHeader>
                         <CardContent className="px-6 pb-6">
-                            <div className="bg-[#F3F4F9] rounded-xl p-4 min-h-[120px]">
-                                <p className="text-gray-500 text-sm leading-relaxed text-right">
+                            <div className="bg-studentClr rounded-xl p-4 min-h-[120px]">
+                                <p className="text-studentCheckboxClr text-sm leading-relaxed text-right">
                                     {accident.finalReport || "لا يوجد تقرير"}
                                 </p>
                             </div>

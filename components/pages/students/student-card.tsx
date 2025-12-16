@@ -54,17 +54,22 @@ function StudentCard({ student }: { student: Student }) {
     };
     const handleDelete = async () => {
         try {
-            await deleteStudent(student.uniqueID);
+            await deleteStudent(student.uniqueID).unwrap();
             toast({
                 title: "تم حذف الطالب",
                 description: `تم حذف الطالب ${itemName} بنجاح.`,
 
             });
             setShowDeleteDialog(false);
-        } catch (error) {
+        } catch (error: any) {
+            // Extract error message from server response
+            const errorMessage = error?.data?.errorMessages?.[0] ||
+                error?.data?.message ||
+                "حدث خطأ أثناء حذف الطالب. يرجى المحاولة مرة أخرى.";
+
             toast({
                 title: "خطأ أثناء حذف الطالب",
-                description: "حدث خطأ أثناء حذف الطالب. يرجى المحاولة مرة أخرى.",
+                description: errorMessage,
                 variant: "destructive",
             });
         }

@@ -15,6 +15,7 @@ import { useGetCoursesQuery } from "@/services/courses";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import React from "react";
+import CoursesHeaderCards from "@/components/pages/courses/Courses-Cards";
 
 
 
@@ -69,7 +70,7 @@ export default function Page() {
 
   return (
     <section className=" space-y-6">
-      <HeaderCards />
+      <CoursesHeaderCards />
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
         <div className=" font-vazirmatn">
           <p className=" font-bold text-cardTxt text-[23px]"> الدورات</p>

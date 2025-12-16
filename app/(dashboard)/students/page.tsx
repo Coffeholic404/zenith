@@ -18,6 +18,7 @@ import filterIcon from "@/public/table/Filter.svg";
 import add from "@/public/employees/plus.svg";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
+import StudentHeaderCards from "@/components/pages/students/Student-Card-Headers";
 
 
 export default function Page() {
@@ -53,7 +54,7 @@ export default function Page() {
 
   return (
     <div className=" space-y-6 ">
-      <HeaderCards />
+      <StudentHeaderCards />
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
         <div className=" font-vazirmatn">
           <p className=" font-bold text-cardTxt ">إدارة الطلاب</p>

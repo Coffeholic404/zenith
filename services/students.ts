@@ -53,11 +53,11 @@ export type GetStudentsRequestParams = {
 export type GetStudentsResponse = {
     result: {
         data: Student[];
+        totalCount: number;
+        pageNumber: number;
+        pageSize: number;
+        totalPages: number;
     };
-    totalCount: number;
-    pageNumber: number;
-    pageSize: number;
-    totalPages: number;
 };
 
 export interface UpdateStudentResponse {
@@ -83,6 +83,7 @@ export interface GetStudentByIdResponse {
   isSuccess: boolean;
   errorMessages: string[];
   result: Student;
+  
 }
 
 

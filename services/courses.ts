@@ -85,7 +85,6 @@ export interface CourseActivity {
 export interface CreateCourseRequest {
   character: string;
   startDate: string;
-  endDate: string;
   typeId: string;
   costtr: CourseTrainerStudent[];
 }

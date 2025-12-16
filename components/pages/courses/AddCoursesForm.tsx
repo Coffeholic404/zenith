@@ -45,7 +45,6 @@ const addCoursesSchema = z.object({
   character: z.string().min(1, { message: "يجب إدخال الحرف" }),
   typeId: z.string().min(1, { message: "يجب إدخال نوع الدورة" }),
   startDate: z.string().min(1, { message: "يجب إدخال تاريخ بداية الدورة" }),
-  endDate: z.string().min(1, { message: "يجب إدخال تاريخ نهاية الدورة" }),
 })
 
 // Interface for trainer with students
@@ -88,7 +87,6 @@ export default function AddCoursesForm() {
       character: "",
       typeId: "",
       startDate: "",
-      endDate: "",
     },
   })
 
@@ -276,7 +274,6 @@ export default function AddCoursesForm() {
     const payload = {
       character: data.character,
       startDate: new Date(data.startDate).toISOString(),
-      endDate: new Date(data.endDate).toISOString(),
       typeId: data.typeId,
       costtr
     };
@@ -392,26 +389,7 @@ export default function AddCoursesForm() {
                     />
                   </div>
 
-                  <div className='flex-1 w-full'>
-                    <FormField
-                      control={control}
-                      name="endDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            {/* <Input
-                              {...field}
-                              type="date"
-                              placeholder="تاريخ الانتهاء"
-                              className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                            /> */}
-                            <BirthdayDate placeholder="تاريخ الانتهاء" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+
                 </div>
               </CardContent>
             </Card>
