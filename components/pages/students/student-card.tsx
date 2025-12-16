@@ -138,7 +138,7 @@ function StudentCard({ student }: { student: Student }) {
     )
 }
 
-const DeleteConfirmationDialog = ({
+export const DeleteConfirmationDialog = ({
     isOpen,
     onClose,
     onConfirm,

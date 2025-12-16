@@ -248,6 +248,9 @@ export const api = createApi({
         'deleteTrainingCourse',
         'getTrainingCourseById',
 
+        //Types
+        'Types',
+
         //plane
         "Plane",
 

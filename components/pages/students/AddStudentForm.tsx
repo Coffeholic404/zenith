@@ -804,7 +804,7 @@ function AddStudentForm() {
                             <Checkbox
                               checked={!!field.value}
                               onCheckedChange={field.onChange}
-                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-primary/20"
+                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-purple-500"
                             />
                           </FormControl>
                           <FormLabel className="text-muted-foreground">قلبية</FormLabel>
@@ -822,7 +822,7 @@ function AddStudentForm() {
                             <Checkbox
                               checked={!!field.value}
                               onCheckedChange={field.onChange}
-                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-primary/20"
+                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-purple-500"
                             />
                           </FormControl>
                           <FormLabel className="text-muted-foreground">ضغط</FormLabel>
@@ -843,7 +843,7 @@ function AddStudentForm() {
                             <Checkbox
                               checked={!!field.value}
                               onCheckedChange={field.onChange}
-                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-primary/20"
+                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-purple-500"
                             />
                           </FormControl>
                           <FormLabel className="text-muted-foreground">صرع</FormLabel>
@@ -861,7 +861,7 @@ function AddStudentForm() {
                             <Checkbox
                               checked={!!field.value}
                               onCheckedChange={field.onChange}
-                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-primary/20"
+                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-purple-500"
                             />
                           </FormControl>
                           <FormLabel className="text-muted-foreground">سكر</FormLabel>

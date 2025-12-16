@@ -42,8 +42,9 @@ import SkillAddModel from './pages/adds/skills/add-skills';
 import TrainingCourseAddModel from './pages/adds/TrainingCourses/addTrainingCourses';
 import AddPlaneModel from './pages/adds/plane/addPlane-model';
 import PlaceAddModel from './pages/adds/places/addPlaces-model';
+import CoursesTypeAddModel from './pages/adds/coursesType/coursesTypesModel';
 import type { EvaluationRow } from '@/components/pages/evaluation/evaluation-columns';
-
+import { CoursesType } from '@/components/pages/adds/coursesType/coursesType-columns';
 interface DataTableProps<TData, TValue, TNames> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -53,7 +54,7 @@ interface DataTableProps<TData, TValue, TNames> {
   type?: string;
   uniqueID?: string;
 }
-type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow;
+type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType;
 export function DataTable<TData extends adds, TValue, TNames>({
   columns,
   data,
@@ -299,6 +300,7 @@ export function DataTable<TData extends adds, TValue, TNames>({
 
               {type === 'plane' && <AddPlaneModel />}
               {type === 'place' && <PlaceAddModel />}
+              {type === 'coursesType' && <CoursesTypeAddModel />}
               {type === 'evaluation' && (
                 <Tooltip>
                   <TooltipTrigger asChild>

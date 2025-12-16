@@ -97,21 +97,21 @@ const menuItems = [
     href: "/accidents",
     icon: TornadoIcon,
   },
-  {
-    title: "تفتيش",
-    href: "/inspection",
-    icon: InspectIcon,
-  },
-  {
-    title: "المشتريات",
-    href: "/purchases",
-    icon: DocumentIcon,
-  },
-  {
-    title: "المخزن",
-    href: "/warehouse",
-    icon: ArchiveIcon,
-  },
+  // {
+  //   title: "تفتيش",
+  //   href: "/inspection",
+  //   icon: InspectIcon,
+  // },
+  // {
+  //   title: "المشتريات",
+  //   href: "/purchases",
+  //   icon: DocumentIcon,
+  // },
+  // {
+  //   title: "المخزن",
+  //   href: "/warehouse",
+  //   icon: ArchiveIcon,
+  // },
 ];
 
 export function AppSidebar() {

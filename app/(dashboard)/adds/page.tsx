@@ -17,6 +17,8 @@ import { planeColumns, planeColumnsNames } from "@/components/pages/adds/plane/p
 import { useGetPlanesQuery, Plane } from "@/services/plane";
 import { PlacesColumns, PlacesColumnsNames } from "@/components/pages/adds/places/places-columns";
 import { useGetPlacesQuery, PlaceItem } from "@/services/place";
+import { coursesTypeColumns, coursesTypeColumnsNames } from "@/components/pages/adds/coursesType/coursesType-columns";
+import { useGetTypesQuery, TypeItem } from "@/services/types";
 
 
 
@@ -43,6 +45,9 @@ export default function Page() {
   })
   const { data: places, isLoading: placesLoading, error: placesError, isSuccess: placesSuccess } = useGetPlacesQuery({
   })
+  const { data: types, isLoading: typesLoading, error: typesError, isSuccess: typesSuccess } = useGetTypesQuery({
+  })
+
 
   let nominatedPartiesData: NominatedParty[] = []
   let subscriptionsData: subscriptionApi[] = []
@@ -50,8 +55,12 @@ export default function Page() {
   let trainingCoursesData: TrainingCourse[] = []
   let planesData: Plane[] = []
   let placesData: PlaceItem[] = []
-  
   let skillsData: Skill[] = []
+  let typesData: TypeItem[] = []
+
+  if (typesSuccess && types?.result?.data) {
+    typesData = types?.result.data || []
+  }
   if (trainingCoursesSuccess && trainingCourses?.result?.data) {
     trainingCoursesData = trainingCourses?.result.data || []
   }
@@ -96,18 +105,18 @@ export default function Page() {
       value: "دورات بدنية",
       label: "دورات بدنية",
     },
-    {
-      value: "مواد",
-      label: "مواد",
-    },
-    {
-      value: "الفئات ",
-      label: "الفئات ",
-    },
-    {
-      value: "الوحدات",
-      label: "الوحدات",
-    },
+    // {
+    //   value: "مواد",
+    //   label: "مواد",
+    // },
+    // {
+    //   value: "الفئات ",
+    //   label: "الفئات ",
+    // },
+    // {
+    //   value: "الوحدات",
+    //   label: "الوحدات",
+    // },
     {
       value: "انواع المرفقات ",
       label: "انواع المرفقات ",
@@ -169,7 +178,7 @@ export default function Page() {
                 showAddButton={true} 
               />
             ) : (
-              <DataTable columns={TrainingCoursesColumns} data={trainingCoursesData} columnsNames={TrainingCoursesColumnsNames} type="trainingCourses" />
+              <DataTable columns={coursesTypeColumns} data={typesData} columnsNames={coursesTypeColumnsNames} type="coursesType" />
             )}
           </TabsContent>
           <TabsContent value="انواع الاشتراكات" className="bg-white rounded-lg">
@@ -183,15 +192,17 @@ export default function Page() {
               <DataTable columns={SubscriptionsColumns} data={subscriptionsData} columnsNames={SubscriptionsColumnsNames} type={"subscriptions"} />
             )}
           </TabsContent>
-          {/* <TabsContent value="دورات بدنية" className="bg-white rounded-lg">
-            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
+          <TabsContent value="دورات بدنية" className="bg-white rounded-lg">
+            {trainingCoursesLoading ? (
+              <DataTableSkeleton 
+                columnCount={3} 
+                rowCount={5} 
+                showAddButton={true} 
+              />
+            ) : (
+              <DataTable columns={TrainingCoursesColumns} data={trainingCoursesData} columnsNames={TrainingCoursesColumnsNames} type="trainingCourses" />
+            )}
           </TabsContent>
-          <TabsContent value="مواد" className="bg-white rounded-lg">
-            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
-          </TabsContent>
-          <TabsContent value="الفئات " className="bg-white rounded-lg">
-            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
-          </TabsContent> */}
           <TabsContent value="المهارات" className="bg-white rounded-lg">
             {skillsLoading ? (
               <DataTableSkeleton 
