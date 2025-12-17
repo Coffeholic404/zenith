@@ -54,7 +54,24 @@ function StudentCard({ student }: { student: Student }) {
     };
     const handleDelete = async () => {
         try {
-            await deleteStudent(student.uniqueID).unwrap();
+            const response = await deleteStudent(student.uniqueID).unwrap();
+
+            // Check if the API response indicates success
+            if (response?.isSuccess === false) {
+                // API returned an error response
+                const errorMessage = response?.errorMessages?.[0] ||
+                    "حدث خطأ أثناء حذف الطالب. يرجى المحاولة مرة أخرى.";
+
+                toast({
+                    title: "خطأ أثناء حذف الطالب",
+                    description: errorMessage,
+                    variant: "destructive",
+                });
+                setShowDeleteDialog(false);
+                return;
+            }
+
+            // Success case
             toast({
                 title: "تم حذف الطالب",
                 description: `تم حذف الطالب ${itemName} بنجاح.`,
@@ -72,6 +89,7 @@ function StudentCard({ student }: { student: Student }) {
                 description: errorMessage,
                 variant: "destructive",
             });
+            setShowDeleteDialog(false);
         }
     }
     const handleDeleteCancel = () => {

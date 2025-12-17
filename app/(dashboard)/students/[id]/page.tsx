@@ -40,21 +40,21 @@ const tabs = [
         value: "الدورات",
         label: "الدورات",
     },
-    {
-        value: "النشاطات",
-        label: "النشاطات",
-    },
-    {
-        value: "الحوادث",
-        label: "الحوادث",
-    },
+    // {
+    //     value: "النشاطات",
+    //     label: "النشاطات",
+    // },
+    // {
+    //     value: "الحوادث",
+    //     label: "الحوادث",
+    // },
 ]
 
 function page({ params }: { params: Promise<{ id: string }> }) {
     const { id: studentID } = React.use(params);
     const router = useRouter();
     const { data: student, isLoading, isSuccess, isError } = useGetStudentByIdQuery({ uniqueID: studentID })
-     const formatDate = (dateString: string) => {
+    const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -71,29 +71,51 @@ function page({ params }: { params: Promise<{ id: string }> }) {
     };
     const handleDelete = async () => {
         try {
-            await deleteStudent(student?.result?.uniqueID || "");
+            const response = await deleteStudent(student?.result?.uniqueID || "").unwrap();
+
+            // Check if the API response indicates success
+            if (response?.isSuccess === false) {
+                // API returned an error response
+                const errorMessage = response?.errorMessages?.[0] ||
+                    "حدث خطأ أثناء حذف الطالب. يرجى المحاولة مرة أخرى.";
+
+                toast({
+                    title: "خطأ أثناء حذف الطالب",
+                    description: errorMessage,
+                    variant: "destructive",
+                });
+                setShowDeleteDialog(false);
+                return;
+            }
+
+            // Success case
             toast({
                 title: "تم حذف الطالب",
                 description: `تم حذف الطالب ${itemName} بنجاح.`,
-
             });
             setShowDeleteDialog(false);
             router.push("/students");
-        } catch (error) {
+        } catch (error: any) {
+            // Extract error message from server response
+            const errorMessage = error?.data?.errorMessages?.[0] ||
+                error?.data?.message ||
+                "حدث خطأ أثناء حذف الطالب. يرجى المحاولة مرة أخرى.";
+
             toast({
                 title: "خطأ أثناء حذف الطالب",
-                description: "حدث خطأ أثناء حذف الطالب. يرجى المحاولة مرة أخرى.",
+                description: errorMessage,
                 variant: "destructive",
             });
+            setShowDeleteDialog(false);
         }
     }
     const handleDeleteCancel = () => {
         setShowDeleteDialog(false);
     };
-    
+
     const basicInfo = [
         {
-            label:"الاسم الثلاثي",
+            label: "الاسم الثلاثي",
             value: student?.result?.name
         },
         {
@@ -118,7 +140,7 @@ function page({ params }: { params: Promise<{ id: string }> }) {
         },
     ]
 
-    
+
 
     const studentSkills = student?.result?.skills?.map((skill: any) => ({
         label: skill.skillName,
@@ -169,7 +191,7 @@ function page({ params }: { params: Promise<{ id: string }> }) {
                             </div>
                         ))
                     }
-                   
+
                 </div>
                 <div className='bg-mainBg rounded-[21px] w-full xl:min-w-[461px] xl:max-w-[461px] p-6'>
                     <Tabs defaultValue={tabs[0].value} className="w-full space-y-6">
@@ -199,7 +221,7 @@ function page({ params }: { params: Promise<{ id: string }> }) {
                                             </div>
                                         ))
                                     }
-                                   
+
                                 </div>
                             </div>
                         </TabsContent>
@@ -218,7 +240,7 @@ function page({ params }: { params: Promise<{ id: string }> }) {
                                             </div>
                                         ))
                                     }
-                                   
+
                                 </div>
                             </div>
                         </TabsContent>
