@@ -180,7 +180,7 @@ export interface GetCoStTrSelectResponse {
 }
 
 export const coStTrApi = api.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     // GET /api/CoStTr - list CoStTr with pagination
     getCoStTr: builder.query<GetCoStTrResponse, GetCoStTrRequest>({
       query: ({ pageNumber = 1, pageSize = 10, searchQuery }) => ({
@@ -189,29 +189,29 @@ export const coStTrApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['CoStTr'],
+      providesTags: ['CoStTr']
     }),
 
     // GET /api/CoStTr/{id}
     getCoStTrById: builder.query<GetCoStTrByIdResponse, GetCoStTrByIdRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/CoStTr/${uniqueID}`,
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['CoStTr'],
+      providesTags: ['CoStTr']
     }),
 
     // POST /api/CoStTr
     createCoStTr: builder.mutation<CreateCoStTrResponse, CreateCoStTrRequest>({
-      query: (body) => ({
+      query: body => ({
         url: '/api/CoStTr',
         method: 'POST',
-        body,
+        body
       }),
-      invalidatesTags: ['CoStTr'],
+      invalidatesTags: ['CoStTr']
     }),
 
     // PUT /api/CoStTr/{id}
@@ -219,45 +219,45 @@ export const coStTrApi = api.injectEndpoints({
       query: ({ uniqueID, ...body }) => ({
         url: `/api/CoStTr/${uniqueID}`,
         method: 'PUT',
-        body,
+        body
       }),
-      invalidatesTags: ['CoStTr'],
+      invalidatesTags: ['CoStTr']
     }),
 
     // DELETE /api/CoStTr/{id}
     deleteCoStTr: builder.mutation<DeleteCoStTrResponse, DeleteCoStTrRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/CoStTr/${uniqueID}`,
-        method: 'DELETE',
+        method: 'DELETE'
       }),
-      invalidatesTags: ['CoStTr'],
+      invalidatesTags: ['CoStTr']
     }),
 
     // GET /api/CoStTr/trainers/select
     getTrainersSelect: builder.query<GetTrainersSelectResponse, void>({
       query: () => ({
         url: '/api/CoStTr/trainers/select',
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['CoStTr'],
+      providesTags: ['CoStTr']
     }),
 
     // GET /api/CoStTr/student/{studentId}/history
     getStudentHistory: builder.query<GetStudentHistoryResponse, GetStudentHistoryRequest>({
       query: ({ studentId }) => ({
         url: `/api/CoStTr/student/${studentId}/history`,
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['CoStTr'],
+      providesTags: ['CoStTr']
     }),
 
     // GET /api/CoStTr/trainer/{trainerId}/courses
     getTrainerCourses: builder.query<GetTrainerCoursesResponse, GetTrainerCoursesRequest>({
       query: ({ trainerId }) => ({
         url: `/api/CoStTr/trainer/${trainerId}/courses`,
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['CoStTr'],
+      providesTags: ['CoStTr']
     }),
 
     // GET /api/CoStTr/without-evaluation
@@ -268,10 +268,10 @@ export const coStTrApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['CoStTr'],
+      providesTags: ['CoStTr']
     }),
 
     // GET /api/CoStTr/with-evaluation
@@ -282,35 +282,35 @@ export const coStTrApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['CoStTr'],
+      providesTags: ['CoStTr']
     }),
 
     // GET /api/CoStTr/active-courses
-    getActiveCourses: builder.query<GetActiveCoursesResponse, GetCoStTrRequest>({
+    getCoStTrActiveCourses: builder.query<GetActiveCoursesResponse, GetCoStTrRequest>({
       query: ({ pageNumber = 1, pageSize = 10, searchQuery }) => ({
         url: '/api/CoStTr/active-courses',
         method: 'GET',
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['CoStTr'],
+      providesTags: ['CoStTr']
     }),
 
     // GET /api/CoStTr/select
     getCoStTrSelect: builder.query<GetCoStTrSelectResponse, void>({
       query: () => ({
         url: '/api/CoStTr/select',
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['CoStTr'],
-    }),
-  }),
+      providesTags: ['CoStTr']
+    })
+  })
 });
 
 export const {
@@ -324,6 +324,6 @@ export const {
   useGetTrainerCoursesQuery,
   useGetCoStTrWithoutEvaluationQuery,
   useGetCoStTrWithEvaluationQuery,
-  useGetActiveCoursesQuery,
-  useGetCoStTrSelectQuery,
+  useGetCoStTrActiveCoursesQuery,
+  useGetCoStTrSelectQuery
 } = coStTrApi;

@@ -68,12 +68,14 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
 
     // State for tracking committee members changes
     const [originalCommitteeMembers, setOriginalCommitteeMembers] = useState<string[]>([]);
+    const [committeeMemberMapping, setCommitteeMemberMapping] = useState<Record<string, string>>({});
     const [loadedAccidentId, setLoadedAccidentId] = useState<string | null>(null);
     const [isCascadingDataReady, setIsCascadingDataReady] = useState(false);
 
     // Reset state when accidentId changes (navigating to different accident)
     useEffect(() => {
         setOriginalCommitteeMembers([]);
+        setCommitteeMemberMapping({});
         setLoadedAccidentId(null);
         setIsCascadingDataReady(false);
     }, [accidentId]);
@@ -87,6 +89,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         { id: accidentId },
         { refetchOnMountOrArgChange: true }
     );
+    console.log(accidentResponse);
 
     // Fetch employees
     const {
@@ -282,9 +285,22 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
             const committeeMemberIds = accident.committeeMembers.map(member => member.employeeId);
             setOriginalCommitteeMembers(committeeMemberIds);
 
-            // Find the course that contains this student
+            // Map employeeId to the actual committee member record id for deletion
+            const mapping: Record<string, string> = {};
+            accident.committeeMembers.forEach(member => {
+                mapping[member.employeeId] = member.id;
+            });
+            setCommitteeMemberMapping(mapping);
+
+            // Find the course that contains this student/activity
             let courseId = '';
-            if (isSuccessCourses && courses?.result?.data) {
+            if (isSuccessActivities && activities?.result?.data) {
+                const activity = activities.result.data.find(a => a.uniqueID === accident.activityId);
+                courseId = activity?.courseId || '';
+            }
+
+            // Fallback: If activity doesn't have courseId, try finding it in courses (original logic as backup)
+            if (!courseId && isSuccessCourses && courses?.result?.data) {
                 const courseWithStudent = courses.result.data.find((course: any) =>
                     course.participants?.some((p: any) => p.co_St_TrId === accident.co_St_TrId)
                 );
@@ -313,13 +329,23 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                 committeeMembers: committeeMemberIds
             });
 
-            // DO NOT set loadedAccidentId yet - wait for cascading data to be ready
+            // Set loadedAccidentId AFTER resetting form as a fallback if cascading data check fails
+            // But we still prefer cascading data check for UI consistency
             setIsCascadingDataReady(false);
         }
-    }, [accidentResponse, form, loadedAccidentId, accidentId, isSuccessCourses, isSuccessActivities, isSuccessEmployees, isSuccessCoStTr, courses]);
+    }, [accidentResponse, form, loadedAccidentId, accidentId, isSuccessCourses, isSuccessActivities, isSuccessEmployees, isSuccessCoStTr, courses, activities]);
 
     // Phase 2: Verify cascading data is ready and mark form as loaded
     useEffect(() => {
+        // Safety timeout to prevent infinite loading if cascading data never becomes "ready"
+        const safetyTimeout = setTimeout(() => {
+            if (accidentResponse?.result && loadedAccidentId !== accidentId) {
+                console.warn('EditAccidentForm: Safety timeout triggered. Marking form ready despite cascading data state.');
+                setIsCascadingDataReady(true);
+                setLoadedAccidentId(accidentId);
+            }
+        }, 3000);
+
         // Only run after form values are set but before marking ready
         if (
             loadedAccidentId !== accidentId &&
@@ -330,22 +356,20 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
             const accident = accidentResponse.result;
 
             // Check if cascading data has been computed correctly
-            const hasMatchingActivity = activitiesData.some(
+            const hasMatchingActivity = activitiesData.length > 0 && activitiesData.some(
                 (activity: any) => activity.value === accident.activityId
             );
 
-            // For students, we need to check if the activity is selected and if studentsData is populated
-            const hasActivitySelected = !!selectedActivityId && selectedActivityId === accident.activityId;
-
             // Check if student data is available AND contains the student we're looking for
-            const hasMatchingStudent = hasActivitySelected &&
+            const hasMatchingStudent = selectedActivityId === accident.activityId &&
                 studentsData.length > 0 &&
                 studentsData.some((student: any) => student.value === accident.co_St_TrId);
 
             // Only mark ready when cascading data is available
             if (hasMatchingActivity && hasMatchingStudent) {
+                clearTimeout(safetyTimeout);
+
                 // Force update the co_St_TrId field to ensure Select recognizes the value
-                // This setTimeout ensures the Select has rendered with correct options before setting the value
                 const currentCoStTrId = accident.co_St_TrId;
                 setTimeout(() => {
                     form.setValue('co_St_TrId', currentCoStTrId, {
@@ -359,6 +383,8 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                 setLoadedAccidentId(accidentId);
             }
         }
+
+        return () => clearTimeout(safetyTimeout);
     }, [selectedCourseId, selectedActivityId, activitiesData, studentsData, accidentResponse, loadedAccidentId, accidentId, isCascadingDataReady]);
 
     const onSubmit = async (values: z.infer<typeof EditAccidentFormSchema>) => {
@@ -371,8 +397,11 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                 .map(employeeId => ({ employeeId }));
 
             // Calculate members to delete (in original but not in current)
+            // We need to send the record ID, not the employee ID
             const committeeMembersToDelete = originalCommitteeMembers
-                .filter(memberId => !currentCommitteeMembers.includes(memberId));
+                .filter(memberId => !currentCommitteeMembers.includes(memberId))
+                .map(employeeId => committeeMemberMapping[employeeId])
+                .filter(id => !!id);
 
             // Prepare update request
             const requestData = {
@@ -433,6 +462,22 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         }
     };
 
+    // Error state - check this FIRST to avoid infinite loading on error
+    const hasAnyError = isErrorAccident || isErrorCourses || isErrorCoStTr || isErrorCourses || (isSuccessActivities === false && !isLoadingActivities);
+
+    if (hasAnyError) {
+        return (
+            <div className="max-w-5xl mx-auto">
+                <Card>
+                    <CardContent className="py-8 text-center text-vazirmatn">
+                        <p className="text-deleteTxt ">حدث خطأ أثناء تحميل بعض البيانات المطلوبة</p>
+                        <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>إعادة المحاولة</Button>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
     // Loading state - wait for all data to be loaded AND form to be populated
     const isLoading = isLoadingAccident || isLoadingEmployees || isLoadingCourses || isLoadingActivities || isLoadingCoStTr;
     const isFormReady = loadedAccidentId === accidentId;
@@ -467,19 +512,6 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                         </CardContent>
                     </Card>
                 </div>
-            </div>
-        );
-    }
-
-    // Error state
-    if (isErrorAccident) {
-        return (
-            <div className="max-w-5xl mx-auto">
-                <Card>
-                    <CardContent className="py-8 text-center">
-                        <p className="text-deleteTxt font-vazirmatn">حدث خطأ أثناء تحميل بيانات الحادث</p>
-                    </CardContent>
-                </Card>
             </div>
         );
     }
@@ -543,12 +575,18 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                                 >
                                                     <SelectValue placeholder={selectedCourseId ? "اختر الطالب" : "اختر الدورة أولاً"} />
                                                 </SelectTrigger>
-                                                <SelectContent>
-                                                    {studentsData.map((option: { value: string; label: string }) => (
-                                                        <SelectItem key={option.value} value={option.value}>
-                                                            {option.label}
+                                                <SelectContent drop-shadow-lg>
+                                                    {studentsData.length > 0 ? (
+                                                        studentsData.map((option: { value: string; label: string }) => (
+                                                            <SelectItem key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))
+                                                    ) : (
+                                                        <SelectItem value="no-student" disabled>
+                                                            لا يوجد طلاب
                                                         </SelectItem>
-                                                    ))}
+                                                    )}
                                                 </SelectContent>
                                             </Select>
                                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -635,12 +673,18 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                                 >
                                                     <SelectValue placeholder="اختر النشاط" />
                                                 </SelectTrigger>
-                                                <SelectContent>
-                                                    {activitiesData.map((option: { value: string; label: string }) => (
-                                                        <SelectItem key={option.value} value={option.value}>
-                                                            {option.label}
+                                                <SelectContent drop-shadow-lg>
+                                                    {activitiesData.length > 0 ? (
+                                                        activitiesData.map((option: { value: string; label: string }) => (
+                                                            <SelectItem key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))
+                                                    ) : (
+                                                        <SelectItem value="no-activity" disabled>
+                                                            لا يوجد أنشطة
                                                         </SelectItem>
-                                                    ))}
+                                                    )}
                                                 </SelectContent>
                                             </Select>
                                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

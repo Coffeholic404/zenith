@@ -331,12 +331,18 @@ export default function AddAccidentForm() {
                         >
                           <SelectValue placeholder={selectedActivityId ? 'اختر الطالب' : 'اختر النشاط أولاً'} />
                         </SelectTrigger>
-                        <SelectContent>
-                          {studentsData.map((option: { value: string; label: string }) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
+                        <SelectContent drop-shadow-lg>
+                          {studentsData.length > 0 ? (
+                            studentsData.map((option: { value: string; label: string }) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="no-student" disabled>
+                              لا يوجد طلاب
                             </SelectItem>
-                          ))}
+                          )}
                         </SelectContent>
                       </Select>
                       {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -437,11 +443,17 @@ export default function AddAccidentForm() {
                           <SelectValue placeholder={selectedCourseId ? 'اختر النشاط' : 'اختر الدورة أولاً'} />
                         </SelectTrigger>
                         <SelectContent>
-                          {activitiesData.map((option: { value: string; label: string }) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
+                          {activitiesData.length > 0 ? (
+                            activitiesData.map((option: { value: string; label: string }) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="no-activity" disabled>
+                              لا يوجد أنشطة
                             </SelectItem>
-                          ))}
+                          )}
                         </SelectContent>
                       </Select>
                       {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

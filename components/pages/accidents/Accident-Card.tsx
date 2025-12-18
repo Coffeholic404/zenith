@@ -120,6 +120,10 @@ export default function AccidentCard({ accident }: { accident: AccidentItem }) {
                   <Image src={map} alt="map" />
                   <p className=" text-[#868585] font-semibold text-[13px]">{accident.placeName}</p>
                 </div>
+                <div className=" flex items-center gap-2">
+                  <Image src={plain} alt="plain" />
+                  <p className=" text-[#868585] font-semibold text-[13px]">{accident.planeName}</p>
+                </div>
                 {/* <div className=" flex items-center gap-2">
                                     <Image src={plain} alt="plain" />
                                     <p className=" text-[#868585] font-semibold text-[13px]">{planeTitle}</p>

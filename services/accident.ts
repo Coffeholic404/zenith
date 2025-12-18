@@ -24,6 +24,7 @@ export interface AccidentItem {
   activityDate: string;
   activityTime: string;
   placeName: string;
+  planeName: string;
   jumperCount: number;
   freefallTime: number;
   freefallAltitude: number;
