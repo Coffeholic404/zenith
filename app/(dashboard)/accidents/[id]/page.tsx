@@ -63,6 +63,7 @@ export default function AccidentDetails({ params }: { params: Promise<{ id: stri
                                 <InfoRow label="اسم النشاط" value={accident.activityName} />
                                 <InfoRow label="عدد القفزات" value={accident.jumperCount} />
                                 <InfoRow label="نوع القفز" value={accident.typeOfJump} />
+                                <InfoRow label="اسم الطائرة" value={accident.planeName} />
                                 <InfoRow label="وقت الخروج من الطائرة" value={accident.exitAltitude ? `${accident.exitAltitude} قدم` : "-"} />
                                 <InfoRow label="ارتفاع فتح المظلة" value={accident.deployAltitude ? `${accident.deployAltitude} قدم` : "-"} />
                                 <InfoRow label="وقت السقوط الحر" value={accident.freefallTime ? `${accident.freefallTime} ثانية` : "-"} />

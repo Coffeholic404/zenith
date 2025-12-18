@@ -126,9 +126,9 @@ export function DataTable<TData extends adds, TValue, TNames>({
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className=" size-10 p-0 rounded-xl bg-searchBg">
+                  {/* <Button variant="outline" className=" size-10 p-0 rounded-xl bg-searchBg">
                     <Image src={filterIcon} alt="filter icon" className=" size-[22px]" />
-                  </Button>
+                  </Button> */}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuCheckboxItem

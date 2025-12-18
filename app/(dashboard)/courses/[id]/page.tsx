@@ -28,7 +28,7 @@ import eye from '@/public/courses/Eye.svg';
 import plain from '@/public/courses/Plain.svg';
 import map from '@/public/courses/map.svg';
 import React from 'react';
-import { useGetCourseByIdQuery, CourseDetails } from '@/services/courses';
+import { useGetCourseByIdQuery, CourseDetails, useDeleteCourseMutation } from '@/services/courses';
 import Loading from '@/components/pages/courses/loading';
 import Error from '@/components/pages/courses/error';
 import { useRouter } from 'next/navigation';
@@ -36,13 +36,15 @@ import { useDeleteActivityMutation, ActivityItem } from '@/services/activity';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  const [isCourseDeleteDialogOpen, setIsCourseDeleteDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [activityToDelete, setActivityToDelete] = useState<string | null>(null);
   const { id: courseId } = React.use(params);
   const [isOpen, setIsOpen] = useState(false);
   const { data, isLoading, isError } = useGetCourseByIdQuery({ uniqueID: courseId });
   const router = useRouter();
-  const [deleteActivity, { isLoading: isDeleting }] = useDeleteActivityMutation();
+  const [deleteActivity, { isLoading: isDeletingActivity }] = useDeleteActivityMutation();
+  const [deleteCourse, { isLoading: isDeletingCourse }] = useDeleteCourseMutation();
   const { toast } = useToast();
   // Group participants by trainer
   const trainerGroups = React.useMemo(() => {
@@ -107,6 +109,38 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     }
   };
 
+  const handleDeleteCourse = async () => {
+    try {
+      await deleteCourse({ uniqueID: courseId }).unwrap();
+
+      // Show success toast
+      toast({
+        title: 'تم بنجاح',
+        description: `تم حذف الدورة بنجاح`,
+        variant: 'default'
+      });
+
+      // Close the dialog
+      setIsCourseDeleteDialogOpen(false);
+
+      // Redirect to courses list
+      router.push('/courses');
+    } catch (error: any) {
+      // Show error toast with the exact error message from API
+      const errorMessage =
+        error?.data?.errorMessages?.[0] || error?.data?.message || error?.message || 'حدث خطأ أثناء حذف الدورة';
+
+      toast({
+        title: 'خطأ',
+        description: errorMessage,
+        variant: 'destructive'
+      });
+
+      // Close the dialog even on error
+      setIsCourseDeleteDialogOpen(false);
+    }
+  };
+
   return (
     <div className=" space-y-4">
       <Card className="  flex justify-center items-center py-4">
@@ -124,11 +158,19 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             </Badge>
           </div>
           <div className=" flex gap-4 font-vazirmatn self-end">
-            <Button variant="outline" className=" px-6 rounded-xl">
+            <Button
+              variant="outline"
+              className=" px-6 rounded-xl"
+              onClick={() => router.push(`/courses/edit-course/${courseId}`)}
+            >
               <Image src={pen} alt="edit" />
               تعديل
             </Button>
-            <Button className=" border border-red-500 px-6 rounded-xl" variant="outline">
+            <Button
+              className=" border border-red-500 px-6 rounded-xl hover:bg-red-500 hover:text-white"
+              variant="outline"
+              onClick={() => setIsCourseDeleteDialogOpen(true)}
+            >
               <Image src={trash} alt="delete" />
               حذف
             </Button>
@@ -267,10 +309,33 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             <AlertDialogCancel className="font-vazirmatn">إلغاء</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteActivity}
-              disabled={isDeleting}
+              disabled={isDeletingActivity}
               className="bg-red-600 hover:bg-red-700 font-vazirmatn"
             >
-              {isDeleting ? 'جاري الحذف...' : 'حذف'}
+              {isDeletingActivity ? 'جاري الحذف...' : 'حذف'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={isCourseDeleteDialogOpen} onOpenChange={setIsCourseDeleteDialogOpen}>
+        <AlertDialogContent className="font-vazirmatn">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-right text-cardTxt">تأكيد الحذف</AlertDialogTitle>
+            <AlertDialogDescription className="text-right text-subtext">
+              هل أنت متأكد من حذف هذه الدورة؟
+              <br />
+              <span className="text-sm text-deleteTxt">لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع البيانات المرتبطة بها.</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex gap-2">
+            <AlertDialogCancel className="font-vazirmatn">إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteCourse}
+              disabled={isDeletingCourse}
+              className="bg-red-600 hover:bg-red-700 font-vazirmatn"
+            >
+              {isDeletingCourse ? 'جاري الحذف...' : 'حذف'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

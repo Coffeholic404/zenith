@@ -106,9 +106,9 @@ export default function Page() {
               </button>
             )}
           </div>
-          <div className="bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg shrink-0">
+          {/* <div className="bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg shrink-0">
             <Image src={filterIcon} alt="filter icon" className=" size-6" />
-          </div>
+          </div> */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button className="bg-sidebaractive px-3 rounded-2xl shrink-0" onClick={() => router.push("/students/add-student")}>

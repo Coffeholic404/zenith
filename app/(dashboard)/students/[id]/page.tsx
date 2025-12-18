@@ -138,6 +138,14 @@ function page({ params }: { params: Promise<{ id: string }> }) {
             label: "الجهة المرشحة",
             value: student?.result?.nominatedPartyName
         },
+        {
+            label: "نوع الاشتراك",
+            value: student?.result?.subscriptionTypeName
+        },
+        {
+            label: "الحالة الجسدية",
+            value: student?.result?.bodyCondition
+        },
     ]
 
 
@@ -175,6 +183,18 @@ function page({ params }: { params: Promise<{ id: string }> }) {
                             <div className='flex gap-2'>
                                 <Badge className=' font-vazirmatn bg-sidebaractive'>{student?.result?.hight} cm</Badge>
                                 <Badge className=' font-vazirmatn bg-sidebaractive'>{student?.result?.width} kg</Badge>
+                                {student?.result?.epilepsy && (
+                                    <Badge className=' font-vazirmatn bg-sidebaractive'>صرع</Badge>
+                                )}
+                                {student?.result?.heartDisease && (
+                                    <Badge className=' font-vazirmatn bg-sidebaractive'>مرض قلب</Badge>
+                                )}
+                                {student?.result?.sugar && (
+                                    <Badge className=' font-vazirmatn bg-sidebaractive'>سكري</Badge>
+                                )}
+                                {student?.result?.pressure && (
+                                    <Badge className=' font-vazirmatn bg-sidebaractive'>ضغط</Badge>
+                                )}
                             </div>
                         </div>
                     </div>
