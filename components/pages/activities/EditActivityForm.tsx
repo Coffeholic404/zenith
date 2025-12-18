@@ -818,7 +818,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                           name={field.name}
                           value={field.value}
                           onValueChange={field.onChange}
-                          // disabled
+                        // disabled
                         >
                           <SelectTrigger
                             id="form-rhf-select-coursetype-edit"
@@ -1028,11 +1028,17 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                             <SelectValue placeholder="اختر الطالب" />
                           </SelectTrigger>
                           <SelectContent>
-                            {studentOptions.map(option => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label}
+                            {studentOptions.length === 0 ? (
+                              <SelectItem value="none" disabled>
+                                لا يوجد طلاب
                               </SelectItem>
-                            ))}
+                            ) : (
+                              studentOptions.map(option => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))
+                            )}
                           </SelectContent>
                         </Select>
                       </Field>
@@ -1063,6 +1069,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                             <SelectValue placeholder="اختر المدرب 1" />
                           </SelectTrigger>
                           <SelectContent>
+                            <SelectItem value="none">اختر مدرب</SelectItem>
                             {trainers.map((option: { value: string; label: string }) => (
                               <SelectItem key={option.value} value={option.value}>
                                 {option.label}

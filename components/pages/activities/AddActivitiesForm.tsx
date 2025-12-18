@@ -317,11 +317,11 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
       exitAltitude: planeExitHeight,
       landings: landingLocation,
       typeOfJump: jumpType,
-      trainer1Id: form.getValues("currentTrainer1Id") || undefined,
+      trainer1Id: form.getValues("currentTrainer1Id") === "none" ? undefined : (form.getValues("currentTrainer1Id") || undefined),
       trainer1Note: form.getValues("currentTrainer1Note") || undefined,
-      trainer2Id: form.getValues("currentTrainer2Id") || undefined,
+      trainer2Id: form.getValues("currentTrainer2Id") === "none" ? undefined : (form.getValues("currentTrainer2Id") || undefined),
       trainer2Note: form.getValues("currentTrainer2Note") || undefined,
-      trainer3Id: form.getValues("currentTrainer3Id") || undefined,
+      trainer3Id: form.getValues("currentTrainer3Id") === "none" ? undefined : (form.getValues("currentTrainer3Id") || undefined),
       trainer3Note: form.getValues("currentTrainer3Note") || undefined,
     };
 
@@ -458,11 +458,11 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
       exitAltitude: planeExitHeight,
       landings: landingLocation,
       typeOfJump: jumpType,
-      trainer1Id: form.getValues("currentTrainer1Id") || undefined,
+      trainer1Id: form.getValues("currentTrainer1Id") === "none" ? undefined : (form.getValues("currentTrainer1Id") || undefined),
       trainer1Note: form.getValues("currentTrainer1Note") || undefined,
-      trainer2Id: form.getValues("currentTrainer2Id") || undefined,
+      trainer2Id: form.getValues("currentTrainer2Id") === "none" ? undefined : (form.getValues("currentTrainer2Id") || undefined),
       trainer2Note: form.getValues("currentTrainer2Note") || undefined,
-      trainer3Id: form.getValues("currentTrainer3Id") || undefined,
+      trainer3Id: form.getValues("currentTrainer3Id") === "none" ? undefined : (form.getValues("currentTrainer3Id") || undefined),
       trainer3Note: form.getValues("currentTrainer3Note") || undefined,
     };
 
@@ -881,11 +881,17 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                             <SelectValue placeholder="اختر الطالب" />
                           </SelectTrigger>
                           <SelectContent >
-                            {studentOptions.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label}
+                            {studentOptions.length === 0 ? (
+                              <SelectItem value="none" disabled>
+                                لا يوجد طلاب
                               </SelectItem>
-                            ))}
+                            ) : (
+                              studentOptions.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))
+                            )}
                           </SelectContent>
                         </Select>
                       </Field>
@@ -915,6 +921,7 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                             <SelectValue placeholder="اختر المدرب 1" />
                           </SelectTrigger>
                           <SelectContent>
+                            <SelectItem value="none">اختر مدرب</SelectItem>
                             {trainers.map((option: { value: string; label: string }) => (
                               <SelectItem key={option.value} value={option.value}>
                                 {option.label}
@@ -961,6 +968,7 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                             <SelectValue placeholder="اختر المدرب 2" />
                           </SelectTrigger>
                           <SelectContent>
+                            <SelectItem value="none">اختر مدرب</SelectItem>
                             {trainers.map((option: { value: string; label: string }) => (
                               <SelectItem key={option.value} value={option.value}>
                                 {option.label}
@@ -1007,6 +1015,7 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                             <SelectValue placeholder="اختر المدرب 3" />
                           </SelectTrigger>
                           <SelectContent>
+                            <SelectItem value="none">اختر مدرب</SelectItem>
                             {trainers.map((option: { value: string; label: string }) => (
                               <SelectItem key={option.value} value={option.value}>
                                 {option.label}

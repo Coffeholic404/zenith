@@ -389,6 +389,7 @@ function EditStudentForm({ id }: { id: string }) {
       const response = await updateStudent({ uniqueID: id, student: formData }).unwrap();
 
       if (response.isSuccess) {
+        
         const studentData = response.result;
         toast.success(`تم تحديث بيانات الطالب بنجاح`, {
           description: `الاسم: ${studentData?.name || data.name}${studentData?.uniqueID ? ` - المعرف: ${studentData.uniqueID}` : ''}`,

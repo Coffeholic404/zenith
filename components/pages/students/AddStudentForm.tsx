@@ -283,9 +283,10 @@ function AddStudentForm() {
           description: `الاسم: ${studentData?.name || data.name}${studentData?.uniqueID ? ` - المعرف: ${studentData.uniqueID}` : ''}`,
         });
 
-        // Reset form
+        // Reset form and navigate back
         form.reset();
         setAttachments([]);
+        router.back();
       } else {
         // Display error messages from server
         const errorMsg = response.errorMessages?.join('\n') || "حدث خطأ أثناء إضافة الطالب";
@@ -311,7 +312,7 @@ function AddStudentForm() {
       <Form {...form} >
         <form onSubmit={form.handleSubmit(onSubmit)} className='studentForm grid grid-cols-1 lg:grid-cols-[378px_1fr] gap-4 lg:gap-8'>
           <div className=' space-y-4'>
-          <Card>
+            <Card>
               <CardContent>
                 <FileUploader className='border-none shadow-none' control={control} name="AttachmentFile" />
                 <Separator className=' my-4 h-px bg-gray-300 rounded-xl' />
@@ -710,7 +711,7 @@ function AddStudentForm() {
               </CardContent>
             </Card>
           </div>
-          
+
           <div className=' space-y-4' id='personal-info'>
             <Card>
               <CardHeader className=" font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
@@ -776,7 +777,7 @@ function AddStudentForm() {
                           <SelectContent>
                             <SelectItem value="thin">مقبول</SelectItem>
                             <SelectItem value="average">مرفوض</SelectItem>
-                            
+
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -963,7 +964,7 @@ function AddStudentForm() {
                                     }}
                                     className="size-5 rounded-md border data-[state=checked]:bg-sidebaractive"
                                   />
-                                  <FormLabel 
+                                  <FormLabel
                                     htmlFor={`skill-${skill.value}`}
                                     className="text-muted-foreground cursor-pointer text-sm font-normal"
                                   >
@@ -1038,29 +1039,29 @@ function AddStudentForm() {
               </CardContent>
             </Card>
           </div>
-          </form>
-          <div className=' absolute bottom-0 left-0 right-0 '>
-            <div className=' w-full text-left bg-white sticky px-4 py-2 -bottom-6 flex justify-end items-center gap-4'>
-              <Button
-                className=' bg-transparent font-vazirmatn px-6 h-8 text-black w-full sm:w-auto'
-                type='button'
-                onClick={() => router.push('/students')}
-                variant="outline"
-              >
-                 الغاء
-              </Button>
-              <Button
-                className=' bg-sidebaractive font-vazirmatn px-6 h-8 text-white w-full sm:w-auto'
-                type='submit'
-                disabled={isAddStudentLoading}
-                onClick={form.handleSubmit(onSubmit)}
-              >
-                {isAddStudentLoading ? 'جاري الحفظ...' : 'حفظ'}
-              </Button>
-              
-            </div>
+        </form>
+        <div className=' absolute bottom-0 left-0 right-0 '>
+          <div className=' w-full text-left bg-white sticky px-4 py-2 -bottom-6 flex justify-end items-center gap-4'>
+            <Button
+              className=' bg-transparent font-vazirmatn px-6 h-8 text-black w-full sm:w-auto'
+              type='button'
+              onClick={() => router.back()}
+              variant="outline"
+            >
+              الغاء
+            </Button>
+            <Button
+              className=' bg-sidebaractive font-vazirmatn px-6 h-8 text-white w-full sm:w-auto'
+              type='submit'
+              disabled={isAddStudentLoading}
+              onClick={form.handleSubmit(onSubmit)}
+            >
+              {isAddStudentLoading ? 'جاري الحفظ...' : 'حفظ'}
+            </Button>
+
           </div>
-        </Form>
+        </div>
+      </Form>
     </div>
   )
 }
