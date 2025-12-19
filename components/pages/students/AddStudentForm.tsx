@@ -775,8 +775,8 @@ function AddStudentForm() {
                             <SelectValue placeholder="حالة الجسم" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="thin">مقبول</SelectItem>
-                            <SelectItem value="average">مرفوض</SelectItem>
+                            <SelectItem value="مقبول">مقبول</SelectItem>
+                            <SelectItem value="مرفوض">مرفوض</SelectItem>
 
                           </SelectContent>
                         </Select>
