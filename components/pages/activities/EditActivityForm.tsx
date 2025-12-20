@@ -783,7 +783,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                           const option = handleCourseTypeChange(value);
                           form.setValue('courseType', option.value, { shouldValidate: true });
                         }}
-                        disabled={isCoursesLoading || !isCoursesSuccess}
+                        disabled
                       >
                         <SelectTrigger
                           id="form-rhf-select-character-edit"
@@ -814,12 +814,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                         <Label htmlFor="form-rhf-select-coursetype-edit" className="font-vazirmatn text-[14px]  block">
                           نوع الدورة
                         </Label>
-                        <Select
-                          name={field.name}
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        // disabled
-                        >
+                        <Select name={field.name} value={field.value} onValueChange={field.onChange} disabled>
                           <SelectTrigger
                             id="form-rhf-select-coursetype-edit"
                             aria-invalid={fieldState.invalid}
