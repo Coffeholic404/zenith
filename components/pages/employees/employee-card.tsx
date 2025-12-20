@@ -147,10 +147,39 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
               </Popover>
             </div>
           </div>
-          <div>
-            <Badge className=" text-[0.725rem] font-vazirmatn font-semibold text-cardTxt bg-studentClr ms-2">
-              بغداد
-            </Badge>
+          <div className="flex items-center gap-2 flex-wrap">
+            {employee.employeeTypeName && (
+              <Badge
+                title={employee.employeeTypeName}
+                className="text-[0.725rem] font-vazirmatn font-semibold text-cardTxt bg-studentClr px-3 py-1 rounded-lg border-none hover:bg-studentClr transition-all duration-200 cursor-default"
+              >
+                {employee.employeeTypeName.length > 6 ? `${employee.employeeTypeName.slice(0, 6)}...` : employee.employeeTypeName}
+              </Badge>
+            )}
+            {employee.character && (
+              <Badge
+                title={employee.character}
+                className="text-[0.625rem] font-vazirmatn font-semibold text-cardTxt bg-studentClr px-3 py-1 rounded-lg border-none hover:bg-studentClr transition-all duration-200 cursor-default"
+              >
+                {employee.character.length > 6 ? `${employee.character.slice(0, 6)}...` : employee.character}
+              </Badge>
+            )}
+            {employee.typeOfTraining && (
+              <Badge
+                title={employee.typeOfTraining}
+                className="text-[0.725rem] font-vazirmatn font-semibold text-cardTxt bg-studentClr px-3 py-1 rounded-lg border-none hover:bg-studentClr transition-all duration-200 cursor-default"
+              >
+                {employee.typeOfTraining.length > 6 ? `${employee.typeOfTraining.slice(0, 6)}...` : employee.typeOfTraining}
+              </Badge>
+            )}
+            {employee.licenseNumber && (
+              <Badge
+                title={employee.licenseNumber}
+                className="text-[0.725rem] font-vazirmatn font-semibold text-cardTxt bg-studentClr px-3 py-1 rounded-lg border-none hover:bg-studentClr transition-all duration-200 cursor-default"
+              >
+                {employee.licenseNumber.length > 6 ? `${employee.licenseNumber.slice(0, 6)}...` : employee.licenseNumber}
+              </Badge>
+            )}
           </div>
           <Separator className="w-full mx-auto " />
           <CardFooter className="p-0  flex items-center justify-end">

@@ -132,7 +132,7 @@ function StudentCard({ student }: { student: Student }) {
                         </PopoverContent>
                     </Popover>
                 </CardHeader>
-                <Separator className=" my-8 mb-6 text-[#CCCCCC] max-w-[284px] mx-auto border rounded-2xl border-[#CCCCCC]" />
+                <Separator className=" my-8 mb-6 text-[#CCCCCC] w-full mx-auto " />
                 <CardFooter className=" flex  flex-row items-center gap-2 px-9 ">
                     {/* <Button variant="outline" className=" w-[130px] rounded-xl">
                             <Image src={pen} alt="pen" className=" size-[18px]" />
@@ -142,10 +142,10 @@ function StudentCard({ student }: { student: Student }) {
                             <Image src={trash} alt="trash" className="size-[18px]" />
                             <p className=" font-vazirmatn text-sm">حذف</p>
                         </Button> */}
-                    <Badge className=" bg-sidebaractive">
+                    <Badge className=" text-[0.725rem] font-vazirmatn font-semibold text-cardTxt bg-studentClr px-3 py-1 rounded-lg border-none hover:bg-studentClr transition-all duration-200 cursor-default">
                         {student.hight}cm
                     </Badge>
-                    <Badge className=" bg-sidebaractive">
+                    <Badge className=" text-[0.725rem] font-vazirmatn font-semibold text-cardTxt bg-studentClr px-3 py-1 rounded-lg border-none hover:bg-studentClr transition-all duration-200 cursor-default">
                         {student.width}kg
                     </Badge>
                 </CardFooter>

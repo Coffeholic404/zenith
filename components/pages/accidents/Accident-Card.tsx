@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import eye from '@/public/courses/Eye.svg';
 import plain from '@/public/courses/Plain.svg';
+import { Plane } from 'lucide-react';
 import map from '@/public/courses/map.svg';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -121,7 +122,7 @@ export default function AccidentCard({ accident }: { accident: AccidentItem }) {
                   <p className=" text-[#868585] font-semibold text-[13px]">{accident.placeName}</p>
                 </div>
                 <div className=" flex items-center gap-2">
-                  <Image src={plain} alt="plain" />
+                  <Plane className=" text-gray-500" />
                   <p className=" text-[#868585] font-semibold text-[13px]">{accident.planeName}</p>
                 </div>
                 {/* <div className=" flex items-center gap-2">

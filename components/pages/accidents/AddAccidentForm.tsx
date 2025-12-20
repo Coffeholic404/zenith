@@ -121,7 +121,6 @@ export default function AddAccidentForm() {
   let employeesData: any = [];
   if (isSuccessEmployees) {
     employeesData = employees?.result?.data
-      ?.filter(item => item.employeeTypeName === 'إداري')
       .map(item => ({
         value: item.id,
         label: item.name

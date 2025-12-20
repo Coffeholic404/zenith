@@ -42,7 +42,7 @@ import { useGetCourseByIdQuery } from "@/services/courses"
 import { useGetPlaceByIdQuery } from "@/services/place"
 import { useGetPlaneByIdQuery } from "@/services/plane"
 import { useState } from "react";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Plane } from "lucide-react";
 
 export default function ActivityCard({ activity }: { activity: ActivityItem }) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -110,7 +110,7 @@ export default function ActivityCard({ activity }: { activity: ActivityItem }) {
                                     <p className=" text-[#868585] font-semibold text-[13px]">{placeTitle}</p>
                                 </div>
                                 <div className=" flex items-center gap-2">
-                                    <Image src={plain} alt="plain" />
+                                    <Plane className=" text-gray-500" />
                                     <p className=" text-[#868585] font-semibold text-[13px]">{planeTitle}</p>
                                 </div>
                             </div>

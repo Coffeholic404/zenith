@@ -1001,8 +1001,8 @@ function EditStudentForm({ id }: { id: string }) {
                             <SelectValue placeholder="حالة الجسم" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="thin">مقبول</SelectItem>
-                            <SelectItem value="average">مرفوض</SelectItem>
+                            <SelectItem value="مقبول">مقبول</SelectItem>
+                            <SelectItem value="مرفوض">مرفوض</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -1030,7 +1030,7 @@ function EditStudentForm({ id }: { id: string }) {
                             <Checkbox
                               checked={!!field.value}
                               onCheckedChange={field.onChange}
-                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-primary/20"
+                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-purple-500"
                             />
                           </FormControl>
                           <FormLabel className="text-muted-foreground">قلبية</FormLabel>
@@ -1048,7 +1048,7 @@ function EditStudentForm({ id }: { id: string }) {
                             <Checkbox
                               checked={!!field.value}
                               onCheckedChange={field.onChange}
-                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-primary/20"
+                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-purple-500"
                             />
                           </FormControl>
                           <FormLabel className="text-muted-foreground">ضغط</FormLabel>
@@ -1069,7 +1069,7 @@ function EditStudentForm({ id }: { id: string }) {
                             <Checkbox
                               checked={!!field.value}
                               onCheckedChange={field.onChange}
-                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-primary/20"
+                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-purple-500"
                             />
                           </FormControl>
                           <FormLabel className="text-muted-foreground">صرع</FormLabel>
@@ -1087,7 +1087,7 @@ function EditStudentForm({ id }: { id: string }) {
                             <Checkbox
                               checked={!!field.value}
                               onCheckedChange={field.onChange}
-                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-primary/20"
+                              className="size-8 rounded-md bg-searchBg border-none data-[state=checked]:bg-purple-500"
                             />
                           </FormControl>
                           <FormLabel className="text-muted-foreground">سكر</FormLabel>
