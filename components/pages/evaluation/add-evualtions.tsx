@@ -6,7 +6,7 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import React, { useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { CourseParticipant } from '@/services/courses';
 import { useCreateEvaluationMutation } from '@/services/evaluation';
 import { EvaluationFormRow } from './evaluation-form-row';
@@ -29,13 +29,12 @@ type AddEvaluationsFormValues = z.infer<typeof AddEvaluationsSchema>;
 
 interface AddEvaluationsProps {
     participants: CourseParticipant[];
+    courseId: string;
 }
 
-const AddEvualtions = ({ participants }: AddEvaluationsProps) => {
+const AddEvualtions = ({ participants, courseId }: AddEvaluationsProps) => {
     const router = useRouter();
     const [createEvaluation, { isLoading }] = useCreateEvaluationMutation();
-
-    console.log('AddEvualtions component - participants:', participants);
 
     // Filter out participants who already have evaluations
     const unevaluatedParticipants = useMemo(
@@ -110,7 +109,7 @@ const AddEvualtions = ({ participants }: AddEvaluationsProps) => {
                     title: 'نجح',
                     description: `تم حفظ ${successful.length} تقييم بنجاح`
                 });
-                router.push('/evaluation');
+                router.push(`/evaluation/${courseId}`);
             } else if (successful.length > 0) {
                 // Partial success - stay on page
                 toast({
@@ -119,12 +118,29 @@ const AddEvualtions = ({ participants }: AddEvaluationsProps) => {
                     variant: 'destructive'
                 });
             } else {
-                // All failed
+                // All failed - extract error messages from server response
                 const errorMessages = failed
                     .map(f => {
                         const reason = f.reason as any;
-                        return reason?.data?.errorMessages?.join(', ') || 'خطأ غير معروف';
+                        const data = reason?.data;
+
+                        // Handle validation errors format: { errors: { FieldName: ["message"] } }
+                        if (data?.errors) {
+                            const fieldErrors = Object.values(data.errors)
+                                .flat()
+                                .join('، ');
+                            return fieldErrors || data?.title || 'خطأ غير معروف';
+                        }
+
+                        // Handle errorMessages array format
+                        if (data?.errorMessages?.length > 0) {
+                            return data.errorMessages.join('، ');
+                        }
+
+                        // Fallback to title or generic message
+                        return data?.title || 'خطأ غير معروف';
                     })
+                    .filter((msg, index, self) => self.indexOf(msg) === index) // Remove duplicates
                     .join('\n');
 
                 toast({
@@ -134,9 +150,23 @@ const AddEvualtions = ({ participants }: AddEvaluationsProps) => {
                 });
             }
         } catch (error: any) {
+            const errorData = error?.data;
+            let errorMessage = 'حدث خطأ أثناء حفظ التقييمات';
+
+            // Handle validation errors format
+            if (errorData?.errors) {
+                errorMessage = Object.values(errorData.errors)
+                    .flat()
+                    .join('، ') as string;
+            } else if (errorData?.errorMessages?.length > 0) {
+                errorMessage = errorData.errorMessages.join('، ');
+            } else if (errorData?.title) {
+                errorMessage = errorData.title;
+            }
+
             toast({
                 title: 'خطأ',
-                description: 'حدث خطأ أثناء حفظ التقييمات',
+                description: errorMessage,
                 variant: 'destructive'
             });
         }

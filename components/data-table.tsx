@@ -312,7 +312,7 @@ export function DataTable<TData extends adds, TValue, TNames>({
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
-                    <p className=" font-normal text-sm text-white font-vazirmatn">إضافة نشاط</p>
+                    <p className=" font-normal text-sm text-white font-vazirmatn">إضافة تقييم</p>
                   </TooltipContent>
                 </Tooltip>
               )}
