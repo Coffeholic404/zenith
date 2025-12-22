@@ -540,7 +540,7 @@ export default function AddCoursesForm() {
               <Button
                 type="submit"
                 disabled={isCreating}
-                className='flex-1 bg-sidebaractive hover:bg-sidebaractive/90 text-white font-vazirmatn rounded-xl'
+                className='flex-1 bg-sidebaractive hover:bg-sidebaractive text-white font-vazirmatn rounded-xl'
               >
                 {isCreating ? "جاري الحفظ..." : "حفظ"}
               </Button>

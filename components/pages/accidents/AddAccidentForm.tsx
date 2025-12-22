@@ -285,7 +285,7 @@ export default function AddAccidentForm() {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field orientation="responsive" data-invalid={fieldState.invalid}>
-                      <Label htmlFor="form-rhf-select-language" className="font-vazirmatn text-[14px]  block">
+                      <Label htmlFor="form-rhf-select-language" className="font-vazirmatn text-[14px] ">
                         اسم الدورة
                       </Label>
                       <Select name={field.name} value={field.value} onValueChange={field.onChange}>
@@ -330,7 +330,7 @@ export default function AddAccidentForm() {
                         >
                           <SelectValue placeholder={selectedActivityId ? 'اختر الطالب' : 'اختر النشاط أولاً'} />
                         </SelectTrigger>
-                        <SelectContent drop-shadow-lg>
+                        <SelectContent>
                           {studentsData.length > 0 ? (
                             studentsData.map((option: { value: string; label: string }) => (
                               <SelectItem key={option.value} value={option.value}>
@@ -424,7 +424,7 @@ export default function AddAccidentForm() {
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field orientation="responsive" data-invalid={fieldState.invalid}>
-                      <Label htmlFor="form-rhf-select-activity" className="font-vazirmatn text-[14px] mb-2 block">
+                      <Label htmlFor="form-rhf-select-activity" className="font-vazirmatn text-[14px] block">
                         النشاط
                       </Label>
                       <Select

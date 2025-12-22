@@ -574,7 +574,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                                 >
                                                     <SelectValue placeholder={selectedCourseId ? "اختر الطالب" : "اختر الدورة أولاً"} />
                                                 </SelectTrigger>
-                                                <SelectContent drop-shadow-lg>
+                                                <SelectContent >
                                                     {studentsData.length > 0 ? (
                                                         studentsData.map((option: { value: string; label: string }) => (
                                                             <SelectItem key={option.value} value={option.value}>
@@ -672,7 +672,7 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                                                 >
                                                     <SelectValue placeholder="اختر النشاط" />
                                                 </SelectTrigger>
-                                                <SelectContent drop-shadow-lg>
+                                                <SelectContent >
                                                     {activitiesData.length > 0 ? (
                                                         activitiesData.map((option: { value: string; label: string }) => (
                                                             <SelectItem key={option.value} value={option.value}>

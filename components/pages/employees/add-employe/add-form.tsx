@@ -12,6 +12,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -37,20 +38,20 @@ const addEmployeeSchema = z.object({
     }
     return age >= 18;
   }, "يجب أن يكون عمر الموظف على الأقل 18 سنة"),
-  Phone : z.string().min(10, "رقم الهاتف غير صالح"),
+  Phone: z.string().min(10, "رقم الهاتف غير صالح"),
   JobTitle: z.string().min(1, "عنوان الوظيفة مطلوب"),
   Character: z.string().min(1, "  رمز المدرب مطلوب").optional(),
   LicenseNumber: z.string().min(1, "رقم رخصة القيادة مطلوب").optional(),
   TypeOfTraining: z.string().min(1, "نوع التدريب مطلوب").optional(),
 });
 
-export default function AddForm({ type }: { type: "trainer" | "employee" }, isEdit: boolean) {  
+export default function AddForm({ type }: { type: "trainer" | "employee" }, isEdit: boolean) {
   const pathname = usePathname();
   const router = useRouter();
   const [isTrainer, setIsTrainer] = useState(false);
   const { toast } = useToast();
 
-  
+
 
   useEffect(() => {
     // Check if the URL contains 'add-trainer' in its path
@@ -75,29 +76,29 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
       formData.append("LicenseNumber", values.LicenseNumber || "");
       formData.append("TypeOfTraining", values.TypeOfTraining || "");
       formData.append("EType", isTrainer ? "true" : "false");
-      
+
       const response = await addEmployeeMutation(formData).unwrap();
-      
+
       // Show success toast
       toast({
         title: "تم بنجاح",
         description: "تم إضافة الموظف بنجاح",
         variant: "default",
       });
-      
+
       // Reset form after successful submission
       form.reset();
-      
+
       // Navigate back to employees page
       router.push("/employees");
-      
+
     } catch (error: any) {
       // Show error toast with the exact error message from API
-      const errorMessage = error?.data?.errorMessages?.[0] || 
-                          error?.data?.message || 
-                          error?.message || 
-                          "حدث خطأ غير متوقع";
-      
+      const errorMessage = error?.data?.errorMessages?.[0] ||
+        error?.data?.message ||
+        error?.message ||
+        "حدث خطأ غير متوقع";
+
       toast({
         title: "خطأ",
         description: errorMessage,
@@ -137,9 +138,13 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
                   name="Name"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel htmlFor="Name" className="font-vazirmatn text-subtext font-normal text-[14px]">
+                        الاسم الثلاثي
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
+                          id="Name"
                           placeholder="الاسم الثلاثي"
                           className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -150,32 +155,39 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
                 />
 
                 <FormField
-                    control={control}
-                    name="BirthDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          {/* <Input
+                  control={control}
+                  name="BirthDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="BirthDate" className="font-vazirmatn text-subtext font-normal text-[14px]">
+                        تاريخ الميلاد
+                      </FormLabel>
+                      <FormControl>
+                        {/* <Input
                             {...field}
                             type="date"
                             placeholder="تاريخ الميلاد"
                             className=" w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           /> */}
-                          <BirthdayDate className=" w-[387px]"  {...field}/>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                        <BirthdayDate className=" w-[387px]" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={control}
                   name="Phone"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel htmlFor="Phone" className="font-vazirmatn text-subtext font-normal text-[14px]">
+                        رقم الهاتف
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
+                          id="Phone"
                           placeholder="رقم الهاتف"
                           className=" w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -190,9 +202,13 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
                   name="JobTitle"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel htmlFor="JobTitle" className="font-vazirmatn text-subtext font-normal text-[14px]">
+                        عنوان وظيفي
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
+                          id="JobTitle"
                           placeholder="عنوان وظيفي"
                           className=" w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
@@ -217,9 +233,13 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
                     name="Character"
                     render={({ field }) => (
                       <FormItem>
+                        <FormLabel htmlFor="Character" className="font-vazirmatn text-subtext font-normal text-[14px]">
+                          رمز المدرب
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
+                            id="Character"
                             placeholder="رمز المدرب"
                             className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           />
@@ -252,30 +272,38 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
                     )}
                   /> */}
                   <FormField
-                  control={control}
-                  name="LicenseNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="رقم رخصة المدرب"
-                          className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    control={control}
+                    name="LicenseNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="LicenseNumber" className="font-vazirmatn text-subtext font-normal text-[14px]">
+                          رقم رخصة المدرب
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            id="LicenseNumber"
+                            placeholder="رقم رخصة المدرب"
+                            className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
                     control={control}
                     name="TypeOfTraining"
                     render={({ field }) => (
                       <FormItem>
+                        <FormLabel htmlFor="TypeOfTraining" className="font-vazirmatn text-subtext font-normal text-[14px]">
+                          نوع التدريب
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
+                            id="TypeOfTraining"
                             placeholder="نوع التدريب"
                             className=" w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           />
@@ -299,7 +327,7 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
             </Button>
             <Button
               type="submit"
-              className=" px-12 rounded-[11px] bg-sidebaractive text-white font-vazirmatn font-normal text-[17px]"
+              className=" px-12 rounded-[11px] bg-sidebaractive hover:bg-sidebaractive text-white font-vazirmatn font-normal text-[17px]"
             >
               حفظ
             </Button>

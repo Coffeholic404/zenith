@@ -663,7 +663,7 @@ export default function EditCourseForm({ courseId }: { courseId: string }) {
               <Button
                 type="submit"
                 disabled={isUpdating}
-                className='flex-1 bg-sidebaractive hover:bg-sidebaractive/90 text-white font-vazirmatn rounded-xl'
+                className='flex-1 bg-sidebaractive hover:bg-sidebaractive text-white font-vazirmatn rounded-xl'
               >
                 {isUpdating ? "جاري التحديث..." : "تحديث"}
               </Button>
