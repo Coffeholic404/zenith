@@ -8,9 +8,9 @@ const ProviderAuth = ({ children }: PropsWithChildren) => {
   const router = useRouter();
   const { status, data } = useSession();
 
-  // useEffect(() => {
-  //   if (status === "unauthenticated") router.replace("/login");
-  // }, [status]);
+  useEffect(() => {
+    if (status === "unauthenticated") router.replace("/login");
+  }, [status]);
 
   if (status === "loading") return <Loader />;
   else return <>{children}</>;
