@@ -1,6 +1,6 @@
 "use client";
 import React, { FC, PropsWithChildren, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Loader from "@/app/loading";
 
@@ -11,6 +11,13 @@ const ProviderAuth = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     if (status === "unauthenticated") router.replace("/login");
   }, [status]);
+
+  // Handle refresh token error - sign out user
+  useEffect(() => {
+    if (data?.error === "RefreshAccessTokenError") {
+      signOut({ redirect: true, callbackUrl: "/login" });
+    }
+  }, [data?.error]);
 
   if (status === "loading") return <Loader />;
   else return <>{children}</>;

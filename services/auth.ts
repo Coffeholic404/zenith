@@ -1,35 +1,59 @@
-import { api } from "./api";
-export const usersApi = api.injectEndpoints({
-  endpoints: (build) => ({
-    signin: build.mutation<any, { email: string; password: string }>({
-      query: (body: { email: string; password: string }) => ({
-        url: "/User/login",
-        method: "POST",
-        credentials: "include",
-        body,
+import { api } from './api';
+
+// Request Types
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+// Response Types
+export interface AuthResult {
+  token: string;
+  expiresAt: string;
+  refreshToken: string;
+}
+
+export interface AuthResponse {
+  statusCode: number;
+  isSuccess: boolean;
+  errorMessages: string[];
+  result: AuthResult;
+}
+
+export const authApi = api.injectEndpoints({
+  endpoints: build => ({
+    signin: build.mutation<AuthResponse, LoginRequest>({
+      query: body => ({
+        url: '/api/Account/login',
+        method: 'POST',
+        body
       }),
-      invalidatesTags: ["Admin", "addAdmin"],
+      invalidatesTags: ['Admin', 'addAdmin']
     }),
-    LogOut: build.mutation<any, void>({
+    LogOut: build.mutation<void, void>({
       query: () => ({
-        url: "/auth/logout",
-        method: "POST",
-        credentials: "include",
+        url: '/api/Account/logout',
+        method: 'POST',
+        credentials: 'include'
       }),
-      invalidatesTags: ["logout"],
+      invalidatesTags: ['logout']
     }),
-    refresh: build.mutation<any, void>({
-      query: () => ({
-        url: `/auth/refresh`,
-        method: "POST",
+    refreshToken: build.mutation<AuthResponse, RefreshTokenRequest>({
+      query: body => ({
+        url: '/api/Account/refresh-token',
+        method: 'POST',
+        body
       }),
-      invalidatesTags: ["refresh"],
-    }),
-  }),
+      invalidatesTags: ['refresh']
+    })
+  })
 });
+
 // Export hooks for usage in functional components
+export const { useSigninMutation, useLogOutMutation, useRefreshTokenMutation } = authApi;
 
-export const { useRefreshMutation, useSigninMutation, useLogOutMutation } =
-  usersApi;
-
-export const { refresh, signin } = usersApi.endpoints;
+export const { refreshToken, signin, LogOut } = authApi.endpoints;

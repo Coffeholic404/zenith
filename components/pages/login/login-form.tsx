@@ -18,9 +18,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { se } from "date-fns/locale";
-import { useSigninMutation } from "@/services/auth";
+import { useSigninMutation, AuthResponse } from "@/services/auth";
 import { signIn, useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   username: z.string().min(4, {
@@ -47,30 +47,39 @@ export function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const res: any = await signin({
-        email: values.username,
+      const res: AuthResponse = await signin({
+        username: values.username,
         password: values.password,
       }).unwrap();
 
-      if (
-        res &&
-        res.error &&
-        res.error.data &&
-        res.error.data.statusCode == 401
-      ) {
-        // return showMessage('يرجى التأكد من المعلومات المدخلة', 'error');
+      if (!res.isSuccess) {
+        // Show error messages from API
+        const errorMessage = res.errorMessages?.join(", ") || "فشل تسجيل الدخول";
+        toast.error(errorMessage);
+        return;
       }
-      const data: any = await signIn("credentials", {
+
+      // Sign in with NextAuth using the API response
+      const result = await signIn("credentials", {
         data: JSON.stringify(res),
         redirect: false,
-        callbackUrl: `${window.location.origin}/auth`,
+        callbackUrl: `${window.location.origin}/`,
       });
-      // console.log(data);
-      // router.reload();
-      // todo reload auth
-    } catch (error) {
-      console.log("error", error);
-      // return showMessage('خطأ في الاتصال', 'error');
+
+      if (result?.error) {
+        toast.error("فشل تسجيل الدخول، يرجى المحاولة مرة أخرى");
+        return;
+      }
+
+      // Success - router will redirect via useEffect
+      toast.success("تم تسجيل الدخول بنجاح");
+    } catch (error: any) {
+      console.error("Login error:", error);
+      const errorMessage =
+        error?.data?.errorMessages?.join(", ") ||
+        error?.message ||
+        "خطأ في الاتصال، يرجى المحاولة مرة أخرى";
+      toast.error(errorMessage);
     }
   }
 
