@@ -15,11 +15,11 @@ export default function RegisterPage() {
         <p className="text-muted-foreground">أدخل المعلومات المطلوبة لإنشاء حساب جديد</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <div className="flex justify-start items-center">
+        <div className=" flex-1 lg:max-w-4xl rounded-lg border bg-card p-6 shadow-sm ">
           <RegisterForm />
         </div>
-        <div className="hidden md:block">
+        {/* <div className="hidden md:block">
           <div className="relative h-full w-full overflow-hidden rounded-lg">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/80 to-primary"></div>
             <Image
@@ -46,7 +46,7 @@ export default function RegisterPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

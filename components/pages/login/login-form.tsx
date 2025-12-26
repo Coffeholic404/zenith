@@ -170,17 +170,17 @@ export function LoginForm() {
             "تسجيل الدخول"
           )}
         </Button>
-        {/* <div className="text-center text-sm">
+        <div className="text-center text-sm">
           ليس لديك حساب؟{" "}
           <Button
             variant="link"
             className="px-0 font-normal"
             type="button"
-            onClick={() => router.push("/register")}
+            onClick={() => router.push("users/register")}
           >
             إنشاء حساب
           </Button>
-        </div> */}
+        </div>
       </form>
     </Form>
   );

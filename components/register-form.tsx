@@ -5,81 +5,172 @@ import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { Eye, EyeOff, Loader2, UserCog, User } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { useRegisterMutation } from "@/services/account"
+import { toast } from "sonner"
+import { cn } from "@/lib/utils"
 
-const formSchema = z
-  .object({
-    name: z.string().min(2, {
-      message: "الاسم يجب أن يكون على الأقل حرفين.",
-    }),
-    email: z.string().email({
-      message: "يرجى إدخال بريد إلكتروني صحيح.",
-    }),
-    password: z.string().min(8, {
-      message: "كلمة المرور يجب أن تكون على الأقل 8 أحرف.",
-    }),
-    confirmPassword: z.string(),
-    gender: z.enum(["male", "female", "other"], {
-      required_error: "يرجى اختيار الجنس.",
-    }),
-    acceptTerms: z.boolean().refine((val) => val === true, {
-      message: "يجب الموافقة على الشروط والأحكام.",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "كلمات المرور غير متطابقة",
-    path: ["confirmPassword"],
-  })
+const formSchema = z.object({
+  username: z.string().min(3, {
+    message: "اسم المستخدم يجب أن يكون على الأقل 3 أحرف.",
+  }),
+  email: z.string().email({
+    message: "يرجى إدخال بريد إلكتروني صحيح.",
+  }),
+  firstName: z.string().min(2, {
+    message: "الاسم الأول يجب أن يكون على الأقل حرفين.",
+  }),
+  lastName: z.string().min(2, {
+    message: "اسم العائلة يجب أن يكون على الأقل حرفين.",
+  }),
+  password: z.string().min(6, {
+    message: "كلمة المرور يجب أن تكون على الأقل 6 أحرف.",
+  }),
+  role: z.string().refine((val) => val === "User" || val === "Admin", {
+    message: "يرجى اختيار نوع الحساب.",
+  }),
+})
 
 export function RegisterForm() {
   const router = useRouter()
-  const [isLoading, setIsLoading] = React.useState(false)
   const [showPassword, setShowPassword] = React.useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false)
+  const [register, { isLoading }] = useRegisterMutation()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      username: "",
       email: "",
+      firstName: "",
+      lastName: "",
       password: "",
-      confirmPassword: "",
-      acceptTerms: false,
+      role: "User",
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true)
-    // محاكاة تأخير الشبكة
-    setTimeout(() => {
-      console.log(values)
-      setIsLoading(false)
-      router.push("/login")
-    }, 1500)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const res = await register({
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        role: values.role,
+      }).unwrap()
+
+      if (!res.isSuccess) {
+        const errorMessage = res.errorMessages?.join(", ") || "فشل إنشاء الحساب"
+        toast.error(errorMessage)
+        return
+      }
+
+      toast.success("تم إنشاء الحساب بنجاح")
+      router.push("/users")
+    } catch (error: any) {
+      console.error("Registration error:", error)
+      const errorMessage =
+        error?.data?.errorMessages?.join(", ") ||
+        error?.message ||
+        "خطأ في الاتصال، يرجى المحاولة مرة أخرى"
+      toast.error(errorMessage)
+    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 font-vazirmatn">
+        {/* Role Toggle */}
         <FormField
           control={form.control}
-          name="name"
+          name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>الاسم</FormLabel>
+              <FormLabel>نوع الحساب</FormLabel>
               <FormControl>
-                <Input placeholder="أدخل اسمك الكامل" {...field} />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => field.onChange("User")}
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-2 rounded-lg border-2 p-3 transition-all duration-200",
+                      field.value === "User"
+                        ? "border-sidebaractive bg-sidebaractive/10 text-sidebaractive"
+                        : "border-muted-foreground/30 text-muted-foreground hover:border-muted-foreground/50"
+                    )}
+                  >
+                    <User className="h-5 w-5" />
+                    <span className="font-medium">مستخدم</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => field.onChange("Admin")}
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-2 rounded-lg border-2 p-3 transition-all duration-200",
+                      field.value === "Admin"
+                        ? "border-sidebaractive bg-sidebaractive/10 text-sidebaractive"
+                        : "border-muted-foreground/30 text-muted-foreground hover:border-muted-foreground/50"
+                    )}
+                  >
+                    <UserCog className="h-5 w-5" />
+                    <span className="font-medium">مسؤول</span>
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Two column layout for names */}
+        <div className="grid gap-4 md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>الاسم الأول</FormLabel>
+                <FormControl>
+                  <Input placeholder="أدخل الاسم الأول" {...field} className="font-vazirmatn text-sm" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>اسم العائلة</FormLabel>
+                <FormControl>
+                  <Input placeholder="أدخل اسم العائلة" {...field} className="font-vazirmatn text-sm" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>اسم المستخدم</FormLabel>
+              <FormControl>
+                <Input placeholder="أدخل اسم المستخدم" {...field} className="font-vazirmatn text-sm" />
+              </FormControl>
+              <FormDescription>سيستخدم هذا الاسم لتسجيل الدخول.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="email"
@@ -87,13 +178,13 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>البريد الإلكتروني</FormLabel>
               <FormControl>
-                <Input placeholder="example@example.com" type="email" {...field} />
+                <Input placeholder="example@example.com" type="email" {...field} className="font-vazirmatn text-sm" />
               </FormControl>
-              <FormDescription>سيتم استخدام هذا البريد الإلكتروني لتسجيل الدخول.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -102,7 +193,12 @@ export function RegisterForm() {
               <FormLabel>كلمة المرور</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Input type={showPassword ? "text" : "password"} placeholder="••••••••" {...field} />
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    {...field}
+                    className="font-vazirmatn text-sm"
+                  />
                   <Button
                     type="button"
                     variant="ghost"
@@ -115,98 +211,23 @@ export function RegisterForm() {
                   </Button>
                 </div>
               </FormControl>
-              <FormDescription>يجب أن تكون كلمة المرور على الأقل 8 أحرف.</FormDescription>
+              <FormDescription>يجب أن تكون كلمة المرور على الأقل 6 أحرف.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>تأكيد كلمة المرور</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Input type={showConfirmPassword ? "text" : "password"} placeholder="••••••••" {...field} />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute left-0 top-0 h-full px-3 py-2 text-muted-foreground"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    <span className="sr-only">{showConfirmPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}</span>
-                  </Button>
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="gender"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>الجنس</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-0 space-x-reverse space-y-0 rtl:space-x-reverse">
-                    <FormControl>
-                      <RadioGroupItem value="male" />
-                    </FormControl>
-                    <FormLabel className="mr-2 font-normal">ذكر</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-0 space-x-reverse space-y-0 rtl:space-x-reverse">
-                    <FormControl>
-                      <RadioGroupItem value="female" />
-                    </FormControl>
-                    <FormLabel className="mr-2 font-normal">أنثى</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-0 space-x-reverse space-y-0 rtl:space-x-reverse">
-                    <FormControl>
-                      <RadioGroupItem value="other" />
-                    </FormControl>
-                    <FormLabel className="mr-2 font-normal">آخر</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="acceptTerms"
-          render={({ field }) => (
-            <FormItem className="flex flex-row   items-start space-x-0 space-x-reverse space-y-0 rounded-md border p-4 rtl:space-x-reverse">
-              <FormControl>
-                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-              </FormControl>
-              <div className="mr-2 space-y-1 leading-none">
-                <FormLabel>الشروط والأحكام</FormLabel>
-                <FormDescription>أوافق على الشروط والأحكام وسياسة الخصوصية.</FormDescription>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className="w-full" disabled={isLoading}>
+
+        <Button type="submit" className="w-full bg-sidebaractive hover:bg-sidebaractive" disabled={isLoading}>
           {isLoading ? (
             <>
               <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-              جاري التسجيل...
+              جاري إنشاء الحساب...
             </>
           ) : (
-            "تسجيل"
+            "إنشاء حساب"
           )}
         </Button>
+
         <div className="text-center text-sm">
           لديك حساب بالفعل؟{" "}
           <Button variant="link" className="px-0 font-normal" type="button" onClick={() => router.push("/login")}>
@@ -217,4 +238,3 @@ export function RegisterForm() {
     </Form>
   )
 }
-

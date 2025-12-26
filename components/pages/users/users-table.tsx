@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/data-table"
 import { columns, userColumnsNames } from "@/components/pages/users/users-columns"
 import { UserFormModal } from "@/components/pages/users/user-form-modal"
-
+import { useRouter } from "next/navigation";
 // بيانات تجريبية للجدول
 const data = [
   {
@@ -93,11 +93,11 @@ const data = [
 
 export function UsersTable() {
   const [isModalOpen, setIsModalOpen] = React.useState(false)
-
+  const router = useRouter()
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button onClick={() => setIsModalOpen(true)}>
+        <Button onClick={() => router.push("/users/register")}>
           <PlusCircle className="ml-2 h-4 w-4" />
           إضافة مستخدم جديد
         </Button>

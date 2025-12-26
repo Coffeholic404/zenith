@@ -5,7 +5,6 @@ export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
-  confirmPassword: string;
   firstName: string;
   lastName: string;
   role: string;
@@ -40,7 +39,7 @@ export const accountApi = api.injectEndpoints({
     // POST /api1/account/register
     register: build.mutation<AuthResponse, RegisterRequest>({
       query: credentials => ({
-        url: '/api1/account/register',
+        url: '/api/Account/register',
         method: 'POST',
         body: credentials
       })
@@ -49,7 +48,7 @@ export const accountApi = api.injectEndpoints({
     // POST /api1/account/login
     login: build.mutation<AuthResponse, LoginRequest>({
       query: credentials => ({
-        url: '/api1/account/login',
+        url: '/api/Account/login',
         method: 'POST',
         body: credentials
       })
@@ -58,7 +57,7 @@ export const accountApi = api.injectEndpoints({
     // POST /api1/account/refresh-token
     refreshToken: build.mutation<AuthResponse, RefreshTokenRequest>({
       query: body => ({
-        url: '/api1/account/refresh-token',
+        url: '/api/Account/refresh-token',
         method: 'POST',
         body
       }),
@@ -68,7 +67,7 @@ export const accountApi = api.injectEndpoints({
     // POST /api1/account/logout
     logout: build.mutation<void, void>({
       query: () => ({
-        url: '/api1/account/logout',
+        url: '/api/Account/logout',
         method: 'POST'
       }),
       invalidatesTags: ['logout']
