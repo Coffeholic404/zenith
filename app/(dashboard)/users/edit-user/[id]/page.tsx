@@ -11,7 +11,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
               </div>
         
               <div className="flex justify-start items-center">
-                <div className=" flex-1 lg:max-w-4xl rounded-lg border bg-card p-6 shadow-sm ">
+                <div className=" flex-1 lg:max-w-4xl rounded-lg p-6">
                   <EditUserForm userId={userId} />
                 </div>
               

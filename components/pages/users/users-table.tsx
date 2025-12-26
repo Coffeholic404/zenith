@@ -86,9 +86,9 @@ export function UsersTable() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 font-vazirmatn">
       <div className="flex justify-end">
-        <Button onClick={() => router.push("/users/register")}>
+        <Button onClick={() => router.push("/users/register")} className=" bg-sidebaractive ">
           <PlusCircle className="ml-2 h-4 w-4" />
           إضافة مستخدم جديد
         </Button>

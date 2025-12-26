@@ -2,6 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import logo from "@/public/zenith-logo.svg"
 import zen from "@/public/zenith.svg"
 
@@ -46,7 +47,7 @@ import {
 } from "@/components/ui/collapsible";
 import {
   ChevronLeft,
-  PanelLeft ,
+  PanelLeft,
   PanelRight,
   UsersRound,
 } from "lucide-react";
@@ -101,7 +102,7 @@ const menuItems = [
   {
     title: "المستخدمين",
     href: "/users",
-    icon: UsersRound ,
+    icon: UsersRound,
   }
   // {
   //   title: "تفتيش",
@@ -123,7 +124,18 @@ const menuItems = [
 export function AppSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
-  
+  const { data: session } = useSession();
+  const userRole = session?.user?.role;
+
+  // Filter menu items based on user role
+  const filteredMenuItems = menuItems.filter(item => {
+    // Hide "المستخدمين" (Users) menu for non-admin users
+    if (item.title === "المستخدمين" && userRole === "User") {
+      return false;
+    }
+    return true;
+  });
+
   // Helper function to check if any subitem is active
   const isAnySubItemActive = (subItems: any[]) => {
     return subItems?.some(subItem => pathname === subItem.href) || false;
@@ -140,8 +152,8 @@ export function AppSidebar() {
       [title]: !prev[title],
     }));
   };
-  
-  
+
+
   return (
     <div
       className={cn(
@@ -161,13 +173,13 @@ export function AppSidebar() {
             state === "collapsed" && "hidden"
           )}>
             <Image
-            alt="zenith logo"
-            src={logo}
+              alt="zenith logo"
+              src={logo}
             />
             <div className=" pt-2">
-              <Image 
-              alt="zenith text"
-              src={zen}
+              <Image
+                alt="zenith text"
+                src={zen}
               />
               <p className=" font-vazirmatn text-subtext font-medium text-[12px]">نظام إدارة المظلات</p>
             </div>
@@ -185,8 +197,8 @@ export function AppSidebar() {
           </SidebarTrigger>
         </SidebarHeader>
         <SidebarContent>
-        <SidebarMenu className="">
-            {menuItems.map((item) => (
+          <SidebarMenu className="">
+            {filteredMenuItems.map((item) => (
               <React.Fragment key={item.title}>
                 {item.subItems ? (
                   <Collapsible
@@ -198,11 +210,11 @@ export function AppSidebar() {
                       state === "collapsed" ? "w-full" : "w-[calc(100%-50px)]"
                     )}>
                       <CollapsibleTrigger asChild>
-                        <SidebarMenuButton 
+                        <SidebarMenuButton
                           className={cn(
                             "w-full transition-all duration-300 flex items-center",
                             state === "collapsed" ? "justify-center px-2 py-3" : "justify-start"
-                          )} 
+                          )}
                           tooltip={state === "collapsed" ? item.title : undefined}
                           isActive={isAnySubItemActive(item.subItems)}
                         >
@@ -211,11 +223,11 @@ export function AppSidebar() {
                             state === "collapsed" ? "justify-center" : "justify-start w-full"
                           )}>
                             <item.icon className={cn(
-                              "h-6 w-6 flex-shrink-0", 
+                              "h-6 w-6 flex-shrink-0",
                               isAnySubItemActive(item.subItems) ? "text-sidebaractive" : "text-[#979797]"
                             )} />
                             <span className={cn(
-                              "sidebar-item-text mr-2 flex-1 rtl:mr-2 rtl:ml-0 font-normal text-base font-vazirmatn transition-all duration-300", 
+                              "sidebar-item-text mr-2 flex-1 rtl:mr-2 rtl:ml-0 font-normal text-base font-vazirmatn transition-all duration-300",
                               isAnySubItemActive(item.subItems) ? "!text-sidebaractive" : "text-[#979797]",
                               state === "collapsed" && "hidden"
                             )}>{item.title}</span>
@@ -256,11 +268,11 @@ export function AppSidebar() {
                           state === "collapsed" ? "justify-center" : "justify-start w-full"
                         )}>
                           <item.icon className={cn(
-                            "h-6 w-6 flex-shrink-0", 
+                            "h-6 w-6 flex-shrink-0",
                             pathname === item.href ? "text-sidebaractive" : "text-[#979797]"
                           )} />
                           <span className={cn(
-                            "sidebar-item-text mr-2 rtl:mr-2 rtl:ml-0 text-[#979797] font-normal text-base font-vazirmatn transition-all duration-300", 
+                            "sidebar-item-text mr-2 rtl:mr-2 rtl:ml-0 text-[#979797] font-normal text-base font-vazirmatn transition-all duration-300",
                             pathname === item.href ? "!text-sidebaractive" : "",
                             state === "collapsed" && "hidden"
                           )}>{item.title}</span>
@@ -273,7 +285,7 @@ export function AppSidebar() {
             ))}
           </SidebarMenu>
         </SidebarContent>
-        
+
       </Sidebar>
     </div>
   );
