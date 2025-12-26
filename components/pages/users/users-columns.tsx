@@ -1,74 +1,44 @@
 "use client"
 
 import type { ColumnDef } from "@tanstack/react-table"
-import { format } from "date-fns"
-import { ar } from "date-fns/locale"
-import { MoreHorizontal, ArrowUpDown } from "lucide-react"
+import Image from "next/image"
+import pen from "@/public/table/Pen.svg"
+import trash from "@/public/table/trash.svg"
+import list from "@/public/table/List.svg"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
 
-// تعريف نوع البيانات
+// تعريف نوع البيانات - matching API response
 export type User = {
   id: string
-  name: string
+  userName: string
   email: string
-  status: string
-  role: string
-  createdAt: string
+  firstName: string
+  lastName: string
+  profileImageUrl: string
 }
 
 // تعريف الأعمدة
 export const columns: ColumnDef<User>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="تحديد الكل"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="تحديد الصف"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: true,
+    accessorKey: "sequence",
+    header: () => {
+      return <p className="font-vazirmatn font-normal text-base text-tableHeader">ت</p>
+    },
+    cell: ({ row }) => {
+      return row.index + 1
+    }
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          الاسم
-          <ArrowUpDown className="mr-2 h-4 w-4" />
-        </Button>
-      )
+    accessorKey: "userName",
+    header: () => {
+      return <p className="font-vazirmatn font-normal text-base text-tableHeader">اسم المستخدم</p>
     },
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          البريد الإلكتروني
-          <ArrowUpDown className="mr-2 h-4 w-4" />
-        </Button>
-      )
+    header: () => {
+      return <p className="font-vazirmatn font-normal text-base text-tableHeader">البريد الإلكتروني</p>
     },
     cell: ({ row }) => (
       <div dir="ltr" className="text-right">
@@ -77,79 +47,51 @@ export const columns: ColumnDef<User>[] = [
     ),
   },
   {
-    accessorKey: "status",
-    header: "الحالة",
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string
-
-      return (
-        <Badge variant={status === "نشط" ? "default" : status === "غير نشط" ? "secondary" : "outline"}>{status}</Badge>
-      )
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+    accessorKey: "firstName",
+    header: () => {
+      return <p className="font-vazirmatn font-normal text-base text-tableHeader">الاسم الأول</p>
     },
   },
   {
-    accessorKey: "role",
-    header: "الدور",
-    cell: ({ row }) => <div>{row.getValue("role")}</div>,
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
-  },
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          تاريخ الإنشاء
-          <ArrowUpDown className="mr-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt"))
-      return <div>{format(date, "PPpp", { locale: ar })}</div>
+    accessorKey: "lastName",
+    header: () => {
+      return <p className="font-vazirmatn font-normal text-base text-tableHeader">اسم العائلة</p>
     },
   },
   {
     id: "actions",
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          <Image src={list} alt="list" className="size-5"/>
+        </Button>
+      )
+    },
     cell: ({ row }) => {
       const user = row.original
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">فتح القائمة</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id)}>
-              نسخ معرف المستخدم
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>عرض التفاصيل</DropdownMenuItem>
-            <DropdownMenuItem>تعديل المستخدم</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">حذف المستخدم</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center justify-end gap-3 pe-4">
+          <Button variant="ghost" className="p-0">
+            <Image src={pen} alt="pen" className="size-5"/>
+          </Button>
+          <Button variant="ghost" className="p-0">
+            <Image src={trash} alt="trash" className="size-5"/>
+          </Button>
+        </div>
       )
     },
-  },
+  }
 ]
 
 // تعريف أسماء الأعمدة
 export const userColumnsNames = [
-  "اختيار",
-  "الاسم", 
-  "البريد الإلكتروني",
-  "الحالة",
-  "الدور",
-  "تاريخ الإنشاء",
-  "الإجراءات"
+  { label: 'ت', dataIndex: 'sequence' },
+  { label: 'اسم المستخدم', dataIndex: 'userName' },
+  { label: 'البريد الإلكتروني', dataIndex: 'email' },
+  { label: 'الاسم الأول', dataIndex: 'firstName' },
+  { label: 'اسم العائلة', dataIndex: 'lastName' },
 ]
 
