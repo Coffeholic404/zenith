@@ -91,7 +91,7 @@ export function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 font-vazirmatn">
         <FormField
           control={form.control}
           name="username"
@@ -99,7 +99,7 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>البريد الإلكتروني</FormLabel>
               <FormControl>
-                <Input placeholder="example@example.com" {...field} />
+                <Input placeholder="example@example.com" {...field} className="font-vazirmatn text-sm focus-within:text-black focus-visible:text-black"/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -122,7 +122,7 @@ export function LoginForm() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute left-0 top-0 h-full px-3 py-2 text-muted-foreground"
+                    className="absolute left-0 top-0 h-full px-3 py-2"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -160,7 +160,7 @@ export function LoginForm() {
             نسيت كلمة المرور؟
           </Button>
         </div> */}
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button type="submit" className="w-full bg-sidebaractive hover:bg-sidebaractive" disabled={isLoading}>
           {isLoading ? (
             <>
               <Loader2 className="ml-2 h-4 w-4 animate-spin" />
@@ -170,7 +170,7 @@ export function LoginForm() {
             "تسجيل الدخول"
           )}
         </Button>
-        <div className="text-center text-sm">
+        {/* <div className="text-center text-sm">
           ليس لديك حساب؟{" "}
           <Button
             variant="link"
@@ -180,7 +180,7 @@ export function LoginForm() {
           >
             إنشاء حساب
           </Button>
-        </div>
+        </div> */}
       </form>
     </Form>
   );

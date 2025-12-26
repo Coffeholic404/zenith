@@ -6,6 +6,7 @@ export interface AuthResult {
   token: string;
   expiresAt: string;
   refreshToken: string;
+  role: string;
 }
 
 export interface User {
@@ -15,6 +16,7 @@ export interface User {
   full_name: string;
   email: string;
   isActive: boolean;
+  role: string;
   roles: Array<{
     resource: string;
     resource_ar: string;
@@ -71,10 +73,12 @@ async function refreshAccessToken(token: any) {
       expiresAt: newExpiresAt,
       user: {
         ...token.user,
+        role: data.result.role || token.user.role,
         result: {
           token: data.result.token,
           refreshToken: data.result.refreshToken,
-          expiresAt: data.result.expiresAt
+          expiresAt: data.result.expiresAt,
+          role: data.result.role || token.user.result.role
         }
       }
     };
@@ -114,12 +118,14 @@ const authOptions: NextAuthOptions = {
             result: {
               token: result.token,
               refreshToken: result.refreshToken,
-              expiresAt: result.expiresAt
+              expiresAt: result.expiresAt,
+              role: result.role
             },
             type: 'credentials',
             full_name: '',
             email: '',
             isActive: true,
+            role: result.role,
             roles: []
           };
 

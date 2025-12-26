@@ -284,7 +284,10 @@ export const api = createApi({
 
     //evaluation
     'Evaluation',
-    'deleteEvaluation'
+    'deleteEvaluation',
+
+    //Users
+    'User'
   ],
   endpoints: build => ({})
 });

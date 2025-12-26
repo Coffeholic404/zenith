@@ -48,6 +48,7 @@ import {
   ChevronLeft,
   PanelLeft ,
   PanelRight,
+  UsersRound,
 } from "lucide-react";
 const menuItems = [
   {
@@ -97,6 +98,11 @@ const menuItems = [
     href: "/accidents",
     icon: TornadoIcon,
   },
+  {
+    title: "المستخدمين",
+    href: "/users",
+    icon: UsersRound ,
+  }
   // {
   //   title: "تفتيش",
   //   href: "/inspection",
