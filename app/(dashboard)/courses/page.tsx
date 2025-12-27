@@ -3,7 +3,7 @@ import HeaderCards from "@/components/pages/employees/header-cards";
 import add from "@/public/employees/plus.svg";
 import Image from "next/image";
 import searchIcon from "@/public/table/Magnifer.svg";
-import filterIcon from "@/public/table/Filter.svg";
+import { useSession } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,7 +23,9 @@ export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-
+  const { data: session } = useSession();
+  const userRole = session?.user?.role;
+  const isAdmin = userRole === "Admin";
   // Controlled search term initialized from URL param for persistence
   const [searchTerm, setSearchTerm] = React.useState<string>(
     searchParams.get("q") ?? ""
@@ -131,7 +133,7 @@ export default function Page() {
           {/* <div className="bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg shrink-0">
             <Image src={filterIcon} alt="filter icon" className=" size-6" />
           </div> */}
-          <Tooltip>
+          {!isAdmin && <Tooltip>
             <TooltipTrigger asChild>
               <Button className="bg-sidebaractive px-3 rounded-2xl shrink-0" onClick={() => router.push("/courses/add-courses")}>
                 <Image src={add} alt="add icon" className=" size-5" />
@@ -140,7 +142,7 @@ export default function Page() {
             <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
               <p className=" font-normal text-sm text-white font-vazirmatn">إضافة دورة</p>
             </TooltipContent>
-          </Tooltip>
+          </Tooltip>}
         </div>
       </div>
 

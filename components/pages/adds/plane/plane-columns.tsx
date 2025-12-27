@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 export type planes = {
     uniqueID: string,
     name: string,
@@ -112,6 +113,10 @@ export const planeColumns: ColumnDef<planes>[] = [
             )
         },
         cell: ({ row }) => {
+            const { data: session } = useSession();
+            const userRole = session?.user?.role;
+            const isAdmin = userRole === "Admin";
+            if (isAdmin) return null;
             const [deletePlane, { isLoading: isDeleting }] = useDeletePlaneMutation();
             const [showDeleteDialog, setShowDeleteDialog] = useState(false);
             const { toast } = useToast();

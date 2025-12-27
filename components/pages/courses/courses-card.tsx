@@ -29,7 +29,7 @@ import { Badge } from "@/components/ui/badge"
 import eye from "@/public/courses/Eye.svg"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import { Separator } from "@/components/ui/separator"
+import { useSession } from "next-auth/react";
 import pen from "@/public/table/Pen.svg"
 import trash from "@/public/table/trash.svg"
 import trash2 from "@/public/employees/TrashBin.svg"
@@ -45,7 +45,9 @@ export default function CoursesCard({ course }: { course: CourseDetails }) {
 
     const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
     const { toast } = useToast();
-
+    const { data: session } = useSession();
+    const userRole = session?.user?.role;
+    const isAdmin = userRole === "Admin";
 
     const handleDeleteCourse = async (id: string) => {
         try {
@@ -120,14 +122,14 @@ export default function CoursesCard({ course }: { course: CourseDetails }) {
                                     <EllipsisVertical className=" size-5 text-[#7B7B7B] hover:text-[#222222] cursor-pointer" />
                                 </PopoverTrigger>
                                 <PopoverContent className=" w-[120px] rounded-xl">
-                                    <Button variant="ghost" className=" w-full" onClick={() => router.push(`/courses/edit-course/${course.uniqueID}`)}>
+                                    {!isAdmin && <Button variant="ghost" className=" w-full" onClick={() => router.push(`/courses/edit-course/${course.uniqueID}`)}>
                                         <Image src={pen} alt="pen" className=" size-[18px]" />
                                         <p className=" font-vazirmatn text-sm">تعديل</p>
-                                    </Button >
-                                    <Button variant="ghost" className=" hover:bg-red-400" onClick={() => setIsDeleteDialogOpen(true)}>
+                                    </Button >}
+                                    {!isAdmin && <Button variant="ghost" className=" hover:bg-red-400" onClick={() => setIsDeleteDialogOpen(true)}>
                                         <Image src={trash} alt="trash" className="size-[18px]" />
                                         <p className=" font-vazirmatn text-sm" >حذف</p>
-                                    </Button>
+                                    </Button>}
 
                                     <Button variant="ghost" className="" onClick={() => router.push(`/courses/${course.uniqueID}`)}>
                                         <Image src={eye} alt="eye" className="size-[18px]" />

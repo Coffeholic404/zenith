@@ -32,6 +32,7 @@ import Image from "next/image";
 import { Employee, useDeleteEmployeeMutation } from "@/services/employe";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { useSession } from "next-auth/react";
 
 
 export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee: Employee, isEdit: boolean, setIsEdit: (value: boolean) => void }) {
@@ -40,7 +41,9 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteEmployee, { isLoading: isDeleting }] = useDeleteEmployeeMutation();
-  console.log(employee);
+  const { data: session } = useSession();
+  const userRole = session?.user?.role;
+  const isAdmin = userRole === "Admin";
 
   const handleDeleteEmployee = async (id: string) => {
     try {
@@ -108,7 +111,7 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
                 </p>
               </div>
             </div>
-            <div className="">
+            {!isAdmin && <div className="">
               <Popover>
                 <PopoverTrigger className=" size-6 text-subtext">
                   <EllipsisVertical className=" size-6 text-subtext" />
@@ -145,7 +148,7 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
                   <PopoverArrow />
                 </PopoverContent>
               </Popover>
-            </div>
+            </div>}
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             {employee.employeeTypeName && (

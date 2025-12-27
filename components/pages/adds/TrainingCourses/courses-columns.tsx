@@ -5,6 +5,7 @@ import trash from "@/public/table/trash.svg"
 import { Button } from "@/components/ui/button";
 import { useDeleteTrainingCourseMutation } from "@/services/trainingCourses";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -106,6 +107,10 @@ export const TrainingCoursesColumns: ColumnDef<TrainingCoursesColumns>[] = [
             )
         },
         cell: ({ row }) => {
+            const { data: session } = useSession();
+            const userRole = session?.user?.role;
+            const isAdmin = userRole === "Admin";
+            if (isAdmin) return null;
             const { toast } = useToast();
             const [showDeleteDialog, setShowDeleteDialog] = useState(false);
             const [deleteTrainingCourseMutation, { isLoading: isDeleting }] = useDeleteTrainingCourseMutation();

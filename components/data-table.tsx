@@ -45,6 +45,7 @@ import PlaceAddModel from './pages/adds/places/addPlaces-model';
 import CoursesTypeAddModel from './pages/adds/coursesType/coursesTypesModel';
 import type { EvaluationRow } from '@/components/pages/evaluation/evaluation-columns';
 import { CoursesType } from '@/components/pages/adds/coursesType/coursesType-columns';
+import { useSession } from 'next-auth/react';
 interface DataTableProps<TData, TValue, TNames> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -64,6 +65,9 @@ export function DataTable<TData extends adds, TValue, TNames>({
   type,
   uniqueID,
 }: DataTableProps<TData, TValue, TNames>) {
+  const { data: session } = useSession();
+  const userRole = session?.user?.role;
+  const isAdmin = userRole === "Admin";
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -292,16 +296,16 @@ export function DataTable<TData extends adds, TValue, TNames>({
               {/* <Button className=" P-0 size-10 rounded-xl bg-btnTxtClr hover:bg-btnTxtClr hover:brightness-110">
                 <Plus strokeWidth={4} />
               </Button> */}
-              {type === 'nominated' && <NominatedModel btnClassName="" />}
-              {type === 'subscriptions' && <SubscriptionAddModel />}
-              {type === 'attachmentTypes' && <AttachmentAddModel />}
-              {type === 'skills' && <SkillAddModel />}
-              {type === 'trainingCourses' && <TrainingCourseAddModel />}
+              {type === 'nominated' && !isAdmin && <NominatedModel btnClassName="" />}
+              {type === 'subscriptions' && !isAdmin && <SubscriptionAddModel />}
+              {type === 'attachmentTypes' && !isAdmin && <AttachmentAddModel />}
+              {type === 'skills' && !isAdmin && <SkillAddModel />}
+              {type === 'trainingCourses' && !isAdmin && <TrainingCourseAddModel />}
 
-              {type === 'plane' && <AddPlaneModel />}
-              {type === 'place' && <PlaceAddModel />}
-              {type === 'coursesType' && <CoursesTypeAddModel />}
-              {type === 'evaluation' && (
+              {type === 'plane' && !isAdmin && <AddPlaneModel />}
+              {type === 'place' && !isAdmin && <PlaceAddModel />}
+              {type === 'coursesType' && !isAdmin && <CoursesTypeAddModel />}
+              {type === 'evaluation' && !isAdmin && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button

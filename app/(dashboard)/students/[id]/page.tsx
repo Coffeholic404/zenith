@@ -30,6 +30,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react"
 import { useDeleteStudentMutation } from "@/services/students";
+import { useSession } from "next-auth/react";
 
 const tabs = [
     {
@@ -53,6 +54,9 @@ const tabs = [
 function page({ params }: { params: Promise<{ id: string }> }) {
     const { id: studentID } = React.use(params);
     const router = useRouter();
+    const { data: session } = useSession();
+    const userRole = session?.user?.role;
+    const isAdmin = userRole === "Admin";
     const { data: student, isLoading, isSuccess, isError } = useGetStudentByIdQuery({ uniqueID: studentID })
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -166,14 +170,14 @@ function page({ params }: { params: Promise<{ id: string }> }) {
         <section className=' '>
             <div className='student-div relative rounded-xl w-full p-4 px-6 h-40 flex flex-col items-end justify-end'>
                 <div className=' flex gap-4 font-vazirmatn'>
-                    <Button onClick={() => router.push(`/students/edit-student/${studentID}`)} variant="outline">
+                    {!isAdmin && <Button onClick={() => router.push(`/students/edit-student/${studentID}`)} variant="outline">
                         <Image src={pen} alt="edit" />
                         تعديل
-                    </Button>
-                    <Button onClick={handleDeleteClick} className=' border border-red-500' variant="outline">
+                    </Button>}
+                    {!isAdmin && <Button onClick={handleDeleteClick} className=' border border-red-500' variant="outline">
                         <Image src={trash} alt="delete" />
                         حذف
-                    </Button>
+                    </Button>}
                 </div>
                 <div className='absolute top-[60%] right-4 md:right-10'>
                     <div className=' student-img flex items-end gap-2'>

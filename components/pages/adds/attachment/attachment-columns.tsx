@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useDeleteAttachmentTypeMutation } from "@/services/attachment";
 import EditAttachmentTypeModel from "@/components/pages/adds/attachment/edit-attachment";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -100,6 +101,10 @@ export const AttachmentColumns: ColumnDef<attachmentColumns>[] =[
             )
         },
         cell: ({ row }) => {
+            const { data: session } = useSession();
+            const userRole = session?.user?.role;
+            const isAdmin = userRole === "Admin";
+            if (isAdmin) return null;
             const { toast } = useToast();
             const [showDeleteDialog, setShowDeleteDialog] = useState(false);
             const [deleteAttachmentTypeMutation, { isLoading: isDeleting }] = useDeleteAttachmentTypeMutation();

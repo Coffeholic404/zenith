@@ -34,6 +34,7 @@ import Error from '@/components/pages/courses/error';
 import { useRouter } from 'next/navigation';
 import { useDeleteActivityMutation, ActivityItem } from '@/services/activity';
 import { useToast } from '@/hooks/use-toast';
+import { useSession } from 'next-auth/react';
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const [isCourseDeleteDialogOpen, setIsCourseDeleteDialogOpen] = useState(false);
@@ -46,6 +47,9 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const [deleteActivity, { isLoading: isDeletingActivity }] = useDeleteActivityMutation();
   const [deleteCourse, { isLoading: isDeletingCourse }] = useDeleteCourseMutation();
   const { toast } = useToast();
+  const { data: session } = useSession();
+  const userRole = session?.user?.role;
+  const isAdmin = userRole === "Admin";
   // Group participants by trainer
   const trainerGroups = React.useMemo(() => {
     if (!data?.result?.participants) return new Map();
@@ -158,22 +162,22 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             </Badge>
           </div>
           <div className=" flex gap-4 font-vazirmatn self-end">
-            <Button
+           {!isAdmin && <Button
               variant="outline"
               className=" px-6 rounded-xl"
               onClick={() => router.push(`/courses/edit-course/${courseId}`)}
             >
               <Image src={pen} alt="edit" />
               تعديل
-            </Button>
-            <Button
+            </Button>}
+           {!isAdmin && <Button
               className=" border border-red-500 px-6 rounded-xl hover:bg-red-500 hover:text-white"
               variant="outline"
               onClick={() => setIsCourseDeleteDialogOpen(true)}
             >
               <Image src={trash} alt="delete" />
               حذف
-            </Button>
+            </Button>}
           </div>
         </CardContent>
       </Card>
@@ -214,7 +218,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
               <p className=" font-vazirmatn text-subtext text-sm">
                 {data?.result?.activitiesCount || data?.result?.activities?.length || 0}
               </p>
-              <Tooltip>
+              {!isAdmin && <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     className=" bg-sidebaractive  px-3 rounded-2xl "
@@ -226,7 +230,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
                   <p className=" font-normal text-sm text-white font-vazirmatn">إضافة نشاط</p>
                 </TooltipContent>
-              </Tooltip>
+              </Tooltip>}
             </div>
           </CardHeader>
           {data?.result?.activities && data.result.activities.length > 0 ? (
@@ -265,15 +269,15 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 </div>
                 <Separator className=" bg-[#DCDACE]  w-[99%] my-2" />
                 <div className=" flex items-center justify-evenly gap-4">
-                  <Button
+                  {!isAdmin && <Button
                     variant="outline"
                     className="font-vazirmatn font-normal text-md flex-1"
                     onClick={() => router.push(`/activities/edit-activity/${activity.uniqueID}`)}
                   >
                     <Image src={pen} alt="pen" />
                     تعديل
-                  </Button>
-                  <Button
+                  </Button>}
+                  {!isAdmin && <Button
                     variant="outline"
                     className="font-vazirmatn font-normal text-md flex-1 hover:bg-red-500 hover:text-white"
                     onClick={() => {
@@ -283,7 +287,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   >
                     <Image src={trash} alt="trash" />
                     حذف
-                  </Button>
+                  </Button>}
                 </div>
               </CardContent>
             ))

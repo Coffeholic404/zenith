@@ -21,13 +21,16 @@ import React from "react";
 import ActivitiesCard from "@/components/pages/activities/Activity-Card";
 import ActivityCard from "@/components/pages/activities/Activity-Card";
 import AccidentCard from "@/components/pages/accidents/Accident-Card";
+import { useSession } from "next-auth/react";
 
 
 export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-
+  const { data: session } = useSession();
+  const userRole = session?.user?.role;
+  const isAdmin = userRole === "Admin";
   const [searchTerm, setSearchTerm] = React.useState<string>(searchParams.get("q") ?? "");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = React.useState<string>(searchTerm);
   const debounceRef = React.useRef<number | null>(null);
@@ -110,16 +113,18 @@ export default function Page() {
           {/* <div className="bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg shrink-0">
             <Image src={filterIcon} alt="filter icon" className=" size-6" />
           </div> */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button className="bg-sidebaractive px-3 rounded-2xl shrink-0" onClick={() => router.push("/accidents/add-accidents")}>
-                <Image src={add} alt="add icon" className=" size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
-              <p className=" font-normal text-sm text-white font-vazirmatn">إضافة حادث</p>
-            </TooltipContent>
-          </Tooltip>
+          {!isAdmin && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button className="bg-sidebaractive px-3 rounded-2xl shrink-0" onClick={() => router.push("/accidents/add-accidents")}>
+                  <Image src={add} alt="add icon" className=" size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
+                <p className=" font-normal text-sm text-white font-vazirmatn">إضافة حادث</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       </div>
       {isLoading ? (

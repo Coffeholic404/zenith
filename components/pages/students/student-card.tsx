@@ -43,8 +43,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react"
+import { useSession } from "next-auth/react";
+
 function StudentCard({ student }: { student: Student }) {
     const router = useRouter();
+    const { data: session } = useSession();
+    const userRole = session?.user?.role;
+    const isAdmin = userRole === "Admin";
     const [deleteStudent, { isLoading: isDeleting }] = useDeleteStudentMutation();
     const { toast } = useToast();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -116,14 +121,14 @@ function StudentCard({ student }: { student: Student }) {
                             <EllipsisVertical className=" size-5 text-[#7B7B7B] hover:text-[#222222] cursor-pointer" />
                         </PopoverTrigger>
                         <PopoverContent className=" w-[120px] rounded-xl">
-                            <Button variant="ghost" className=" w-full" onClick={() => router.push(`/students/edit-student/${student.uniqueID}`)}>
+                           {!isAdmin && <Button variant="ghost" className=" w-full" onClick={() => router.push(`/students/edit-student/${student.uniqueID}`)}>
                                 <Image src={pen} alt="pen" className=" size-[18px]" />
                                 <p className=" font-vazirmatn text-sm">تعديل</p>
-                            </Button >
-                            <Button variant="ghost" className=" hover:bg-red-400" onClick={handleDeleteClick}>
+                            </Button >}
+                            {!isAdmin && <Button variant="ghost" className=" hover:bg-red-400" onClick={handleDeleteClick}>
                                 <Image src={trash} alt="trash" className="size-[18px]" />
                                 <p className=" font-vazirmatn text-sm" >حذف</p>
-                            </Button>
+                            </Button>}
 
                             <Button variant="ghost" className="" onClick={() => router.push(`/students/${student.uniqueID}`)}>
                                 <Image src={eye} alt="eye" className="size-[18px]" />

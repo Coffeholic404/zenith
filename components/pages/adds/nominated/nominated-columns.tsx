@@ -6,6 +6,7 @@ import trash from "@/public/table/trash.svg"
 import { Button } from "@/components/ui/button";
 import { useDeleteNominatedPartyMutation} from "@/services/nominatedParty";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -100,6 +101,10 @@ export const nominatedColumns: ColumnDef<NominatedParty>[] = [
             )
         },
         cell: ({ row }) => {
+            const { data: session } = useSession();
+            const userRole = session?.user?.role;
+            const isAdmin = userRole === "Admin";
+            if (isAdmin) return null;
             const [deleteNominatedParty, { isLoading: isDeleting }] = useDeleteNominatedPartyMutation();
             const [showDeleteDialog, setShowDeleteDialog] = useState(false);
             const { toast } = useToast();

@@ -6,6 +6,7 @@ import trash from "@/public/table/trash.svg"
 import { Button } from "@/components/ui/button";
 import { useDeleteSubscriptionMutation } from "@/services/subscriptions";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -106,6 +107,10 @@ export const SubscriptionsColumns: ColumnDef<subscriptionsColumns>[] =[
             )
         },
         cell: ({ row }) => {
+            const { data: session } = useSession();
+            const userRole = session?.user?.role;
+            const isAdmin = userRole === "Admin";
+            if (isAdmin) return null;
             const { toast } = useToast();
             const [showDeleteDialog, setShowDeleteDialog] = useState(false);
             const [deleteSubscriptionMutation, { isLoading: isDeleting }] = useDeleteSubscriptionMutation();
