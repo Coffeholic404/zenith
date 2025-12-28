@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
+import { Badge } from "lucide-react"
 
 // تعريف نوع البيانات - matching API response
 export type User = {
@@ -29,6 +30,7 @@ export type User = {
   firstName: string
   lastName: string
   profileImageUrl: string
+  role: string
 }
 
 const DeleteConfirmationDialog = ({
@@ -119,6 +121,19 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
+    accessorKey: "role",
+    header: () => {
+      return <p className="font-vazirmatn font-normal text-base text-tableHeader">الدور</p>
+    },
+    cell: ({ row }) => {
+      return (
+        
+          <div>{row.getValue("role")}</div>
+        
+      )
+    }
+  },
+  {
     id: "actions",
     header: ({ column }) => {
       return (
@@ -194,5 +209,6 @@ export const userColumnsNames = [
   { label: 'البريد الإلكتروني', dataIndex: 'email' },
   { label: 'الاسم الأول', dataIndex: 'firstName' },
   { label: 'اسم العائلة', dataIndex: 'lastName' },
+  { label: 'الدور', dataIndex: 'role' },
 ]
 

@@ -8,6 +8,7 @@ export interface User {
   firstName: string;
   lastName: string;
   profileImageUrl: string;
+  role: string;
 }
 
 // Request Types
