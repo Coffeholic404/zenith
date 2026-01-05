@@ -62,7 +62,7 @@ export function AppHeader() {
                       welcom
                     </p>
                     <p className=" text-xs font-medium text-userEmailClr  flex flex-row-reverse">
-                      {isDropdownOpen ? <ChevronUp className="h-4 w-4 text-userWelcomClr " /> : <ChevronDown className="h-4 w-4 text-userWelcomClr " />}female@gmail.com
+                      {isDropdownOpen ? <ChevronUp className="h-4 w-4 text-userWelcomClr " /> : <ChevronDown className="h-4 w-4 text-userWelcomClr " />}someone@gmail.com
                     </p>
                   </div>
                   <Button
@@ -71,7 +71,7 @@ export function AppHeader() {
                     className="rounded-full hover:bg-primary/10 transition-colors"
                   >
                     <Avatar className=" size-12">
-                      <AvatarImage src="/navbar/female.svg" alt="صورة المستخدم" />
+                      <AvatarImage src="placeholder.svg" alt="صورة المستخدم" />
                       <AvatarFallback>م</AvatarFallback>
                     </Avatar>
                   </Button>
