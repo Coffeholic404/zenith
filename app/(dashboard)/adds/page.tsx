@@ -16,6 +16,7 @@ import { useGetTrainingCoursesQuery, TrainingCourse } from "@/services/trainingC
 import { planeColumns, planeColumnsNames } from "@/components/pages/adds/plane/plane-columns";
 import { useGetPlanesQuery, Plane } from "@/services/plane";
 import { PlacesColumns, PlacesColumnsNames } from "@/components/pages/adds/places/places-columns";
+import { material, materialColumns, materialColumnsNames } from "@/components/pages/adds/Materials/materials-columns";
 import { useGetPlacesQuery, PlaceItem } from "@/services/place";
 import { coursesTypeColumns, coursesTypeColumnsNames } from "@/components/pages/adds/coursesType/coursesType-columns";
 import { useGetTypesQuery, TypeItem } from "@/services/types";
@@ -28,6 +29,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { category, categoryColumns, categoryColumnsNames } from "@/components/pages/adds/category/category-columns";
+import { unit, unitColumns, unitColumnsNames } from "@/components/pages/adds/units/units-columns";
 export default function Page() {
   const { data: nominatedParties, isLoading: nominatedPartiesLoading, error, isSuccess } = useGetNominatedPartiesQuery({
   })
@@ -82,7 +85,74 @@ export default function Page() {
   if (placesSuccess && places?.result?.data) {
     placesData = places?.result.data || []
   }
-  
+  const materialsLoading = false;
+  const materialsData: material[] = [
+    {
+      uniqueID: "1",
+      name: "material 1",
+      category: "category 1",
+      unit: "unit 1",
+      code: "code 1",
+      producingCountry: "producingCountry 1",
+      cost: 1,
+      weight: 1,
+      tradeMark: "tradeMark 1",
+    },
+    {
+      uniqueID: "2",
+      name: "material 2",
+      category: "category 2",
+      unit: "unit 2",
+      code: "code 2",
+      producingCountry: "producingCountry 2",
+      cost: 2,
+      weight: 2,
+      tradeMark: "tradeMark 2",
+    },
+    {
+      uniqueID: "3",
+      name: "material 3",
+      category: "category 3",
+      unit: "unit 3",
+      code: "code 3",
+      producingCountry: "producingCountry 3",
+      cost: 3,
+      weight: 3,
+      tradeMark: "tradeMark 3",
+    },
+  ];
+
+  const categoryLoading = false;
+  const categoryData: category[] = [
+    {
+      uniqueID: "1",
+      name: "category 1",
+    },
+    {
+      uniqueID: "2",
+      name: "category 2",
+    },
+    {
+      uniqueID: "3",
+      name: "category 3",
+    },
+  ];
+
+  const unitsLoading = false;
+  const unitsData: unit[] = [
+    {
+      uniqueID: "1",
+      name: "unit 1",
+    },
+    {
+      uniqueID: "2",
+      name: "unit 2",
+    },
+    {
+      uniqueID: "3",
+      name: "unit 3",
+    },
+  ];
 
   const tabs = [
     {
@@ -105,18 +175,18 @@ export default function Page() {
       value: "دورات بدنية",
       label: "دورات بدنية",
     },
-    // {
-    //   value: "مواد",
-    //   label: "مواد",
-    // },
-    // {
-    //   value: "الفئات ",
-    //   label: "الفئات ",
-    // },
-    // {
-    //   value: "الوحدات",
-    //   label: "الوحدات",
-    // },
+    {
+      value: "مواد",
+      label: "مواد",
+    },
+    {
+      value: "الفئات",
+      label: "الفئات",
+    },
+    {
+      value: "الوحدات",
+      label: "الوحدات",
+    },
     {
       value: "انواع المرفقات ",
       label: "انواع المرفقات ",
@@ -214,9 +284,39 @@ export default function Page() {
               <DataTable columns={SkillsColumns} data={skillsData} columnsNames={SkillsColumnsNames} type="skills" />
             )}
           </TabsContent>
-          {/* <TabsContent value="الوحدات" className="bg-white rounded-lg">
-            <DataTable columns={columns} data={data} columnsNames={columnsNames} />
-          </TabsContent> */}
+          <TabsContent value="مواد" className="bg-white rounded-lg">
+            {materialsLoading ? (
+              <DataTableSkeleton 
+                columnCount={3} 
+                rowCount={5} 
+                showAddButton={true} 
+              />
+            ) : (
+              <DataTable columns={materialColumns} data={materialsData} columnsNames={materialColumnsNames} type="materials" />
+            )}
+          </TabsContent>
+          <TabsContent value="الفئات" className="bg-white rounded-lg">
+            {categoryLoading ? (
+              <DataTableSkeleton 
+                columnCount={3} 
+                rowCount={5} 
+                showAddButton={true} 
+              />
+            ) : (
+              <DataTable columns={categoryColumns} data={categoryData} columnsNames={categoryColumnsNames} type="category" />
+            )}
+          </TabsContent>
+          <TabsContent value="الوحدات" className="bg-white rounded-lg">
+            {unitsLoading ? (
+              <DataTableSkeleton 
+                columnCount={3} 
+                rowCount={5} 
+                showAddButton={true} 
+              />
+            ) : (
+              <DataTable columns={unitColumns} data={unitsData} columnsNames={unitColumnsNames} type="units" />
+            )}
+          </TabsContent>
           <TabsContent value="انواع المرفقات " className="bg-white rounded-lg">
             <DataTable columns={AttachmentColumns} data={attachmentTypesData} columnsNames={AttachmentColumnsNames} type="attachmentTypes"/>
           </TabsContent>

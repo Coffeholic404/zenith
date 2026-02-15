@@ -46,6 +46,12 @@ import CoursesTypeAddModel from './pages/adds/coursesType/coursesTypesModel';
 import type { EvaluationRow } from '@/components/pages/evaluation/evaluation-columns';
 import { CoursesType } from '@/components/pages/adds/coursesType/coursesType-columns';
 import { useSession } from 'next-auth/react';
+import { material } from './pages/adds/Materials/materials-columns';
+import MarerialsModelButton from './pages/adds/Materials/marerialsModel';
+import { category } from './pages/adds/category/category-columns';
+import CategoryModel from './pages/adds/category/categoryModel';
+import UnitsModelButton from './pages/adds/units/unitsModel';
+import { unit } from './pages/adds/units/units-columns';
 interface DataTableProps<TData, TValue, TNames> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -55,7 +61,7 @@ interface DataTableProps<TData, TValue, TNames> {
   type?: string;
   uniqueID?: string;
 }
-type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType;
+type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType | material | category | unit;
 export function DataTable<TData extends adds, TValue, TNames>({
   columns,
   data,
@@ -320,6 +326,9 @@ export function DataTable<TData extends adds, TValue, TNames>({
                   </TooltipContent>
                 </Tooltip>
               )}
+              {type === 'materials'  && <MarerialsModelButton />}
+              {type === 'category' && <CategoryModel />}
+              {type === 'units' && <UnitsModelButton />}
             </div>
           </div>
 
