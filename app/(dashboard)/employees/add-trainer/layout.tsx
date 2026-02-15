@@ -1,4 +1,4 @@
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from '@/components/ui/toaster';
 
 export default function AddTrainerLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -6,5 +6,5 @@ export default function AddTrainerLayout({ children }: { children: React.ReactNo
       {children}
       <Toaster />
     </>
-  )
+  );
 }

@@ -80,7 +80,7 @@ export interface GetPlaneByIdResponse {
 
 // API endpoints
 export const planeApi = api.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     // GET /api/Plane - Get all planes with pagination
     getPlanes: builder.query<GetPlanesResponse, GetPlanesRequest>({
       query: ({ pageNumber = 1, pageSize = 10, searchQuery }) => ({
@@ -89,20 +89,20 @@ export const planeApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['Plane'],
+      providesTags: ['Plane']
     }),
 
     // POST /api/Plane - Create a new plane
     createPlane: builder.mutation<CreatePlaneResponse, CreatePlaneRequest>({
-      query: (body) => ({
+      query: body => ({
         url: '/api/Plane',
         method: 'POST',
-        body,
+        body
       }),
-      invalidatesTags: ['Plane'],
+      invalidatesTags: ['Plane']
     }),
 
     // PUT /api/Plane/{id} - Update an existing plane
@@ -110,29 +110,29 @@ export const planeApi = api.injectEndpoints({
       query: ({ uniqueID, ...body }) => ({
         url: `/api/Plane/${uniqueID}`,
         method: 'PUT',
-        body,
+        body
       }),
-      invalidatesTags: ['Plane'],
+      invalidatesTags: ['Plane']
     }),
 
     // DELETE /api/Plane/{id} - Delete a plane
     deletePlane: builder.mutation<DeletePlaneResponse, DeletePlaneRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/Plane/${uniqueID}`,
-        method: 'DELETE',
+        method: 'DELETE'
       }),
-      invalidatesTags: ['Plane'],
+      invalidatesTags: ['Plane']
     }),
 
     // GET /api/Plane/{id} - Get plane by ID
     getPlaneById: builder.query<GetPlaneByIdResponse, GetPlaneByIdRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/Plane/${uniqueID}`,
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Plane'],
-    }),
-  }),
+      providesTags: ['Plane']
+    })
+  })
 });
 
 // Export hooks for use in React components
@@ -141,5 +141,5 @@ export const {
   useCreatePlaneMutation,
   useUpdatePlaneMutation,
   useDeletePlaneMutation,
-  useGetPlaneByIdQuery,
+  useGetPlaneByIdQuery
 } = planeApi;

@@ -1,28 +1,28 @@
-"use client"
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+'use client';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 const data = [
   {
-    name: "الربع الأول",
+    name: 'الربع الأول',
     مبيعات: 4000,
-    إيرادات: 2400,
+    إيرادات: 2400
   },
   {
-    name: "الربع الثاني",
+    name: 'الربع الثاني',
     مبيعات: 3000,
-    إيرادات: 1398,
+    إيرادات: 1398
   },
   {
-    name: "الربع الثالث",
+    name: 'الربع الثالث',
     مبيعات: 2000,
-    إيرادات: 9800,
+    إيرادات: 9800
   },
   {
-    name: "الربع الرابع",
+    name: 'الربع الرابع',
     مبيعات: 2780,
-    إيرادات: 3908,
-  },
-]
+    إيرادات: 3908
+  }
+];
 
 export function BarChartComponent() {
   return (
@@ -34,7 +34,7 @@ export function BarChartComponent() {
             top: 20,
             right: 10,
             left: 10,
-            bottom: 5,
+            bottom: 5
           }}
           layout="horizontal"
         >
@@ -52,27 +52,27 @@ export function BarChartComponent() {
           <XAxis
             dataKey="name"
             stroke="hsl(var(--primary) / 0.5)"
-            tick={{ fill: "hsl(var(--foreground))" }}
+            tick={{ fill: 'hsl(var(--foreground))' }}
             reversed={true}
             tickMargin={10}
           />
-          <YAxis stroke="hsl(var(--primary) / 0.5)" tick={{ fill: "hsl(var(--foreground))" }} orientation="right" />
+          <YAxis stroke="hsl(var(--primary) / 0.5)" tick={{ fill: 'hsl(var(--foreground))' }} orientation="right" />
           <Tooltip
             contentStyle={{
-              backgroundColor: "hsl(var(--background))",
-              borderColor: "hsl(var(--primary) / 0.2)",
-              boxShadow: "0 4px 12px hsl(var(--primary) / 0.1)",
-              textAlign: "right",
-              direction: "rtl",
+              backgroundColor: 'hsl(var(--background))',
+              borderColor: 'hsl(var(--primary) / 0.2)',
+              boxShadow: '0 4px 12px hsl(var(--primary) / 0.1)',
+              textAlign: 'right',
+              direction: 'rtl'
             }}
-            labelStyle={{ color: "hsl(var(--primary))" }}
+            labelStyle={{ color: 'hsl(var(--primary))' }}
           />
           <Legend
             layout="horizontal"
             verticalAlign="top"
             align="center"
             wrapperStyle={{
-              paddingTop: "10px",
+              paddingTop: '10px'
             }}
           />
           <Bar dataKey="مبيعات" fill="url(#colorSales)" radius={[4, 4, 0, 0]} barSize={30} />
@@ -80,6 +80,5 @@ export function BarChartComponent() {
         </BarChart>
       </ResponsiveContainer>
     </div>
-  )
+  );
 }
-

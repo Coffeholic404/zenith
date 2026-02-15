@@ -1,4 +1,4 @@
-export default function DiplomaIcon({className}: {className?: string}) {
+export default function DiplomaIcon({ className }: { className?: string }) {
   return (
     <svg
       width="24"

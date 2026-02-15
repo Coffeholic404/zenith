@@ -1,14 +1,13 @@
-import type { Metadata } from "next"
-import { FormDisplayDemo } from "@/components/form-display-demo"
-import { Card, CardContent } from "@/components/ui/card"
+import type { Metadata } from 'next';
+import { FormDisplayDemo } from '@/components/form-display-demo';
+import { Card, CardContent } from '@/components/ui/card';
 
 export const metadata: Metadata = {
-  title: "Form Display | Dashboard",
-  description: "Display forms in different ways - normal or steps",
-}
+  title: 'Form Display | Dashboard',
+  description: 'Display forms in different ways - normal or steps'
+};
 
 export default function FormDisplayPage() {
-  
   return (
     <div className="space-y-6">
       <div>
@@ -22,6 +21,5 @@ export default function FormDisplayPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-

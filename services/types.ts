@@ -94,7 +94,7 @@ export interface GetTypeStatisticsResponse {
 
 // API endpoints for Types
 export const typesApi = api.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     // GET /api/Types - list with pagination and optional search
     getTypes: builder.query<GetTypesResponse, GetTypesRequest>({
       query: ({ pageNumber = 1, pageSize = 10, searchQuery }) => ({
@@ -103,20 +103,20 @@ export const typesApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['Types'],
+      providesTags: ['Types']
     }),
 
     // POST /api/Types - create new type
     createType: builder.mutation<CreateTypeResponse, CreateTypeRequest>({
-      query: (body) => ({
+      query: body => ({
         url: '/api/Types',
         method: 'POST',
-        body,
+        body
       }),
-      invalidatesTags: ['Types'],
+      invalidatesTags: ['Types']
     }),
 
     // PUT /api/Types/{id} - update type
@@ -124,47 +124,47 @@ export const typesApi = api.injectEndpoints({
       query: ({ uniqueID, ...body }) => ({
         url: `/api/Types/${uniqueID}`,
         method: 'PUT',
-        body,
+        body
       }),
-      invalidatesTags: ['Types'],
+      invalidatesTags: ['Types']
     }),
 
     // DELETE /api/Types/{id} - delete type
     deleteType: builder.mutation<DeleteTypeResponse, DeleteTypeRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/Types/${uniqueID}`,
-        method: 'DELETE',
+        method: 'DELETE'
       }),
-      invalidatesTags: ['Types'],
+      invalidatesTags: ['Types']
     }),
 
     // GET /api/Types/{id} - get type by ID
     getTypeById: builder.query<GetTypeByIdResponse, GetTypeByIdRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/Types/${uniqueID}`,
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Types'],
+      providesTags: ['Types']
     }),
 
     // GET /api/Types/select - select list
     getTypeSelect: builder.query<GetTypeSelectResponse, void>({
       query: () => ({
         url: '/api/Types/select',
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Types'],
+      providesTags: ['Types']
     }),
 
     // GET /api/Types/statistics - stats
     getTypeStatistics: builder.query<GetTypeStatisticsResponse, void>({
       query: () => ({
         url: '/api/Types/statistics',
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Types'],
-    }),
-  }),
+      providesTags: ['Types']
+    })
+  })
 });
 
 // Hooks
@@ -175,5 +175,5 @@ export const {
   useDeleteTypeMutation,
   useGetTypeByIdQuery,
   useGetTypeSelectQuery,
-  useGetTypeStatisticsQuery,
+  useGetTypeStatisticsQuery
 } = typesApi;

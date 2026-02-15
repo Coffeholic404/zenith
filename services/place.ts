@@ -93,7 +93,7 @@ export interface GetPlaceStatisticsResponse {
 }
 
 export const placeApi = api.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     // GET /api/Place
     getPlaces: builder.query<GetPlacesResponse, GetPlacesRequest>({
       query: ({ pageNumber = 1, pageSize = 10, searchQuery }) => ({
@@ -102,29 +102,29 @@ export const placeApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['Place'],
+      providesTags: ['Place']
     }),
 
     // GET /api/Place/{id}
     getPlaceById: builder.query<GetPlaceByIdResponse, GetPlaceByIdRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/Place/${uniqueID}`,
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Place'],
+      providesTags: ['Place']
     }),
 
     // POST /api/Place
     createPlace: builder.mutation<CreatePlaceResponse, CreatePlaceRequest>({
-      query: (body) => ({
+      query: body => ({
         url: '/api/Place',
         method: 'POST',
-        body,
+        body
       }),
-      invalidatesTags: ['Place'],
+      invalidatesTags: ['Place']
     }),
 
     // PUT /api/Place/{id}
@@ -132,38 +132,38 @@ export const placeApi = api.injectEndpoints({
       query: ({ uniqueID, ...body }) => ({
         url: `/api/Place/${uniqueID}`,
         method: 'PUT',
-        body,
+        body
       }),
-      invalidatesTags: ['Place'],
+      invalidatesTags: ['Place']
     }),
 
     // DELETE /api/Place/{id}
     deletePlace: builder.mutation<DeletePlaceResponse, DeletePlaceRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/Place/${uniqueID}`,
-        method: 'DELETE',
+        method: 'DELETE'
       }),
-      invalidatesTags: ['Place'],
+      invalidatesTags: ['Place']
     }),
 
     // GET /api/Place/select
     getPlaceSelect: builder.query<GetPlaceSelectResponse, void>({
       query: () => ({
         url: '/api/Place/select',
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Place'],
+      providesTags: ['Place']
     }),
 
     // GET /api/Place/statistics
     getPlaceStatistics: builder.query<GetPlaceStatisticsResponse, void>({
       query: () => ({
         url: '/api/Place/statistics',
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Place'],
-    }),
-  }),
+      providesTags: ['Place']
+    })
+  })
 });
 
 export const {
@@ -173,5 +173,5 @@ export const {
   useUpdatePlaceMutation,
   useDeletePlaceMutation,
   useGetPlaceSelectQuery,
-  useGetPlaceStatisticsQuery,
+  useGetPlaceStatisticsQuery
 } = placeApi;

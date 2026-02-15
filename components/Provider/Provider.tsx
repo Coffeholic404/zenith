@@ -1,25 +1,25 @@
-"use client";
-import React, { FC, PropsWithChildren, useEffect } from "react";
-import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Loader from "@/app/loading";
+'use client';
+import React, { FC, PropsWithChildren, useEffect } from 'react';
+import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Loader from '@/app/loading';
 
 const ProviderAuth = ({ children }: PropsWithChildren) => {
   const router = useRouter();
   const { status, data } = useSession();
 
   useEffect(() => {
-    if (status === "unauthenticated") router.replace("/login");
+    if (status === 'unauthenticated') router.replace('/login');
   }, [status]);
 
   // Handle refresh token error - sign out user
   useEffect(() => {
-    if (data?.error === "RefreshAccessTokenError") {
-      signOut({ redirect: true, callbackUrl: "/login" });
+    if (data?.error === 'RefreshAccessTokenError') {
+      signOut({ redirect: true, callbackUrl: '/login' });
     }
   }, [data?.error]);
 
-  if (status === "loading") return <Loader />;
+  if (status === 'loading') return <Loader />;
   else return <>{children}</>;
 };
 

@@ -1,59 +1,65 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { MapPin, Mail, Briefcase, GraduationCap, MoreVertical, Edit, Share2 } from "lucide-react"
-import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import * as React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { MapPin, Mail, Briefcase, GraduationCap, MoreVertical, Edit, Share2 } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 
 export function UserProfile() {
-  const [activeTab, setActiveTab] = React.useState("profile")
+  const [activeTab, setActiveTab] = React.useState('profile');
 
   const userData = {
-    name: "أحمد محمد",
-    title: "مدير تقني",
-    avatar: "/images/avatar.webp",
-    coverImage: "/images/cover.webp",    followers: "1,947",
-    following: "9,124",
+    name: 'أحمد محمد',
+    title: 'مدير تقني',
+    avatar: '/images/avatar.webp',
+    coverImage: '/images/cover.webp',
+    followers: '1,947',
+    following: '9,124',
     about:
-      "مطور ويب متخصص في تطوير تطبيقات الويب باستخدام React و Next.js. أعمل في مجال البرمجة منذ أكثر من 5 سنوات وأسعى دائمًا لتطوير مهاراتي وتعلم التقنيات الجديدة.",
-    location: "الرياض، المملكة العربية السعودية",
-    email: "ahmed@example.com",
-    company: "شركة التقنية المتقدمة",
-    education: "جامعة الملك سعود - علوم الحاسب",
+      'مطور ويب متخصص في تطوير تطبيقات الويب باستخدام React و Next.js. أعمل في مجال البرمجة منذ أكثر من 5 سنوات وأسعى دائمًا لتطوير مهاراتي وتعلم التقنيات الجديدة.',
+    location: 'الرياض، المملكة العربية السعودية',
+    email: 'ahmed@example.com',
+    company: 'شركة التقنية المتقدمة',
+    education: 'جامعة الملك سعود - علوم الحاسب',
     social: {
-      facebook: "https://www.facebook.com/ahmed",
-      instagram: "https://www.instagram.com/ahmed",
-      linkedin: "https://www.linkedin.com/in/ahmed",
-      twitter: "https://www.twitter.com/ahmed",
+      facebook: 'https://www.facebook.com/ahmed',
+      instagram: 'https://www.instagram.com/ahmed',
+      linkedin: 'https://www.linkedin.com/in/ahmed',
+      twitter: 'https://www.twitter.com/ahmed'
     },
     posts: [
       {
         id: 1,
-        date: "22 مارس 2023",
-        content: "غروب الشمس ببطء فوق الأفق، ملونًا السماء بألوان زاهية من البرتقالي والوردي.",
-        image: "/placeholder.svg?height=400&width=600&text=Sunset",
+        date: '22 مارس 2023',
+        content: 'غروب الشمس ببطء فوق الأفق، ملونًا السماء بألوان زاهية من البرتقالي والوردي.',
+        image: '/placeholder.svg?height=400&width=600&text=Sunset'
       },
       {
         id: 2,
-        date: "15 فبراير 2023",
-        content: "اليوم أكملت مشروعًا جديدًا باستخدام Next.js وTailwind CSS. كانت تجربة رائعة!",
-        image: null,
-      },
-    ],
-  }
+        date: '15 فبراير 2023',
+        content: 'اليوم أكملت مشروعًا جديدًا باستخدام Next.js وTailwind CSS. كانت تجربة رائعة!',
+        image: null
+      }
+    ]
+  };
 
   return (
     <div className="mx-auto max-w-4xl">
       {/* Cover Image and Profile */}
       <div className="relative mb-8 rounded-xl overflow-hidden">
         <div className="h-64 w-full relative">
-          <Image src={userData.coverImage || "/placeholder.svg"} alt="Cover" fill className="object-cover" priority />
+          <Image src={userData.coverImage || '/placeholder.svg'} alt="Cover" fill className="object-cover" priority />
         </div>
 
         <div className="absolute bottom-0 right-0 left-0 bg-gradient-to-t from-black/60 to-transparent h-1/2"></div>
@@ -202,7 +208,7 @@ export function UserProfile() {
           </div>
 
           {/* Posts */}
-          {userData.posts.map((post) => (
+          {userData.posts.map(post => (
             <div key={post.id} className="border rounded-lg overflow-hidden">
               <div className="p-4">
                 <div className="flex items-center justify-between mb-4">
@@ -233,7 +239,7 @@ export function UserProfile() {
                 {post.image && (
                   <div className="rounded-lg overflow-hidden mb-2">
                     <Image
-                      src={post.image || "/placeholder.svg"}
+                      src={post.image || '/placeholder.svg'}
                       alt="Post"
                       width={600}
                       height={400}
@@ -258,6 +264,5 @@ export function UserProfile() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-

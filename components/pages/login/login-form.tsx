@@ -1,34 +1,27 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { useRouter } from "next/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useSigninMutation, AuthResponse } from "@/services/auth";
-import { signIn, useSession } from "next-auth/react";
-import { toast } from "sonner";
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useSigninMutation, AuthResponse } from '@/services/auth';
+import { signIn, useSession } from 'next-auth/react';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
   username: z.string().min(4, {
-    message: "يرجى إدخال اسم مستخدم صحيح.",
+    message: 'يرجى إدخال اسم مستخدم صحيح.'
   }),
   password: z.string().min(4, {
-    message: "كلمة المرور يجب أن تكون على الأقل 4 أحرف.",
-  }),
+    message: 'كلمة المرور يجب أن تكون على الأقل 4 أحرف.'
+  })
 });
 
 export function LoginForm() {
@@ -38,9 +31,9 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      password: "",
-    },
+      username: '',
+      password: ''
+    }
   });
   const [signin, { isLoading }] = useSigninMutation();
   const { status, data } = useSession();
@@ -49,42 +42,40 @@ export function LoginForm() {
     try {
       const res: AuthResponse = await signin({
         username: values.username,
-        password: values.password,
+        password: values.password
       }).unwrap();
 
       if (!res.isSuccess) {
         // Show error messages from API
-        const errorMessage = res.errorMessages?.join(", ") || "فشل تسجيل الدخول";
+        const errorMessage = res.errorMessages?.join(', ') || 'فشل تسجيل الدخول';
         toast.error(errorMessage);
         return;
       }
 
       // Sign in with NextAuth using the API response
-      const result = await signIn("credentials", {
+      const result = await signIn('credentials', {
         data: JSON.stringify(res),
         redirect: false,
-        callbackUrl: `${window.location.origin}/`,
+        callbackUrl: `${window.location.origin}/`
       });
 
       if (result?.error) {
-        toast.error("فشل تسجيل الدخول، يرجى المحاولة مرة أخرى");
+        toast.error('فشل تسجيل الدخول، يرجى المحاولة مرة أخرى');
         return;
       }
 
       // Success - router will redirect via useEffect
-      toast.success("تم تسجيل الدخول بنجاح");
+      toast.success('تم تسجيل الدخول بنجاح');
     } catch (error: any) {
-      console.error("Login error:", error);
+      console.error('Login error:', error);
       const errorMessage =
-        error?.data?.errorMessages?.join(", ") ||
-        error?.message ||
-        "خطأ في الاتصال، يرجى المحاولة مرة أخرى";
+        error?.data?.errorMessages?.join(', ') || error?.message || 'خطأ في الاتصال، يرجى المحاولة مرة أخرى';
       toast.error(errorMessage);
     }
   }
 
   React.useEffect(() => {
-    if (status === "authenticated" && window.location.pathname === "/login") {
+    if (status === 'authenticated' && window.location.pathname === '/login') {
       router.replace(`/`);
     }
   }, [status]);
@@ -99,7 +90,11 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>البريد الإلكتروني</FormLabel>
               <FormControl>
-                <Input placeholder="example@example.com" {...field} className="font-vazirmatn text-sm focus-within:text-black focus-visible:text-black"/>
+                <Input
+                  placeholder="example@example.com"
+                  {...field}
+                  className="font-vazirmatn text-sm focus-within:text-black focus-visible:text-black"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -113,11 +108,7 @@ export function LoginForm() {
               <FormLabel>كلمة المرور</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    {...field}
-                  />
+                  <Input type={showPassword ? 'text' : 'password'} placeholder="••••••••" {...field} />
                   <Button
                     type="button"
                     variant="ghost"
@@ -125,14 +116,8 @@ export function LoginForm() {
                     className="absolute left-0 top-0 h-full px-3 py-2"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                    <span className="sr-only">
-                      {showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
-                    </span>
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    <span className="sr-only">{showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}</span>
                   </Button>
                 </div>
               </FormControl>
@@ -167,16 +152,16 @@ export function LoginForm() {
               جاري تسجيل الدخول...
             </>
           ) : (
-            "تسجيل الدخول"
+            'تسجيل الدخول'
           )}
         </Button>
         <div className="text-center text-sm">
-          ليس لديك حساب؟{" "}
+          ليس لديك حساب؟{' '}
           <Button
             variant="link"
             className="px-0 font-normal"
             type="button"
-            onClick={() => router.push("users/register")}
+            onClick={() => router.push('users/register')}
           >
             إنشاء حساب
           </Button>

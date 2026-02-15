@@ -20,7 +20,7 @@ import { Plane } from 'lucide-react';
 import map from '@/public/courses/map.svg';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { useSession } from "next-auth/react";
+import { useSession } from 'next-auth/react';
 import pen from '@/public/table/Pen.svg';
 import trash from '@/public/table/trash.svg';
 import trash2 from '@/public/employees/TrashBin.svg';
@@ -40,7 +40,7 @@ export default function AccidentCard({ accident }: { accident: AccidentItem }) {
   const { toast } = useToast();
   const { data: session } = useSession();
   const userRole = session?.user?.role;
-  const isAdmin = userRole === "Admin";
+  const isAdmin = userRole === 'Admin';
 
   const handleDeleteAccident = async (id: string) => {
     try {
@@ -89,18 +89,26 @@ export default function AccidentCard({ accident }: { accident: AccidentItem }) {
                       <EllipsisVertical className=" size-5 text-[#7B7B7B] hover:text-[#222222] cursor-pointer" />
                     </PopoverTrigger>
                     <PopoverContent className=" w-[120px] rounded-xl">
-                      {!isAdmin && <Button
-                        variant="ghost"
-                        className=" w-full"
-                        onClick={() => router.push(`/accidents/edit-accidents/${accident.id}`)}
-                      >
-                        <Image src={pen} alt="pen" className=" size-[18px]" />
-                        <p className=" font-vazirmatn text-sm">تعديل</p>
-                      </Button>}
-                      {!isAdmin && <Button variant="ghost" className=" hover:bg-red-400" onClick={() => setIsDeleteDialogOpen(true)}>
-                        <Image src={trash} alt="trash" className="size-[18px]" />
-                        <p className=" font-vazirmatn text-sm">حذف</p>
-                      </Button>}
+                      {!isAdmin && (
+                        <Button
+                          variant="ghost"
+                          className=" w-full"
+                          onClick={() => router.push(`/accidents/edit-accidents/${accident.id}`)}
+                        >
+                          <Image src={pen} alt="pen" className=" size-[18px]" />
+                          <p className=" font-vazirmatn text-sm">تعديل</p>
+                        </Button>
+                      )}
+                      {!isAdmin && (
+                        <Button
+                          variant="ghost"
+                          className=" hover:bg-red-400"
+                          onClick={() => setIsDeleteDialogOpen(true)}
+                        >
+                          <Image src={trash} alt="trash" className="size-[18px]" />
+                          <p className=" font-vazirmatn text-sm">حذف</p>
+                        </Button>
+                      )}
 
                       <Button variant="ghost" className="" onClick={() => router.push(`/accidents/${accident.id}`)}>
                         <Image src={eye} alt="eye" className="size-[18px]" />

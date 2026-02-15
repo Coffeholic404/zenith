@@ -1,46 +1,42 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { CalendarIcon } from "lucide-react"
-import { ControllerRenderProps } from "react-hook-form"
+import * as React from 'react';
+import { CalendarIcon } from 'lucide-react';
+import { ControllerRenderProps } from 'react-hook-form';
 
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Input } from "@/components/ui/input"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface BirthdayDateProps extends ControllerRenderProps {
-  placeholder?: string
-  className?: string
+  placeholder?: string;
+  className?: string;
 }
 
 function formatDateForDisplay(date: Date | undefined): string {
   if (!date) {
-    return ""
+    return '';
   }
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, "0")
-  const day = String(date.getDate()).padStart(2, "0")
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
   // Display as: yyyy mm dd
-  return `${year} ${month} ${day}`
+  return `${year} ${month} ${day}`;
 }
 
 function formatDateForInput(dateString: string): Date | undefined {
-  if (!dateString) return undefined
+  if (!dateString) return undefined;
 
-  const date = new Date(dateString)
-  return isNaN(date.getTime()) ? undefined : date
+  const date = new Date(dateString);
+  return isNaN(date.getTime()) ? undefined : date;
 }
 
 function isValidDate(date: Date | undefined): boolean {
   if (!date) {
-    return false
+    return false;
   }
-  return !isNaN(date.getTime())
+  return !isNaN(date.getTime());
 }
 
 export default function BirthdayDate({
@@ -48,66 +44,62 @@ export default function BirthdayDate({
   onChange,
   onBlur,
   name,
-  placeholder = "اختر تاريخ الميلاد",
-  className = ""
+  placeholder = 'اختر تاريخ الميلاد',
+  className = ''
 }: BirthdayDateProps) {
-  const [open, setOpen] = React.useState(false)
-  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
-    formatDateForInput(value)
-  )
-  const [displayValue, setDisplayValue] = React.useState(
-    formatDateForDisplay(formatDateForInput(value))
-  )
+  const [open, setOpen] = React.useState(false);
+  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(formatDateForInput(value));
+  const [displayValue, setDisplayValue] = React.useState(formatDateForDisplay(formatDateForInput(value)));
 
   // Update internal state when value prop changes
   React.useEffect(() => {
-    const date = formatDateForInput(value)
-    setSelectedDate(date)
-    setDisplayValue(formatDateForDisplay(date))
-  }, [value])
+    const date = formatDateForInput(value);
+    setSelectedDate(date);
+    setDisplayValue(formatDateForDisplay(date));
+  }, [value]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value
-    setDisplayValue(inputValue)
+    const inputValue = e.target.value;
+    setDisplayValue(inputValue);
 
     // Try to parse the input as a date
     // Support formats: yyyy-mm-dd, yyyy/mm/dd, yyyy mm dd
-    const ymdMatch = inputValue.match(/^\s*(\d{4})[-/ ](\d{2})[-/ ](\d{2})\s*$/)
+    const ymdMatch = inputValue.match(/^\s*(\d{4})[-/ ](\d{2})[-/ ](\d{2})\s*$/);
     const parsedDate = ymdMatch
       ? new Date(Number(ymdMatch[1]), Number(ymdMatch[2]) - 1, Number(ymdMatch[3]))
-      : new Date(inputValue)
+      : new Date(inputValue);
     if (isValidDate(parsedDate)) {
-      setSelectedDate(parsedDate)
+      setSelectedDate(parsedDate);
       // Convert to YYYY-MM-DD format for form submission (local time, not UTC)
-      const year = parsedDate.getFullYear()
-      const month = String(parsedDate.getMonth() + 1).padStart(2, "0")
-      const day = String(parsedDate.getDate()).padStart(2, "0")
-      onChange(`${year}-${month}-${day}`)
+      const year = parsedDate.getFullYear();
+      const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(parsedDate.getDate()).padStart(2, '0');
+      onChange(`${year}-${month}-${day}`);
     } else {
       // If invalid, still update the form with the raw input for validation
-      onChange(inputValue)
+      onChange(inputValue);
     }
-  }
+  };
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
-      setSelectedDate(date)
-      setDisplayValue(formatDateForDisplay(date))
+      setSelectedDate(date);
+      setDisplayValue(formatDateForDisplay(date));
       // Convert to YYYY-MM-DD format for form submission (local time, not UTC)
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, "0")
-      const day = String(date.getDate()).padStart(2, "0")
-      onChange(`${year}-${month}-${day}`)
-      setOpen(false)
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      onChange(`${year}-${month}-${day}`);
+      setOpen(false);
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "ArrowDown") {
-      e.preventDefault()
-      setOpen(true)
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setOpen(true);
     }
-  }
+  };
 
   return (
     <div className="relative">
@@ -132,18 +124,12 @@ export default function BirthdayDate({
             <span className="sr-only">اختر التاريخ</span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent
-          className="w-auto overflow-hidden p-0"
-          align="end"
-          alignOffset={-8}
-          sideOffset={10}
-        >
+        <PopoverContent className="w-auto overflow-hidden p-0" align="end" alignOffset={-8} sideOffset={10}>
           <Calendar
             mode="single"
             selected={selectedDate}
             captionLayout="dropdown"
             onSelect={handleDateSelect}
-
             defaultMonth={selectedDate || new Date(2000, 0, 1)}
             fromYear={1950}
             toYear={new Date().getFullYear()}
@@ -151,5 +137,5 @@ export default function BirthdayDate({
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }

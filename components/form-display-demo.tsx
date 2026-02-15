@@ -1,182 +1,182 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Steps, Step } from "@/components/ui/steps"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Combobox } from "@/components/ui/combobox"
-import { Switch } from "@/components/ui/switch"
-import { DatePickerDemo } from "@/components/forms/date-picker"
-import { TimePickerDemo } from "@/components/forms/time-picker"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
-import { Clock } from "lucide-react"
-import { useGetTest2Query } from "@/services/test"
+import * as React from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Steps, Step } from '@/components/ui/steps';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Combobox } from '@/components/ui/combobox';
+import { Switch } from '@/components/ui/switch';
+import { DatePickerDemo } from '@/components/forms/date-picker';
+import { TimePickerDemo } from '@/components/forms/time-picker';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { Clock } from 'lucide-react';
+import { useGetTest2Query } from '@/services/test';
 
 const formSchema = z.object({
   personalInfo: z.object({
     firstName: z.string().min(2, {
-      message: "الاسم الأول يجب أن يكون على الأقل حرفين.",
+      message: 'الاسم الأول يجب أن يكون على الأقل حرفين.'
     }),
     lastName: z.string().min(2, {
-      message: "الاسم الأخير يجب أن يكون على الأقل حرفين.",
+      message: 'الاسم الأخير يجب أن يكون على الأقل حرفين.'
     }),
     email: z.string().email({
-      message: "يرجى إدخال بريد إلكتروني صحيح.",
+      message: 'يرجى إدخال بريد إلكتروني صحيح.'
     }),
     phone: z.string().min(10, {
-      message: "رقم الهاتف يجب أن يكون على الأقل 10 أرقام.",
-    }),
+      message: 'رقم الهاتف يجب أن يكون على الأقل 10 أرقام.'
+    })
   }),
   addressInfo: z.object({
     address: z.string().min(5, {
-      message: "العنوان يجب أن يكون على الأقل 5 أحرف.",
+      message: 'العنوان يجب أن يكون على الأقل 5 أحرف.'
     }),
     city: z.string().min(2, {
-      message: "المدينة يجب أن تكون على الأقل حرفين.",
+      message: 'المدينة يجب أن تكون على الأقل حرفين.'
     }),
     country: z.string({
-      required_error: "يرجى اختيار الدولة.",
+      required_error: 'يرجى اختيار الدولة.'
     }),
     postalCode: z.string().min(5, {
-      message: "الرمز البريدي يجب أن يكون على الأقل 5 أحرف.",
-    }),
+      message: 'الرمز البريدي يجب أن يكون على الأقل 5 أحرف.'
+    })
   }),
   accountInfo: z.object({
     username: z.string().min(3, {
-      message: "اسم المستخدم يجب أن يكون على الأقل 3 أحرف.",
+      message: 'اسم المستخدم يجب أن يكون على الأقل 3 أحرف.'
     }),
     bio: z
       .string()
       .max(160, {
-        message: "السيرة الذاتية يجب أن تكون أقل من 160 حرفًا.",
+        message: 'السيرة الذاتية يجب أن تكون أقل من 160 حرفًا.'
       })
       .optional(),
     birthDate: z.date({
-      required_error: "يرجى اختيار تاريخ الميلاد.",
+      required_error: 'يرجى اختيار تاريخ الميلاد.'
     }),
     appointmentTime: z.string({
-      required_error: "يرجى اختيار وقت الموعد.",
+      required_error: 'يرجى اختيار وقت الموعد.'
     }),
-    gender: z.enum(["male", "female", "other"], {
-      required_error: "يرجى اختيار الجنس.",
-    }),
+    gender: z.enum(['male', 'female', 'other'], {
+      required_error: 'يرجى اختيار الجنس.'
+    })
   }),
   preferences: z.object({
     notifications: z.boolean().default(false),
     newsletter: z.boolean().default(false),
-    acceptTerms: z.boolean().refine((val) => val === true, {
-      message: "يجب الموافقة على الشروط والأحكام.",
-    }),
-  }),
-})
+    acceptTerms: z.boolean().refine(val => val === true, {
+      message: 'يجب الموافقة على الشروط والأحكام.'
+    })
+  })
+});
 
 const countryOptions = [
-  { value: "sa", label: "المملكة العربية السعودية" },
-  { value: "ae", label: "الإمارات العربية المتحدة" },
-  { value: "eg", label: "مصر" },
-  { value: "jo", label: "الأردن" },
-  { value: "kw", label: "الكويت" },
-  { value: "bh", label: "البحرين" },
-  { value: "qa", label: "قطر" },
-  { value: "om", label: "عمان" },
-  { value: "lb", label: "لبنان" },
-  { value: "sy", label: "سوريا" },
-]
+  { value: 'sa', label: 'المملكة العربية السعودية' },
+  { value: 'ae', label: 'الإمارات العربية المتحدة' },
+  { value: 'eg', label: 'مصر' },
+  { value: 'jo', label: 'الأردن' },
+  { value: 'kw', label: 'الكويت' },
+  { value: 'bh', label: 'البحرين' },
+  { value: 'qa', label: 'قطر' },
+  { value: 'om', label: 'عمان' },
+  { value: 'lb', label: 'لبنان' },
+  { value: 'sy', label: 'سوريا' }
+];
 
 export function FormDisplayDemo() {
-  const [displayMode, setDisplayMode] = React.useState<"regular" | "steps">("regular")
-  const [currentStep, setCurrentStep] = React.useState(0)
+  const [displayMode, setDisplayMode] = React.useState<'regular' | 'steps'>('regular');
+  const [currentStep, setCurrentStep] = React.useState(0);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       personalInfo: {
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: ''
       },
       addressInfo: {
-        address: "",
-        city: "",
-        country: "",
-        postalCode: "",
+        address: '',
+        city: '',
+        country: '',
+        postalCode: ''
       },
       accountInfo: {
-        username: "",
-        bio: "",
-        gender: undefined,
+        username: '',
+        bio: '',
+        gender: undefined
       },
       preferences: {
         notifications: false,
         newsletter: false,
-        acceptTerms: false,
-      },
-    },
-  })
+        acceptTerms: false
+      }
+    }
+  });
 
   const steps = [
     {
-      id: "step-1",
-      name: "المعلومات الشخصية",
-      fields: ["personalInfo.firstName", "personalInfo.lastName", "personalInfo.email", "personalInfo.phone"],
+      id: 'step-1',
+      name: 'المعلومات الشخصية',
+      fields: ['personalInfo.firstName', 'personalInfo.lastName', 'personalInfo.email', 'personalInfo.phone']
     },
     {
-      id: "step-2",
-      name: "معلومات العنوان",
-      fields: ["addressInfo.address", "addressInfo.city", "addressInfo.country", "addressInfo.postalCode"],
+      id: 'step-2',
+      name: 'معلومات العنوان',
+      fields: ['addressInfo.address', 'addressInfo.city', 'addressInfo.country', 'addressInfo.postalCode']
     },
     {
-      id: "step-3",
-      name: "معلومات الحساب",
+      id: 'step-3',
+      name: 'معلومات الحساب',
       fields: [
-        "accountInfo.username",
-        "accountInfo.bio",
-        "accountInfo.birthDate",
-        "accountInfo.appointmentTime",
-        "accountInfo.gender",
-      ],
+        'accountInfo.username',
+        'accountInfo.bio',
+        'accountInfo.birthDate',
+        'accountInfo.appointmentTime',
+        'accountInfo.gender'
+      ]
     },
     {
-      id: "step-4",
-      name: "التفضيلات",
-      fields: ["preferences.notifications", "preferences.newsletter", "preferences.acceptTerms"],
-    },
-  ]
+      id: 'step-4',
+      name: 'التفضيلات',
+      fields: ['preferences.notifications', 'preferences.newsletter', 'preferences.acceptTerms']
+    }
+  ];
 
   // Check if the current step is valid
   const checkStepValidity = async (step: number) => {
-    const fields = steps[step].fields
-    const result = await form.trigger(fields as any)
-    return result
-  }
+    const fields = steps[step].fields;
+    const result = await form.trigger(fields as any);
+    return result;
+  };
 
   // Go to the next step
   const handleNext = async () => {
-    const isValid = await checkStepValidity(currentStep)
+    const isValid = await checkStepValidity(currentStep);
     if (isValid) {
-      setCurrentStep((prev) => prev + 1)
+      setCurrentStep(prev => prev + 1);
     }
-  }
+  };
 
   // Go to the previous step
   const handlePrevious = () => {
-    setCurrentStep((prev) => prev - 1)
-  }
+    setCurrentStep(prev => prev - 1);
+  };
 
   // Handle form submission
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    alert("تم إرسال النموذج بنجاح!")
+    console.log(values);
+    alert('تم إرسال النموذج بنجاح!');
   }
   const { isFetching, data } = useGetTest2Query({});
   const recordsData = Array.isArray(data) ? data : [];
@@ -191,15 +191,15 @@ export function FormDisplayDemo() {
           <div className="flex items-center space-x-2 space-x-reverse rtl:space-x-reverse">
             <span className="text-sm text-muted-foreground">عادي</span>
             <Switch
-              checked={displayMode === "steps"}
-              onCheckedChange={(checked) => setDisplayMode(checked ? "steps" : "regular")}
+              checked={displayMode === 'steps'}
+              onCheckedChange={checked => setDisplayMode(checked ? 'steps' : 'regular')}
             />
             <span className="text-sm text-muted-foreground">خطوات</span>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        {displayMode === "steps" && (
+        {displayMode === 'steps' && (
           <div className="mb-8">
             <Steps currentStep={currentStep}>
               {steps.map((step, index) => (
@@ -211,7 +211,7 @@ export function FormDisplayDemo() {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            {displayMode === "regular" ? (
+            {displayMode === 'regular' ? (
               <>
                 {/* Regular Form Display - All sections at once */}
                 <div className="space-y-8">
@@ -396,10 +396,10 @@ export function FormDisplayDemo() {
                               <PopoverTrigger asChild>
                                 <FormControl>
                                   <Button
-                                    variant={"outline"}
+                                    variant={'outline'}
                                     className={cn(
-                                      "w-full pl-3 text-right font-normal",
-                                      !field.value && "text-muted-foreground",
+                                      'w-full pl-3 text-right font-normal',
+                                      !field.value && 'text-muted-foreground'
                                     )}
                                   >
                                     {field.value || <span>اختر وقتًا</span>}
@@ -408,7 +408,7 @@ export function FormDisplayDemo() {
                                 </FormControl>
                               </PopoverTrigger>
                               <PopoverContent className="w-auto p-4" align="start">
-                                <TimePickerDemo setTime={(time) => field.onChange(time)} time={field.value} />
+                                <TimePickerDemo setTime={time => field.onChange(time)} time={field.value} />
                               </PopoverContent>
                             </Popover>
                             <FormMessage />
@@ -690,10 +690,10 @@ export function FormDisplayDemo() {
                               <PopoverTrigger asChild>
                                 <FormControl>
                                   <Button
-                                    variant={"outline"}
+                                    variant={'outline'}
                                     className={cn(
-                                      "w-full pl-3 text-right font-normal",
-                                      !field.value && "text-muted-foreground",
+                                      'w-full pl-3 text-right font-normal',
+                                      !field.value && 'text-muted-foreground'
                                     )}
                                   >
                                     {field.value || <span>اختر وقتًا</span>}
@@ -702,7 +702,7 @@ export function FormDisplayDemo() {
                                 </FormControl>
                               </PopoverTrigger>
                               <PopoverContent className="w-auto p-4" align="start">
-                                <TimePickerDemo setTime={(time) => field.onChange(time)} time={field.value} />
+                                <TimePickerDemo setTime={time => field.onChange(time)} time={field.value} />
                               </PopoverContent>
                             </Popover>
                             <FormMessage />
@@ -804,7 +804,7 @@ export function FormDisplayDemo() {
           </form>
         </Form>
       </CardContent>
-      {displayMode === "steps" && (
+      {displayMode === 'steps' && (
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 0}>
             السابق
@@ -817,6 +817,5 @@ export function FormDisplayDemo() {
         </CardFooter>
       )}
     </Card>
-  )
+  );
 }
-

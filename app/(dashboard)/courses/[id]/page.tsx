@@ -18,12 +18,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import add from "@/public/employees/plus.svg";
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import add from '@/public/employees/plus.svg';
 import eye from '@/public/courses/Eye.svg';
 import plain from '@/public/courses/Plain.svg';
 import map from '@/public/courses/map.svg';
@@ -49,7 +45,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { toast } = useToast();
   const { data: session } = useSession();
   const userRole = session?.user?.role;
-  const isAdmin = userRole === "Admin";
+  const isAdmin = userRole === 'Admin';
   // Group participants by trainer
   const trainerGroups = React.useMemo(() => {
     if (!data?.result?.participants) return new Map();
@@ -162,22 +158,26 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             </Badge>
           </div>
           <div className=" flex gap-4 font-vazirmatn self-end">
-           {!isAdmin && <Button
-              variant="outline"
-              className=" px-6 rounded-xl"
-              onClick={() => router.push(`/courses/edit-course/${courseId}`)}
-            >
-              <Image src={pen} alt="edit" />
-              تعديل
-            </Button>}
-           {!isAdmin && <Button
-              className=" border border-red-500 px-6 rounded-xl hover:bg-red-500 hover:text-white"
-              variant="outline"
-              onClick={() => setIsCourseDeleteDialogOpen(true)}
-            >
-              <Image src={trash} alt="delete" />
-              حذف
-            </Button>}
+            {!isAdmin && (
+              <Button
+                variant="outline"
+                className=" px-6 rounded-xl"
+                onClick={() => router.push(`/courses/edit-course/${courseId}`)}
+              >
+                <Image src={pen} alt="edit" />
+                تعديل
+              </Button>
+            )}
+            {!isAdmin && (
+              <Button
+                className=" border border-red-500 px-6 rounded-xl hover:bg-red-500 hover:text-white"
+                variant="outline"
+                onClick={() => setIsCourseDeleteDialogOpen(true)}
+              >
+                <Image src={trash} alt="delete" />
+                حذف
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -214,23 +214,25 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         <Card className=" rounded-lg px-3 pb-2 space-y-4">
           <CardHeader className=" flex -mx-3 flex-row items-center justify-between p-2 px-3 border-b border-solid border-[#DCDACE] mb-2">
             <p className=" font-vazirmatn text-subtext text-sm">النشاطات</p>
-            <div className=' flex gap-4 items-center'>
+            <div className=" flex gap-4 items-center">
               <p className=" font-vazirmatn text-subtext text-sm">
                 {data?.result?.activitiesCount || data?.result?.activities?.length || 0}
               </p>
-              {!isAdmin && <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    className=" bg-sidebaractive  px-3 rounded-2xl "
-                    onClick={() => router.push(`/activities/add-activities/${data?.result?.uniqueID}`)}
-                  >
-                    <Image src={add} alt="add icon" className=" size-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
-                  <p className=" font-normal text-sm text-white font-vazirmatn">إضافة نشاط</p>
-                </TooltipContent>
-              </Tooltip>}
+              {!isAdmin && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      className=" bg-sidebaractive  px-3 rounded-2xl "
+                      onClick={() => router.push(`/activities/add-activities/${data?.result?.uniqueID}`)}
+                    >
+                      <Image src={add} alt="add icon" className=" size-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
+                    <p className=" font-normal text-sm text-white font-vazirmatn">إضافة نشاط</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </div>
           </CardHeader>
           {data?.result?.activities && data.result.activities.length > 0 ? (
@@ -269,25 +271,29 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 </div>
                 <Separator className=" bg-[#DCDACE]  w-[99%] my-2" />
                 <div className=" flex items-center justify-evenly gap-4">
-                  {!isAdmin && <Button
-                    variant="outline"
-                    className="font-vazirmatn font-normal text-md flex-1"
-                    onClick={() => router.push(`/activities/edit-activity/${activity.uniqueID}`)}
-                  >
-                    <Image src={pen} alt="pen" />
-                    تعديل
-                  </Button>}
-                  {!isAdmin && <Button
-                    variant="outline"
-                    className="font-vazirmatn font-normal text-md flex-1 hover:bg-red-500 hover:text-white"
-                    onClick={() => {
-                      setActivityToDelete(activity.uniqueID);
-                      setIsDeleteDialogOpen(true);
-                    }}
-                  >
-                    <Image src={trash} alt="trash" />
-                    حذف
-                  </Button>}
+                  {!isAdmin && (
+                    <Button
+                      variant="outline"
+                      className="font-vazirmatn font-normal text-md flex-1"
+                      onClick={() => router.push(`/activities/edit-activity/${activity.uniqueID}`)}
+                    >
+                      <Image src={pen} alt="pen" />
+                      تعديل
+                    </Button>
+                  )}
+                  {!isAdmin && (
+                    <Button
+                      variant="outline"
+                      className="font-vazirmatn font-normal text-md flex-1 hover:bg-red-500 hover:text-white"
+                      onClick={() => {
+                        setActivityToDelete(activity.uniqueID);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                    >
+                      <Image src={trash} alt="trash" />
+                      حذف
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             ))
@@ -329,7 +335,9 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             <AlertDialogDescription className="text-right text-subtext">
               هل أنت متأكد من حذف هذه الدورة؟
               <br />
-              <span className="text-sm text-deleteTxt">لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع البيانات المرتبطة بها.</span>
+              <span className="text-sm text-deleteTxt">
+                لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع البيانات المرتبطة بها.
+              </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex gap-2">

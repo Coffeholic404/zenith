@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { ar } from "date-fns/locale";
-import { MoreHorizontal, ArrowUpDown } from "lucide-react";
+import type { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
+import { ar } from 'date-fns/locale';
+import { MoreHorizontal, ArrowUpDown } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 
 // تعريف نوع البيانات
 export type User = {
@@ -30,50 +30,41 @@ export type User = {
 // تعريف الأعمدة
 export const columns: ColumnDef<User>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
         aria-label="تحديد الكل"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onCheckedChange={value => row.toggleSelected(!!value)}
         aria-label="تحديد الصف"
       />
     ),
     enableSorting: false,
-    enableHiding: true,
+    enableHiding: true
   },
   {
-    accessorKey: "name",
+    accessorKey: 'name',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           الاسم
           <ArrowUpDown className="mr-2 h-4 w-4" />
         </Button>
       );
     },
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    cell: ({ row }) => <div>{row.getValue('name')}</div>
   },
   {
-    accessorKey: "email",
+    accessorKey: 'email',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           البريد الإلكتروني
           <ArrowUpDown className="mr-2 h-4 w-4" />
         </Button>
@@ -81,62 +72,49 @@ export const columns: ColumnDef<User>[] = [
     },
     cell: ({ row }) => (
       <div dir="ltr" className="text-right">
-        {row.getValue("email")}
+        {row.getValue('email')}
       </div>
-    ),
+    )
   },
   {
-    accessorKey: "status",
-    header: "الحالة",
+    accessorKey: 'status',
+    header: 'الحالة',
     cell: ({ row }) => {
-      const status = row.getValue("status") as string;
+      const status = row.getValue('status') as string;
 
       return (
-        <Badge
-          variant={
-            status === "نشط"
-              ? "default"
-              : status === "غير نشط"
-              ? "secondary"
-              : "outline"
-          }
-        >
-          {status}
-        </Badge>
+        <Badge variant={status === 'نشط' ? 'default' : status === 'غير نشط' ? 'secondary' : 'outline'}>{status}</Badge>
       );
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    },
+    }
   },
   {
-    accessorKey: "role",
-    header: "الدور",
-    cell: ({ row }) => <div>{row.getValue("role")}</div>,
+    accessorKey: 'role',
+    header: 'الدور',
+    cell: ({ row }) => <div>{row.getValue('role')}</div>,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    },
+    }
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: 'createdAt',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           تاريخ الإنشاء
           <ArrowUpDown className="mr-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt"));
-      return <div>{format(date, "PPpp", { locale: ar })}</div>;
-    },
+      const date = new Date(row.getValue('createdAt'));
+      return <div>{format(date, 'PPpp', { locale: ar })}</div>;
+    }
   },
   {
-    id: "actions",
+    id: 'actions',
     cell: ({ row }) => {
       const user = row.original;
 
@@ -150,27 +128,23 @@ export const columns: ColumnDef<User>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
-            >
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id)}>
               نسخ معرف المستخدم
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>عرض التفاصيل</DropdownMenuItem>
             <DropdownMenuItem>تعديل المستخدم</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
-              حذف المستخدم
-            </DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive">حذف المستخدم</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
-    },
-  },
+    }
+  }
 ];
 export const columnsNames = [
-  { label: "الاسم", dataIndex: "name" },
-  { label: "البريد الإلكتروني", dataIndex: "email" },
-  { label: "الحالة", dataIndex: "status" },
-  { label: "الدور", dataIndex: "role" },
-  { label: "تاريخ الإنشاء", dataIndex: "createdAt" },
+  { label: 'الاسم', dataIndex: 'name' },
+  { label: 'البريد الإلكتروني', dataIndex: 'email' },
+  { label: 'الحالة', dataIndex: 'status' },
+  { label: 'الدور', dataIndex: 'role' },
+  { label: 'تاريخ الإنشاء', dataIndex: 'createdAt' }
 ];

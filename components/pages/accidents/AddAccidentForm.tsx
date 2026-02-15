@@ -120,11 +120,10 @@ export default function AddAccidentForm() {
 
   let employeesData: any = [];
   if (isSuccessEmployees) {
-    employeesData = employees?.result?.data
-      .map(item => ({
-        value: item.id,
-        label: item.name
-      }));
+    employeesData = employees?.result?.data.map(item => ({
+      value: item.id,
+      label: item.name
+    }));
   }
   let trainers: any = [];
   if (isSuccessEmployees) {
@@ -227,9 +226,9 @@ export default function AddAccidentForm() {
         typeOfJump: values.typeOfJump,
         trainer1Id: values.trainer1Id === 'none' ? '' : values.trainer1Id || '',
         trainer1Note: values.trainer1Note || '',
-        trainer2Id: (values.trainer2Id === 'none' || !values.trainer2Id) ? null : values.trainer2Id,
+        trainer2Id: values.trainer2Id === 'none' || !values.trainer2Id ? null : values.trainer2Id,
         trainer2Note: values.trainer2Note || null,
-        trainer3Id: (values.trainer3Id === 'none' || !values.trainer3Id) ? null : values.trainer3Id,
+        trainer3Id: values.trainer3Id === 'none' || !values.trainer3Id ? null : values.trainer3Id,
         trainer3Note: values.trainer3Note || null,
         finalReport: values.finalReport || '',
         committeeMembers: values.committeeMembers || []

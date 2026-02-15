@@ -1,19 +1,10 @@
-import { EllipsisVertical } from "lucide-react";
-import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  PopoverArrow,
-} from "@/components/ui/popover";
+import { EllipsisVertical } from 'lucide-react';
+import { useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Popover, PopoverContent, PopoverTrigger, PopoverArrow } from '@/components/ui/popover';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,28 +13,34 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import phone from "@/public/employees/Phone.svg";
-import pencil from "@/public/table/Pen.svg"
-import trash from "@/public/employees/TrashBin.svg"
-import Image from "next/image";
-import { Employee, useDeleteEmployeeMutation } from "@/services/employe";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
-import { useSession } from "next-auth/react";
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import phone from '@/public/employees/Phone.svg';
+import pencil from '@/public/table/Pen.svg';
+import trash from '@/public/employees/TrashBin.svg';
+import Image from 'next/image';
+import { Employee, useDeleteEmployeeMutation } from '@/services/employe';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
+import { useSession } from 'next-auth/react';
 
-
-export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee: Employee, isEdit: boolean, setIsEdit: (value: boolean) => void }) {
-
+export default function EmployeeCard({
+  employee,
+  isEdit,
+  setIsEdit
+}: {
+  employee: Employee;
+  isEdit: boolean;
+  setIsEdit: (value: boolean) => void;
+}) {
   const router = useRouter();
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteEmployee, { isLoading: isDeleting }] = useDeleteEmployeeMutation();
   const { data: session } = useSession();
   const userRole = session?.user?.role;
-  const isAdmin = userRole === "Admin";
+  const isAdmin = userRole === 'Admin';
 
   const handleDeleteEmployee = async (id: string) => {
     try {
@@ -51,9 +48,9 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
 
       // Show success toast
       toast({
-        title: "تم بنجاح",
+        title: 'تم بنجاح',
         description: `تم حذف الموظف ${employee.name} بنجاح`,
-        variant: "default",
+        variant: 'default'
       });
 
       // Close the dialog
@@ -61,18 +58,15 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
 
       // Refresh the page to update the employee list
       router.refresh();
-
     } catch (error: any) {
       // Show error toast with the exact error message from API
-      const errorMessage = error?.data?.errorMessages?.[0] ||
-        error?.data?.message ||
-        error?.message ||
-        "حدث خطأ أثناء حذف الموظف";
+      const errorMessage =
+        error?.data?.errorMessages?.[0] || error?.data?.message || error?.message || 'حدث خطأ أثناء حذف الموظف';
 
       toast({
-        title: "خطأ",
+        title: 'خطأ',
         description: errorMessage,
-        variant: "destructive",
+        variant: 'destructive'
       });
 
       // Close the dialog even on error
@@ -82,16 +76,14 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
 
   const handleEditEmployee = () => {
     setIsEdit(true);
-    if (employee.employeeTypeName === "مدرب") {
+    if (employee.employeeTypeName === 'مدرب') {
       router.push(`/employees/edit-trainer/${employee.id}`);
     } else {
       router.push(`/employees/edit-employe/${employee.id}`);
     }
-  }
+  };
 
   console.log(employee);
-
-
 
   return (
     <>
@@ -105,50 +97,34 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
               </Avatar>
               <div className=" font-vazirmatn pt-2">
                 <p className=" font-medium text-lg text-cardTxt">{employee.name}</p>
-                <p className=" text-sm text-subtext font-normal">
-                  {" "}
-                  {employee.jobTitle}
-                </p>
+                <p className=" text-sm text-subtext font-normal"> {employee.jobTitle}</p>
               </div>
             </div>
-            {!isAdmin && <div className="">
-              <Popover>
-                <PopoverTrigger className=" size-6 text-subtext">
-                  <EllipsisVertical className=" size-6 text-subtext" />
-                </PopoverTrigger>
-                <PopoverContent className=" max-w-24 font-vazirmatn p-2 py-4 rounded-xl">
-                  <div className=" flex flex-col gap-4">
-                    <div
-                      onClick={handleEditEmployee}
-                      className=" flex items-center gap-2 cursor-pointer"
-                    >
-                      <Image
-                        src={pencil}
-                        alt="user rounded icon"
-                        className=" size-6"
-                      />
-                      <p className=" font-normal text-base text-subtext">
-                        تعديل
-                      </p>
+            {!isAdmin && (
+              <div className="">
+                <Popover>
+                  <PopoverTrigger className=" size-6 text-subtext">
+                    <EllipsisVertical className=" size-6 text-subtext" />
+                  </PopoverTrigger>
+                  <PopoverContent className=" max-w-24 font-vazirmatn p-2 py-4 rounded-xl">
+                    <div className=" flex flex-col gap-4">
+                      <div onClick={handleEditEmployee} className=" flex items-center gap-2 cursor-pointer">
+                        <Image src={pencil} alt="user rounded icon" className=" size-6" />
+                        <p className=" font-normal text-base text-subtext">تعديل</p>
+                      </div>
+                      <div
+                        onClick={() => setIsDeleteDialogOpen(true)}
+                        className=" flex items-center gap-2 cursor-pointer"
+                      >
+                        <Image src={trash} alt="trash icon" className=" size-6" />
+                        <p className=" font-normal text-base text-deleteTxt">حذف</p>
+                      </div>
                     </div>
-                    <div
-                      onClick={() => setIsDeleteDialogOpen(true)}
-                      className=" flex items-center gap-2 cursor-pointer"
-                    >
-                      <Image
-                        src={trash}
-                        alt="trash icon"
-                        className=" size-6"
-                      />
-                      <p className=" font-normal text-base text-deleteTxt">
-                        حذف
-                      </p>
-                    </div>
-                  </div>
-                  <PopoverArrow />
-                </PopoverContent>
-              </Popover>
-            </div>}
+                    <PopoverArrow />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             {employee.employeeTypeName && (
@@ -156,7 +132,9 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
                 title={employee.employeeTypeName}
                 className="text-[0.725rem] font-vazirmatn font-semibold text-cardTxt bg-studentClr px-3 py-1 rounded-lg border-none hover:bg-studentClr transition-all duration-200 cursor-default"
               >
-                {employee.employeeTypeName.length > 6 ? `${employee.employeeTypeName.slice(0, 6)}...` : employee.employeeTypeName}
+                {employee.employeeTypeName.length > 6
+                  ? `${employee.employeeTypeName.slice(0, 6)}...`
+                  : employee.employeeTypeName}
               </Badge>
             )}
             {employee.character && (
@@ -172,7 +150,9 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
                 title={employee.typeOfTraining}
                 className="text-[0.725rem] font-vazirmatn font-semibold text-cardTxt bg-studentClr px-3 py-1 rounded-lg border-none hover:bg-studentClr transition-all duration-200 cursor-default"
               >
-                {employee.typeOfTraining.length > 6 ? `${employee.typeOfTraining.slice(0, 6)}...` : employee.typeOfTraining}
+                {employee.typeOfTraining.length > 6
+                  ? `${employee.typeOfTraining.slice(0, 6)}...`
+                  : employee.typeOfTraining}
               </Badge>
             )}
             {employee.licenseNumber && (
@@ -180,7 +160,9 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
                 title={employee.licenseNumber}
                 className="text-[0.725rem] font-vazirmatn font-semibold text-cardTxt bg-studentClr px-3 py-1 rounded-lg border-none hover:bg-studentClr transition-all duration-200 cursor-default"
               >
-                {employee.licenseNumber.length > 6 ? `${employee.licenseNumber.slice(0, 6)}...` : employee.licenseNumber}
+                {employee.licenseNumber.length > 6
+                  ? `${employee.licenseNumber.slice(0, 6)}...`
+                  : employee.licenseNumber}
               </Badge>
             )}
           </div>
@@ -197,9 +179,7 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent className="font-vazirmatn">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-right text-cardTxt">
-              تأكيد الحذف
-            </AlertDialogTitle>
+            <AlertDialogTitle className="text-right text-cardTxt">تأكيد الحذف</AlertDialogTitle>
             <AlertDialogDescription className="text-right text-subtext">
               هل أنت متأكد من حذف الموظف <span className="font-semibold text-cardTxt">{employee.name}</span>؟
               <br />
@@ -207,15 +187,13 @@ export default function EmployeeCard({ employee, isEdit, setIsEdit }: { employee
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex gap-2">
-            <AlertDialogCancel className="font-vazirmatn">
-              إلغاء
-            </AlertDialogCancel>
+            <AlertDialogCancel className="font-vazirmatn">إلغاء</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => handleDeleteEmployee(employee.id || "")}
+              onClick={() => handleDeleteEmployee(employee.id || '')}
               disabled={isDeleting}
               className="bg-red-600 hover:bg-red-700 font-vazirmatn"
             >
-              {isDeleting ? "جاري الحذف..." : "حذف"}
+              {isDeleting ? 'جاري الحذف...' : 'حذف'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

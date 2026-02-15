@@ -1,11 +1,11 @@
-import type { Metadata } from "next"
-import { RegisterForm } from "@/components/register-form"
-import Image from "next/image"
+import type { Metadata } from 'next';
+import { RegisterForm } from '@/components/register-form';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
-  title: "تسجيل مستخدم جديد | لوحة التحكم",
-  description: "صفحة تسجيل مستخدم جديد في لوحة التحكم",
-}
+  title: 'تسجيل مستخدم جديد | لوحة التحكم',
+  description: 'صفحة تسجيل مستخدم جديد في لوحة التحكم'
+};
 
 export default function RegisterPage() {
   return (
@@ -49,6 +49,5 @@ export default function RegisterPage() {
         </div> */}
       </div>
     </div>
-  )
+  );
 }
-

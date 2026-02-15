@@ -1,20 +1,20 @@
-"use client"
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+'use client';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 const data = [
-  { name: "يناير", value: 4000 },
-  { name: "فبراير", value: 3000 },
-  { name: "مارس", value: 2000 },
-  { name: "أبريل", value: 2780 },
-  { name: "مايو", value: 1890 },
-  { name: "يونيو", value: 2390 },
-  { name: "يوليو", value: 3490 },
-  { name: "أغسطس", value: 3200 },
-  { name: "سبتمبر", value: 2800 },
-  { name: "أكتوبر", value: 2500 },
-  { name: "نوفمبر", value: 3300 },
-  { name: "ديسمبر", value: 3700 },
-]
+  { name: 'يناير', value: 4000 },
+  { name: 'فبراير', value: 3000 },
+  { name: 'مارس', value: 2000 },
+  { name: 'أبريل', value: 2780 },
+  { name: 'مايو', value: 1890 },
+  { name: 'يونيو', value: 2390 },
+  { name: 'يوليو', value: 3490 },
+  { name: 'أغسطس', value: 3200 },
+  { name: 'سبتمبر', value: 2800 },
+  { name: 'أكتوبر', value: 2500 },
+  { name: 'نوفمبر', value: 3300 },
+  { name: 'ديسمبر', value: 3700 }
+];
 
 export function AreaChartComponent() {
   return (
@@ -26,7 +26,7 @@ export function AreaChartComponent() {
             top: 10,
             right: 10,
             left: 10,
-            bottom: 0,
+            bottom: 0
           }}
         >
           <defs>
@@ -39,21 +39,21 @@ export function AreaChartComponent() {
           <XAxis
             dataKey="name"
             stroke="hsl(var(--primary) / 0.5)"
-            tick={{ fill: "hsl(var(--foreground))" }}
+            tick={{ fill: 'hsl(var(--foreground))' }}
             reversed={true}
             tickMargin={10}
           />
-          <YAxis stroke="hsl(var(--primary) / 0.5)" tick={{ fill: "hsl(var(--foreground))" }} orientation="right" />
+          <YAxis stroke="hsl(var(--primary) / 0.5)" tick={{ fill: 'hsl(var(--foreground))' }} orientation="right" />
           <Tooltip
             contentStyle={{
-              backgroundColor: "hsl(var(--background))",
-              borderColor: "hsl(var(--primary) / 0.2)",
-              boxShadow: "0 4px 12px hsl(var(--primary) / 0.1)",
-              textAlign: "right",
-              direction: "rtl",
+              backgroundColor: 'hsl(var(--background))',
+              borderColor: 'hsl(var(--primary) / 0.2)',
+              boxShadow: '0 4px 12px hsl(var(--primary) / 0.1)',
+              textAlign: 'right',
+              direction: 'rtl'
             }}
-            formatter={(value) => [`${value} ر.س`, "الإيرادات"]}
-            labelStyle={{ color: "hsl(var(--primary))" }}
+            formatter={value => [`${value} ر.س`, 'الإيرادات']}
+            labelStyle={{ color: 'hsl(var(--primary))' }}
           />
           <Area
             type="monotone"
@@ -63,14 +63,13 @@ export function AreaChartComponent() {
             fill="url(#colorValue)"
             activeDot={{
               r: 6,
-              stroke: "hsl(var(--primary))",
+              stroke: 'hsl(var(--primary))',
               strokeWidth: 2,
-              fill: "hsl(var(--background))",
+              fill: 'hsl(var(--background))'
             }}
           />
         </AreaChart>
       </ResponsiveContainer>
     </div>
-  )
+  );
 }
-

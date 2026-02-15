@@ -1,23 +1,12 @@
-"use client";
+'use client';
 
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import searchIcon from "@/public/table/Magnifer.svg";
-import filterIcon from "@/public/table/Filter.svg";
-import { Button } from "@/components/ui/button";
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import Image from 'next/image';
+import searchIcon from '@/public/table/Magnifer.svg';
+import filterIcon from '@/public/table/Filter.svg';
+import { Button } from '@/components/ui/button';
 
 interface DataTableSkeletonProps {
   columnCount?: number;
@@ -25,11 +14,7 @@ interface DataTableSkeletonProps {
   showAddButton?: boolean;
 }
 
-export function DataTableSkeleton({ 
-  columnCount = 3, 
-  rowCount = 5,
-  showAddButton = false 
-}: DataTableSkeletonProps) {
+export function DataTableSkeleton({ columnCount = 3, rowCount = 5, showAddButton = false }: DataTableSkeletonProps) {
   return (
     <Card>
       <CardHeader></CardHeader>
@@ -53,9 +38,7 @@ export function DataTableSkeleton({
 
             {/* Add Button Section */}
             <div className="flex items-center space-x-2 space-x-reverse rtl:space-x-reverse">
-              {showAddButton && (
-                <Skeleton className="h-10 w-24 rounded-xl" />
-              )}
+              {showAddButton && <Skeleton className="h-10 w-24 rounded-xl" />}
             </div>
           </div>
 
@@ -66,8 +49,8 @@ export function DataTableSkeleton({
               <TableHeader className="bg-searchBg">
                 <TableRow className="border-none">
                   {Array.from({ length: columnCount }).map((_, index) => (
-                    <TableHead 
-                      key={index} 
+                    <TableHead
+                      key={index}
                       className={`${index === 0 ? 'rounded-s-lg' : ''} ${index === columnCount - 1 ? 'rounded-e-lg' : ''}`}
                     >
                       <Skeleton className="h-5 w-20 animate-pulse" />

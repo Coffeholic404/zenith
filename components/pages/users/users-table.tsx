@@ -1,12 +1,12 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { PlusCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { columns, userColumnsNames, type User } from "@/components/pages/users/users-columns"
-import { UserFormModal } from "@/components/pages/users/user-form-modal"
-import { useRouter } from "next/navigation"
-import { useGetUsersQuery } from "@/services/users"
+import * as React from 'react';
+import { PlusCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { columns, userColumnsNames, type User } from '@/components/pages/users/users-columns';
+import { UserFormModal } from '@/components/pages/users/user-form-modal';
+import { useRouter } from 'next/navigation';
+import { useGetUsersQuery } from '@/services/users';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -18,41 +18,41 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable
-} from "@tanstack/react-table"
-import Image from "next/image"
-import searchIcon from "@/public/table/Magnifer.svg"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+} from '@tanstack/react-table';
+import Image from 'next/image';
+import searchIcon from '@/public/table/Magnifer.svg';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function UsersTable() {
-  const [isModalOpen, setIsModalOpen] = React.useState(false)
-  const [pageNumber, setPageNumber] = React.useState(1)
-  const [searchQuery, setSearchQuery] = React.useState("")
-  const [searchInput, setSearchInput] = React.useState("")
-  const router = useRouter()
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [pageNumber, setPageNumber] = React.useState(1);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchInput, setSearchInput] = React.useState('');
+  const router = useRouter();
 
   // Debounce search input
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      setSearchQuery(searchInput)
-      setPageNumber(1) // Reset to first page on search
-    }, 500)
+      setSearchQuery(searchInput);
+      setPageNumber(1); // Reset to first page on search
+    }, 500);
 
-    return () => clearTimeout(timer)
-  }, [searchInput])
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const { data: usersData, isLoading } = useGetUsersQuery({
     pageNumber,
     pageSize: 10,
     ...(searchQuery && { searchQuery })
-  })
+  });
 
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
     data: usersData?.result?.data || [],
@@ -71,24 +71,24 @@ export function UsersTable() {
       columnVisibility,
       rowSelection
     }
-  })
+  });
 
   const handlePreviousPage = () => {
     if (usersData?.result?.hasPrevious) {
-      setPageNumber(prev => prev - 1)
+      setPageNumber(prev => prev - 1);
     }
-  }
+  };
 
   const handleNextPage = () => {
     if (usersData?.result?.hasNext) {
-      setPageNumber(prev => prev + 1)
+      setPageNumber(prev => prev + 1);
     }
-  }
+  };
 
   return (
     <div className="space-y-4 font-vazirmatn">
       <div className="flex justify-end">
-        <Button onClick={() => router.push("/users/register")} className=" bg-sidebaractive ">
+        <Button onClick={() => router.push('/users/register')} className=" bg-sidebaractive ">
           <PlusCircle className="ml-2 h-4 w-4" />
           إضافة مستخدم جديد
         </Button>
@@ -110,7 +110,7 @@ export function UsersTable() {
                     id="search"
                     placeholder="بحث ..."
                     value={searchInput}
-                    onChange={(event) => setSearchInput(event.target.value)}
+                    onChange={event => setSearchInput(event.target.value)}
                     className="bg-searchBg rounded-xl block w-full p-4 ps-10 min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
                   />
                 </div>
@@ -147,7 +147,7 @@ export function UsersTable() {
                     table.getRowModel().rows.map(row => (
                       <TableRow
                         key={row.id}
-                        data-state={row.getIsSelected() && "selected"}
+                        data-state={row.getIsSelected() && 'selected'}
                         className="border-none text-tableRow"
                       >
                         {row.getVisibleCells().map(cell => (
@@ -172,7 +172,8 @@ export function UsersTable() {
               <div className="flex-1 text-sm text-muted-foreground">
                 {usersData?.result && (
                   <div>
-                    عرض {((pageNumber - 1) * 10) + 1} - {Math.min(pageNumber * 10, usersData.result.totalCount)} من أصل {usersData.result.totalCount}
+                    عرض {(pageNumber - 1) * 10 + 1} - {Math.min(pageNumber * 10, usersData.result.totalCount)} من أصل{' '}
+                    {usersData.result.totalCount}
                   </div>
                 )}
               </div>
@@ -185,12 +186,7 @@ export function UsersTable() {
                 >
                   السابق
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleNextPage}
-                  disabled={!usersData?.result?.hasNext}
-                >
+                <Button variant="outline" size="sm" onClick={handleNextPage} disabled={!usersData?.result?.hasNext}>
                   التالي
                 </Button>
               </div>
@@ -201,6 +197,5 @@ export function UsersTable() {
 
       <UserFormModal open={isModalOpen} onOpenChange={setIsModalOpen} />
     </div>
-  )
+  );
 }
-

@@ -1,44 +1,44 @@
-"use client"
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+'use client';
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 const data = [
   {
-    name: "يناير",
+    name: 'يناير',
     زيارات: 4000,
     مشاهدات: 2400,
-    مبيعات: 2400,
+    مبيعات: 2400
   },
   {
-    name: "فبراير",
+    name: 'فبراير',
     زيارات: 3000,
     مشاهدات: 1398,
-    مبيعات: 2210,
+    مبيعات: 2210
   },
   {
-    name: "مارس",
+    name: 'مارس',
     زيارات: 2000,
     مشاهدات: 9800,
-    مبيعات: 2290,
+    مبيعات: 2290
   },
   {
-    name: "أبريل",
+    name: 'أبريل',
     زيارات: 2780,
     مشاهدات: 3908,
-    مبيعات: 2000,
+    مبيعات: 2000
   },
   {
-    name: "مايو",
+    name: 'مايو',
     زيارات: 1890,
     مشاهدات: 4800,
-    مبيعات: 2181,
+    مبيعات: 2181
   },
   {
-    name: "يونيو",
+    name: 'يونيو',
     زيارات: 2390,
     مشاهدات: 3800,
-    مبيعات: 2500,
-  },
-]
+    مبيعات: 2500
+  }
+];
 
 export function LineChartComponent() {
   return (
@@ -50,27 +50,27 @@ export function LineChartComponent() {
             top: 5,
             right: 10,
             left: 10,
-            bottom: 5,
+            bottom: 5
           }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--primary) / 0.1)" />
           <XAxis
             dataKey="name"
             stroke="hsl(var(--primary) / 0.5)"
-            tick={{ fill: "hsl(var(--foreground))" }}
+            tick={{ fill: 'hsl(var(--foreground))' }}
             reversed={true}
             tickMargin={10}
           />
-          <YAxis stroke="hsl(var(--primary) / 0.5)" tick={{ fill: "hsl(var(--foreground))" }} orientation="right" />
+          <YAxis stroke="hsl(var(--primary) / 0.5)" tick={{ fill: 'hsl(var(--foreground))' }} orientation="right" />
           <Tooltip
             contentStyle={{
-              backgroundColor: "hsl(var(--background))",
-              borderColor: "hsl(var(--primary) / 0.2)",
-              boxShadow: "0 4px 12px hsl(var(--primary) / 0.1)",
-              textAlign: "right",
-              direction: "rtl",
+              backgroundColor: 'hsl(var(--background))',
+              borderColor: 'hsl(var(--primary) / 0.2)',
+              boxShadow: '0 4px 12px hsl(var(--primary) / 0.1)',
+              textAlign: 'right',
+              direction: 'rtl'
             }}
-            labelStyle={{ color: "hsl(var(--primary))" }}
+            labelStyle={{ color: 'hsl(var(--primary))' }}
           />
           <Legend layout="horizontal" verticalAlign="top" align="center" />
           <Line
@@ -80,9 +80,9 @@ export function LineChartComponent() {
             strokeWidth={3}
             activeDot={{
               r: 6,
-              stroke: "hsl(var(--primary))",
+              stroke: 'hsl(var(--primary))',
               strokeWidth: 2,
-              fill: "hsl(var(--background))",
+              fill: 'hsl(var(--background))'
             }}
           />
           <Line type="monotone" dataKey="مشاهدات" stroke="hsl(var(--primary) / 0.7)" strokeWidth={2} />
@@ -96,6 +96,5 @@ export function LineChartComponent() {
         </LineChart>
       </ResponsiveContainer>
     </div>
-  )
+  );
 }
-

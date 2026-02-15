@@ -1,14 +1,13 @@
-import type { Metadata } from "next"
-import { LoginForm } from "@/components/pages/login/login-form"
-import "../../globals.css";
+import type { Metadata } from 'next';
+import { LoginForm } from '@/components/pages/login/login-form';
+import '../../globals.css';
 
 export const metadata: Metadata = {
-  title: "تسجيل الدخول | لوحة التحكم",
-  description: "صفحة تسجيل الدخول إلى لوحة التحكم",
-}
+  title: 'تسجيل الدخول | لوحة التحكم',
+  description: 'صفحة تسجيل الدخول إلى لوحة التحكم'
+};
 
 export default function LoginPage() {
-  
   return (
     <div className="flex h-[100vh] w-full flex-col items-center justify-center bg-gradient-to-br from-background to-muted p-4 md:p-8">
       <div className="grid   max-w-[1200px] grid-cols-1 overflow-hidden rounded-xl border bg-background shadow-lg  ">
@@ -55,6 +54,5 @@ export default function LoginPage() {
         </div> */}
       </div>
     </div>
-  )
+  );
 }
-

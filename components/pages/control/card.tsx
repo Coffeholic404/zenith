@@ -1,65 +1,61 @@
-import Image from "next/image";
-import map from "@/public/main-page/map.svg"
-import diploma from  "@/public/main-page/Diploma.svg"
-import student from "@/public/main-page/Urounded.svg"
-import employee from "@/public/main-page/Uheart.svg"
-import plane from "@/public/main-page/Plain.svg"
+import Image from 'next/image';
+import map from '@/public/main-page/map.svg';
+import diploma from '@/public/main-page/Diploma.svg';
+import student from '@/public/main-page/Urounded.svg';
+import employee from '@/public/main-page/Uheart.svg';
+import plane from '@/public/main-page/Plain.svg';
 export default function MiniCard() {
   return (
-
-
     <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
-
       <div className="flex gap-2 bg-white shadow p-3 rounded-md group">
         <div className=" size-10 bg-placesClr rounded-md grid place-content-center">
-            <Image src={map} alt="map icon" className=" group-hover:animate-pulse"/>
+          <Image src={map} alt="map icon" className=" group-hover:animate-pulse" />
         </div>
         <div>
-            <p className=" font-vazirmatn font-bold text-lg">6 مناطق</p>
-            <p className=" font-vazirmatn font-normal text-xs text-subtext">الاماكن</p>
+          <p className=" font-vazirmatn font-bold text-lg">6 مناطق</p>
+          <p className=" font-vazirmatn font-normal text-xs text-subtext">الاماكن</p>
         </div>
       </div>
 
       <div className="flex gap-2 bg-white shadow p-3 rounded-md group">
         <div className=" size-10 bg-couresClr rounded-md grid place-content-center">
-            <Image src={diploma} alt="diploma icon" className=" group-hover:animate-pulse"/>
+          <Image src={diploma} alt="diploma icon" className=" group-hover:animate-pulse" />
         </div>
         <div>
-            <p className=" font-vazirmatn font-bold text-lg">10 دورات</p>
-            <p className=" font-vazirmatn font-normal text-xs text-subtext">الدورات</p>
+          <p className=" font-vazirmatn font-bold text-lg">10 دورات</p>
+          <p className=" font-vazirmatn font-normal text-xs text-subtext">الدورات</p>
         </div>
       </div>
 
       <div className="flex gap-2 bg-white shadow p-3 rounded-md group">
         <div className=" size-10 bg-studentClr rounded-md grid place-content-center">
-            <Image src={student} alt="student icon" className=" group-hover:animate-pulse"/>
+          <Image src={student} alt="student icon" className=" group-hover:animate-pulse" />
         </div>
         <div>
-            <p className=" font-vazirmatn font-bold text-lg">200 شخص</p>
-            <p className=" font-vazirmatn font-normal text-xs text-subtext">الطلاب</p>
+          <p className=" font-vazirmatn font-bold text-lg">200 شخص</p>
+          <p className=" font-vazirmatn font-normal text-xs text-subtext">الطلاب</p>
         </div>
       </div>
 
       <div className="flex gap-2 bg-white shadow p-3 rounded-md group">
         <div className=" size-10 bg-employeeClr rounded-md grid place-content-center">
-            <Image src={employee} alt="employee icon" className=" group-hover:animate-pulse"/>
+          <Image src={employee} alt="employee icon" className=" group-hover:animate-pulse" />
         </div>
         <div>
-            <p className=" font-vazirmatn font-bold text-lg">70 شخص</p>
-            <p className=" font-vazirmatn font-normal text-xs text-subtext">الموظفين</p>
+          <p className=" font-vazirmatn font-bold text-lg">70 شخص</p>
+          <p className=" font-vazirmatn font-normal text-xs text-subtext">الموظفين</p>
         </div>
       </div>
 
       <div className="flex gap-2 bg-white shadow p-3 rounded-md group">
         <div className=" size-10 bg-couresClr rounded-md grid place-content-center">
-            <Image src={plane} alt="plane icon" className=" group-hover:animate-pulse"/>
+          <Image src={plane} alt="plane icon" className=" group-hover:animate-pulse" />
         </div>
         <div>
-            <p className=" font-vazirmatn font-bold text-lg">80 قطعة</p>
-            <p className=" font-vazirmatn font-normal text-xs text-subtext">الطائرات</p>
+          <p className=" font-vazirmatn font-bold text-lg">80 قطعة</p>
+          <p className=" font-vazirmatn font-normal text-xs text-subtext">الطائرات</p>
         </div>
       </div>
-
     </div>
   );
 }

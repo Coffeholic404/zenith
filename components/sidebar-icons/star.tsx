@@ -1,4 +1,4 @@
-export default function StarIcon({className}: {className?: string}) {
+export default function StarIcon({ className }: { className?: string }) {
   return (
     <svg
       width="24"

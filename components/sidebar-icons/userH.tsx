@@ -1,4 +1,4 @@
-export default function UserHeartIcon( {className}: {className: string}) {
+export default function UserHeartIcon({ className }: { className: string }) {
   return (
     <svg
       width="24"

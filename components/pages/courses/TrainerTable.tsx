@@ -1,9 +1,5 @@
-"use client"
+'use client';
 
 export default function TrainerTable() {
-  return (
-    <div>
-     
-    </div>
-  )
+  return <div></div>;
 }

@@ -214,11 +214,25 @@
   }
 
   .student-div {
-    background: linear-gradient(116.99deg, rgba(192, 238, 253, 0.21) 1.09%, rgba(194, 178, 253, 0.21) 33.87%, rgba(221, 186, 228, 0.21) 72.11%, rgba(220, 218, 206, 0.21) 99.45%, rgba(61, 83, 184, 0.21) 99.45%);
+    background: linear-gradient(
+      116.99deg,
+      rgba(192, 238, 253, 0.21) 1.09%,
+      rgba(194, 178, 253, 0.21) 33.87%,
+      rgba(221, 186, 228, 0.21) 72.11%,
+      rgba(220, 218, 206, 0.21) 99.45%,
+      rgba(61, 83, 184, 0.21) 99.45%
+    );
   }
 
   .course-card {
-    background: linear-gradient(116.99deg, rgba(192, 238, 253, 0.21) 1.09%, rgba(194, 178, 253, 0.21) 33.87%, rgba(221, 186, 228, 0.21) 72.11%, rgba(220, 218, 206, 0.21) 99.45%, rgba(61, 83, 184, 0.21) 99.45%);
+    background: linear-gradient(
+      116.99deg,
+      rgba(192, 238, 253, 0.21) 1.09%,
+      rgba(194, 178, 253, 0.21) 33.87%,
+      rgba(221, 186, 228, 0.21) 72.11%,
+      rgba(220, 218, 206, 0.21) 99.45%,
+      rgba(61, 83, 184, 0.21) 99.45%
+    );
   }
 
   .char-select:first-of-type span {
@@ -314,14 +328,14 @@
 }
 
 /* RTL radio and checkbox positioning */
-.rtl [type="radio"],
-.rtl [type="checkbox"] {
+.rtl [type='radio'],
+.rtl [type='checkbox'] {
   margin-left: 0;
   margin-right: -1.5em;
 }
 
 /* RTL input groups */
-.rtl .input-group> :not(:first-child) {
+.rtl .input-group > :not(:first-child) {
   margin-left: 0;
   margin-right: -1px;
   border-top-right-radius: 0;
@@ -330,7 +344,7 @@
   border-bottom-left-radius: var(--radius);
 }
 
-.rtl .input-group> :not(:last-child) {
+.rtl .input-group > :not(:last-child) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   border-top-right-radius: var(--radius);
@@ -338,7 +352,14 @@
 }
 
 .evaluation-card {
-  background: linear-gradient(116.99deg, rgba(192, 238, 253, 0.2) 1.09%, rgba(194, 178, 253, 0.2) 33.87%, rgba(221, 186, 228, 0.2) 72.11%, rgba(220, 218, 206, 0.2) 99.45%, rgba(61, 83, 184, 0.2) 99.45%);
+  background: linear-gradient(
+    116.99deg,
+    rgba(192, 238, 253, 0.2) 1.09%,
+    rgba(194, 178, 253, 0.2) 33.87%,
+    rgba(221, 186, 228, 0.2) 72.11%,
+    rgba(220, 218, 206, 0.2) 99.45%,
+    rgba(61, 83, 184, 0.2) 99.45%
+  );
   border-radius: 22px;
 }
 
@@ -409,7 +430,7 @@
 }
 
 /* Sidebar RTL adjustments */
-[data-side="right"] {
+[data-side='right'] {
   right: 0;
   left: auto !important;
 }
@@ -420,15 +441,15 @@
   transition: width 0.2s ease;
 }
 
-.sidebar-wrapper[data-state="collapsed"] {
+.sidebar-wrapper[data-state='collapsed'] {
   width: var(--sidebar-width-collapsed);
 }
 
-.sidebar-wrapper[data-state="collapsed"] .sidebar-item-text {
+.sidebar-wrapper[data-state='collapsed'] .sidebar-item-text {
   display: none;
 }
 
-.sidebar-wrapper[data-state="collapsed"] .sidebar-header-text {
+.sidebar-wrapper[data-state='collapsed'] .sidebar-header-text {
   display: none;
 }
 
@@ -449,7 +470,7 @@ select:-webkit-autofill {
   transition: background-color 9999s ease-in-out 0s;
 }
 
-.command-item[data-selected="true"] {
+.command-item[data-selected='true'] {
   background-color: hsl(var(--primary) / 0.5) !important;
   color: hsl(var(--primary-foreground)) !important;
 }
@@ -472,12 +493,10 @@ select:-webkit-autofill {
   border: 1px solid;
 
   border-image-source: linear-gradient(90deg, rgba(151, 131, 230, 0.26) 0%, rgba(197, 123, 216, 0.26) 100%);
-
-
 }
 
 /* Active menu item styling */
-[data-active="true"] {
+[data-active='true'] {
   background: linear-gradient(90deg, rgba(151, 131, 230, 0.26) 0%, rgba(197, 123, 216, 0.26) 100%);
   /* border-right: 3px solid hsl(var(--primary)) !important; */
   color: hsla(var(--sidebar-icon-clr)) !important;
@@ -492,8 +511,6 @@ select:-webkit-autofill {
 
   color: hsla(var(--sidebar-icon-clr)) !important;
 } */
-
-
 
 tspan {
   direction: ltr !important;

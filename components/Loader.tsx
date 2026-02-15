@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
 const Loader = () => {
   return (
     <div className="screen_loader animate__animated fixed inset-0 z-[60] grid place-content-center bg-[#fafafa] dark:bg-[#0e1e37]">
       <div className="relative flex h-[80px] w-[80px] items-center justify-center">
-        <div  ></div>
+        <div></div>
         {/* <img src="/images/logo.png" className=" absolute h-[60px] w-[60px]  " /> */}
         {/* <svg width="150" height="150" viewBox="0 0 50 50">
           <g>
@@ -236,55 +236,13 @@ const Loader = () => {
           </g>
         </svg> */}
         <svg width="150" height="150" viewBox="0 0 44 44">
-          <circle
-            cx="22"
-            cy="22"
-            r="6"
-            fill="none"
-            stroke="#60A5FA"
-            strokeWidth="2"
-          >
-            <animate
-              attributeName="r"
-              from="6"
-              to="20"
-              dur="1.5s"
-              begin="0s"
-              repeatCount="indefinite"
-            ></animate>
-            <animate
-              attributeName="opacity"
-              from="1"
-              to="0"
-              dur="1.5s"
-              begin="0s"
-              repeatCount="indefinite"
-            ></animate>
+          <circle cx="22" cy="22" r="6" fill="none" stroke="#60A5FA" strokeWidth="2">
+            <animate attributeName="r" from="6" to="20" dur="1.5s" begin="0s" repeatCount="indefinite"></animate>
+            <animate attributeName="opacity" from="1" to="0" dur="1.5s" begin="0s" repeatCount="indefinite"></animate>
           </circle>
-          <circle
-            cx="22"
-            cy="22"
-            r="6"
-            fill="none"
-            stroke="#60A5FA"
-            strokeWidth="2"
-          >
-            <animate
-              attributeName="r"
-              from="6"
-              to="20"
-              dur="1.5s"
-              begin="0.5s"
-              repeatCount="indefinite"
-            ></animate>
-            <animate
-              attributeName="opacity"
-              from="1"
-              to="0"
-              dur="1.5s"
-              begin="0.5s"
-              repeatCount="indefinite"
-            ></animate>
+          <circle cx="22" cy="22" r="6" fill="none" stroke="#60A5FA" strokeWidth="2">
+            <animate attributeName="r" from="6" to="20" dur="1.5s" begin="0.5s" repeatCount="indefinite"></animate>
+            <animate attributeName="opacity" from="1" to="0" dur="1.5s" begin="0.5s" repeatCount="indefinite"></animate>
           </circle>
         </svg>
       </div>

@@ -1,57 +1,46 @@
-"use client";
-import { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import FileUploader from "@/components/utli/file-uploader";
-import BirthdayDate from "@/components/pages/employees/add-employe/birthday-date";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useAddEmployeeMutation, useGetEmployeeByIdQuery, useUpdateEmployeeMutation } from "@/services/employe";
-import { useToast } from "@/hooks/use-toast";
+'use client';
+import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import FileUploader from '@/components/utli/file-uploader';
+import BirthdayDate from '@/components/pages/employees/add-employe/birthday-date';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useAddEmployeeMutation, useGetEmployeeByIdQuery, useUpdateEmployeeMutation } from '@/services/employe';
+import { useToast } from '@/hooks/use-toast';
 const addEmployeeSchema = z.object({
-  AttachmentFile: z.instanceof(File, { message: "يرجى تحميل صورة شخصية" }),
-  Name: z.string().min(1, "الاسم الثلاثي مطلوب"),
-  BirthDate: z.string().min(1, "تاريخ الميلاد مطلوب").refine((date) => {
-    const birthDate = new Date(date);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      return age - 1 >= 18;
-    }
-    return age >= 18;
-  }, "يجب أن يكون عمر الموظف على الأقل 18 سنة"),
-  Phone: z.string().min(10, "رقم الهاتف غير صالح"),
-  JobTitle: z.string().min(1, "عنوان الوظيفة مطلوب"),
-  Character: z.string().min(1, "  رمز المدرب مطلوب").optional(),
-  LicenseNumber: z.string().min(1, "رقم رخصة القيادة مطلوب").optional(),
-  TypeOfTraining: z.string().min(1, "نوع التدريب مطلوب").optional(),
+  AttachmentFile: z.instanceof(File, { message: 'يرجى تحميل صورة شخصية' }),
+  Name: z.string().min(1, 'الاسم الثلاثي مطلوب'),
+  BirthDate: z
+    .string()
+    .min(1, 'تاريخ الميلاد مطلوب')
+    .refine(date => {
+      const birthDate = new Date(date);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        return age - 1 >= 18;
+      }
+      return age >= 18;
+    }, 'يجب أن يكون عمر الموظف على الأقل 18 سنة'),
+  Phone: z.string().min(10, 'رقم الهاتف غير صالح'),
+  JobTitle: z.string().min(1, 'عنوان الوظيفة مطلوب'),
+  Character: z.string().min(1, '  رمز المدرب مطلوب').optional(),
+  LicenseNumber: z.string().min(1, 'رقم رخصة القيادة مطلوب').optional(),
+  TypeOfTraining: z.string().min(1, 'نوع التدريب مطلوب').optional()
 });
 
-export default function AddForm({ type }: { type: "trainer" | "employee" }, isEdit: boolean) {
+export default function AddForm({ type }: { type: 'trainer' | 'employee' }, isEdit: boolean) {
   const pathname = usePathname();
   const router = useRouter();
   const [isTrainer, setIsTrainer] = useState(false);
   const { toast } = useToast();
-
-
 
   useEffect(() => {
     // Check if the URL contains 'add-trainer' in its path
@@ -65,44 +54,41 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
   async function onSubmit(values: z.infer<typeof addEmployeeSchema>) {
     try {
       const formData = new FormData();
-      formData.append("AttachmentFile", values.AttachmentFile);
-      formData.append("Name", values.Name);
+      formData.append('AttachmentFile', values.AttachmentFile);
+      formData.append('Name', values.Name);
       // Convert date string to ISO format for API
       const birthDate = new Date(values.BirthDate);
-      formData.append("BirthDate", birthDate.toISOString());
-      formData.append("Phone", values.Phone);
-      formData.append("JobTitle", values.JobTitle);
-      formData.append("Character", values.Character || "");
-      formData.append("LicenseNumber", values.LicenseNumber || "");
-      formData.append("TypeOfTraining", values.TypeOfTraining || "");
-      formData.append("EType", isTrainer ? "true" : "false");
+      formData.append('BirthDate', birthDate.toISOString());
+      formData.append('Phone', values.Phone);
+      formData.append('JobTitle', values.JobTitle);
+      formData.append('Character', values.Character || '');
+      formData.append('LicenseNumber', values.LicenseNumber || '');
+      formData.append('TypeOfTraining', values.TypeOfTraining || '');
+      formData.append('EType', isTrainer ? 'true' : 'false');
 
       const response = await addEmployeeMutation(formData).unwrap();
 
       // Show success toast
       toast({
-        title: "تم بنجاح",
-        description: "تم إضافة الموظف بنجاح",
-        variant: "default",
+        title: 'تم بنجاح',
+        description: 'تم إضافة الموظف بنجاح',
+        variant: 'default'
       });
 
       // Reset form after successful submission
       form.reset();
 
       // Navigate back to employees page
-      router.push("/employees");
-
+      router.push('/employees');
     } catch (error: any) {
       // Show error toast with the exact error message from API
-      const errorMessage = error?.data?.errorMessages?.[0] ||
-        error?.data?.message ||
-        error?.message ||
-        "حدث خطأ غير متوقع";
+      const errorMessage =
+        error?.data?.errorMessages?.[0] || error?.data?.message || error?.message || 'حدث خطأ غير متوقع';
 
       toast({
-        title: "خطأ",
+        title: 'خطأ',
         description: errorMessage,
-        variant: "destructive",
+        variant: 'destructive'
       });
     }
   }
@@ -111,11 +97,11 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
     resolver: zodResolver(addEmployeeSchema),
     defaultValues: {
       AttachmentFile: undefined,
-      Name: "",
-      BirthDate: "",
-      Phone: "",
-      JobTitle: "",
-    },
+      Name: '',
+      BirthDate: '',
+      Phone: '',
+      JobTitle: ''
+    }
   });
 
   const { formState, handleSubmit, control } = form;
@@ -276,7 +262,10 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
                     name="LicenseNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="LicenseNumber" className="font-vazirmatn text-subtext font-normal text-[14px]">
+                        <FormLabel
+                          htmlFor="LicenseNumber"
+                          className="font-vazirmatn text-subtext font-normal text-[14px]"
+                        >
                           رقم رخصة المدرب
                         </FormLabel>
                         <FormControl>
@@ -297,7 +286,10 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
                     name="TypeOfTraining"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="TypeOfTraining" className="font-vazirmatn text-subtext font-normal text-[14px]">
+                        <FormLabel
+                          htmlFor="TypeOfTraining"
+                          className="font-vazirmatn text-subtext font-normal text-[14px]"
+                        >
                           نوع التدريب
                         </FormLabel>
                         <FormControl>
@@ -319,7 +311,7 @@ export default function AddForm({ type }: { type: "trainer" | "employee" }, isEd
           <div className="max-w-[830px] flex justify-end gap-4">
             <Button
               type="button"
-              onClick={() => router.push("/employees")}
+              onClick={() => router.push('/employees')}
               variant="ghost"
               className=" px-12 border rounded-[11px] border-cancelBtnTxt text-subtext font-vazirmatn font-normal text-[17px]"
             >

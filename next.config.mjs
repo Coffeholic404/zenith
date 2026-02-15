@@ -1,4 +1,4 @@
-let userConfig = undefined
+let userConfig = undefined;
 try {
   // userConfig = await import('./v0-user-next.config')
 } catch (e) {
@@ -8,45 +8,42 @@ try {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: true
   },
   images: {
-    unoptimized: true,
+    unoptimized: true
   },
   env: {
     BASIC_URL: process.env.NEXT_BASIC_URL
-},
+  },
   experimental: {
     // Disabled experimental features that may cause Netlify build issues
     // webpackBuildWorker: true,
     // parallelServerBuildTraces: true,
     // parallelServerCompiles: true,
-  },
-}
+  }
+};
 
-mergeConfig(nextConfig, userConfig)
+mergeConfig(nextConfig, userConfig);
 
 function mergeConfig(nextConfig, userConfig) {
   if (!userConfig) {
-    return
+    return;
   }
 
   for (const key in userConfig) {
-    if (
-      typeof nextConfig[key] === 'object' &&
-      !Array.isArray(nextConfig[key])
-    ) {
+    if (typeof nextConfig[key] === 'object' && !Array.isArray(nextConfig[key])) {
       nextConfig[key] = {
         ...nextConfig[key],
-        ...userConfig[key],
-      }
+        ...userConfig[key]
+      };
     } else {
-      nextConfig[key] = userConfig[key]
+      nextConfig[key] = userConfig[key];
     }
   }
 }
 
-export default nextConfig
+export default nextConfig;

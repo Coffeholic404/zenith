@@ -1,38 +1,30 @@
-"use client"
-import React, { useRef, useState, useEffect } from "react"
-import { Control, Controller, FieldPath, FieldValues } from "react-hook-form"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+'use client';
+import React, { useRef, useState, useEffect } from 'react';
+import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-import userRounded from "@/public/add-employe/UserRounded.svg"
-import archive from "@/public/add-employe/ArchiveUp.svg"
-import { Button } from "@/components/ui/button"
-import Image from "next/image"
-import { cn } from "@/lib/utils"
+import userRounded from '@/public/add-employe/UserRounded.svg';
+import archive from '@/public/add-employe/ArchiveUp.svg';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 interface FileUploaderProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > {
-  control: Control<TFieldValues>
-  name: TName
-  title?: string
-  description?: string
-  buttonText?: string
-  accept?: string
-  maxSize?: number // in MB
-  className?: string
-  disabled?: boolean
-  onFileChange?: (file: File | null) => void
-  previewUrl?: string | null
+  control: Control<TFieldValues>;
+  name: TName;
+  title?: string;
+  description?: string;
+  buttonText?: string;
+  accept?: string;
+  maxSize?: number; // in MB
+  className?: string;
+  disabled?: boolean;
+  onFileChange?: (file: File | null) => void;
+  previewUrl?: string | null;
 }
 
 export default function FileUploader<
@@ -41,71 +33,69 @@ export default function FileUploader<
 >({
   control,
   name,
-  title = "الصورة الشخصية",
-  description = "اختر صورة واضحة للموظف (png , jpg)",
-  buttonText = "اختر صورة",
-  accept = "image/*",
+  title = 'الصورة الشخصية',
+  description = 'اختر صورة واضحة للموظف (png , jpg)',
+  buttonText = 'اختر صورة',
+  accept = 'image/*',
   maxSize = 5, // 5MB default
-  className = "",
+  className = '',
   disabled = false,
   onFileChange,
-  previewUrl: initialPreviewUrl,
+  previewUrl: initialPreviewUrl
 }: FileUploaderProps<TFieldValues, TName>) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(initialPreviewUrl || null)
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initialPreviewUrl || null);
 
   useEffect(() => {
     if (initialPreviewUrl) {
-      setPreviewUrl(initialPreviewUrl)
+      setPreviewUrl(initialPreviewUrl);
     }
-  }, [initialPreviewUrl])
+  }, [initialPreviewUrl]);
 
   const handleFileSelect = (onChange: (value: File | null) => void) => {
-    const input = fileInputRef.current
-    if (!input) return
+    const input = fileInputRef.current;
+    if (!input) return;
 
-    const file = input.files?.[0]
+    const file = input.files?.[0];
     if (!file) {
-      onChange(null)
-      setPreviewUrl(null)
-      onFileChange?.(null)
-      return
+      onChange(null);
+      setPreviewUrl(null);
+      onFileChange?.(null);
+      return;
     }
 
     // Check file size
     if (file.size > maxSize * 1024 * 1024) {
-      alert(`حجم الملف يجب أن يكون أقل من ${maxSize} ميجابايت`)
-      input.value = ""
-      return
+      alert(`حجم الملف يجب أن يكون أقل من ${maxSize} ميجابايت`);
+      input.value = '';
+      return;
     }
 
     // Check file type
     if (!file.type.startsWith('image/')) {
-      alert('يرجى اختيار ملف صورة صالح')
-      input.value = ""
-      return
+      alert('يرجى اختيار ملف صورة صالح');
+      input.value = '';
+      return;
     }
 
     // Create preview URL
-    const url = URL.createObjectURL(file)
-    setPreviewUrl(url)
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
 
-    onChange(file)
-    onFileChange?.(file)
-  }
+    onChange(file);
+    onFileChange?.(file);
+  };
 
   const handleButtonClick = () => {
     if (!disabled) {
-      fileInputRef.current?.click()
+      fileInputRef.current?.click();
     }
-  }
+  };
 
   return (
-    <div >
-      <Card className={cn("max-w-[830px] pb-6", className)}>
-        <CardHeader className="px-3 py-2 font-vazirmatn font-light text-subtext">
-          {title}
-        </CardHeader>
+    <div>
+      <Card className={cn('max-w-[830px] pb-6', className)}>
+        <CardHeader className="px-3 py-2 font-vazirmatn font-light text-subtext">{title}</CardHeader>
         <CardContent className="flex items-center gap-4 px-3">
           <Avatar className="size-24">
             {previewUrl ? (
@@ -119,12 +109,8 @@ export default function FileUploader<
           </Avatar>
           <div className="space-y-2">
             <div>
-              <p className="font-vazirmatn font-light text-lg">
-                رفع الصورة الشخصية
-              </p>
-              <p className="font-vazirmatn font-light text-sm text-subtext">
-                {description}
-              </p>
+              <p className="font-vazirmatn font-light text-lg">رفع الصورة الشخصية</p>
+              <p className="font-vazirmatn font-light text-sm text-subtext">{description}</p>
             </div>
             <Controller
               control={control}
@@ -149,11 +135,7 @@ export default function FileUploader<
                     className="hidden"
                     disabled={disabled}
                   />
-                  {error && (
-                    <p className="text-sm text-red-500 font-vazirmatn">
-                      {error.message}
-                    </p>
-                  )}
+                  {error && <p className="text-sm text-red-500 font-vazirmatn">{error.message}</p>}
                 </div>
               )}
             />
@@ -161,5 +143,5 @@ export default function FileUploader<
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

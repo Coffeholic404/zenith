@@ -1,19 +1,17 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AreaChartComponent } from "@/components/charts/area-chart"
-import { BarChartComponent } from "@/components/charts/bar-chart"
-import { LineChartComponent } from "@/components/charts/line-chart"
-import { PieChartComponent } from "@/components/charts/pie-chart"
-import MiniCard from "@/components/pages/control/card"
-import Charts from "@/components/pages/control/charts"
-import Updates from "@/components/pages/control/updates"
-import QuickActions from "@/components/pages/control/quickActions"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AreaChartComponent } from '@/components/charts/area-chart';
+import { BarChartComponent } from '@/components/charts/bar-chart';
+import { LineChartComponent } from '@/components/charts/line-chart';
+import { PieChartComponent } from '@/components/charts/pie-chart';
+import MiniCard from '@/components/pages/control/card';
+import Charts from '@/components/pages/control/charts';
+import Updates from '@/components/pages/control/updates';
+import QuickActions from '@/components/pages/control/quickActions';
 
 export default function Home() {
   return (
     <div className="space-y-6 mainn">
-      
-
       {/* <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="bg-primary/10 p-1">
           <TabsTrigger
@@ -198,6 +196,5 @@ export default function Home() {
       <Updates />
       <QuickActions />
     </div>
-  )
+  );
 }
-

@@ -1,10 +1,10 @@
-import type { Metadata } from "next"
-import { UsersTable } from "@/components/pages/users/users-table"
+import type { Metadata } from 'next';
+import { UsersTable } from '@/components/pages/users/users-table';
 
 export const metadata: Metadata = {
-  title: "المستخدمين | لوحة التحكم",
-  description: "إدارة المستخدمين وإضافة مستخدمين جدد",
-}
+  title: 'المستخدمين | لوحة التحكم',
+  description: 'إدارة المستخدمين وإضافة مستخدمين جدد'
+};
 
 export default function UsersPage() {
   return (
@@ -16,6 +16,5 @@ export default function UsersPage() {
 
       <UsersTable />
     </div>
-  )
+  );
 }
-

@@ -1,25 +1,20 @@
-"use client"
-import HeaderCards from "@/components/pages/employees/header-cards";
-import StudentCard from "@/components/pages/students/student-card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { useGetStudentsQuery } from "@/services/students";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import Image from "next/image";
-import searchIcon from "@/public/table/Magnifer.svg";
-import { useSession } from "next-auth/react";
-import add from "@/public/employees/plus.svg";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React from "react";
-import StudentHeaderCards from "@/components/pages/students/Student-Card-Headers";
-
+'use client';
+import HeaderCards from '@/components/pages/employees/header-cards';
+import StudentCard from '@/components/pages/students/student-card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useGetStudentsQuery } from '@/services/students';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import Image from 'next/image';
+import searchIcon from '@/public/table/Magnifer.svg';
+import { useSession } from 'next-auth/react';
+import add from '@/public/employees/plus.svg';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import React from 'react';
+import StudentHeaderCards from '@/components/pages/students/Student-Card-Headers';
 
 export default function Page() {
   const router = useRouter();
@@ -27,9 +22,9 @@ export default function Page() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const userRole = session?.user?.role;
-  const isAdmin = userRole === "Admin";
+  const isAdmin = userRole === 'Admin';
 
-  const [searchTerm, setSearchTerm] = React.useState<string>(searchParams.get("q") ?? "");
+  const [searchTerm, setSearchTerm] = React.useState<string>(searchParams.get('q') ?? '');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = React.useState<string>(searchTerm);
   const debounceRef = React.useRef<number | null>(null);
 
@@ -45,14 +40,14 @@ export default function Page() {
 
   React.useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
-    if (debouncedSearchTerm) params.set("q", debouncedSearchTerm);
-    else params.delete("q");
+    if (debouncedSearchTerm) params.set('q', debouncedSearchTerm);
+    else params.delete('q');
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchTerm]);
 
   const { data, isLoading, isFetching, isError, error, refetch } = useGetStudentsQuery({
-    searchQuery: debouncedSearchTerm,
+    searchQuery: debouncedSearchTerm
   });
 
   return (
@@ -61,13 +56,15 @@ export default function Page() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
         <div className=" font-vazirmatn">
           <p className=" font-bold text-cardTxt ">إدارة الطلاب</p>
-          <p className=" font-light text-subtext text-lg">
-            قائمة الطلاب المسجلين
-          </p>
+          <p className=" font-light text-subtext text-lg">قائمة الطلاب المسجلين</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 lg:gap-4">
-          <div className="relative flex-1 min-w-[200px] sm:min-w-[280px] lg:min-w-0 lg:flex-initial" aria-label="بحث عن الطلاب" aria-busy={isFetching}>
+          <div
+            className="relative flex-1 min-w-[200px] sm:min-w-[280px] lg:min-w-0 lg:flex-initial"
+            aria-label="بحث عن الطلاب"
+            aria-busy={isFetching}
+          >
             <Image
               src={searchIcon}
               alt="magnifier icon"
@@ -79,12 +76,12 @@ export default function Page() {
               aria-label="حقل البحث"
               placeholder="بحث ..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") {
-                  setSearchTerm("");
-                  setDebouncedSearchTerm("");
-                } else if (e.key === "Enter") {
+              onChange={e => setSearchTerm(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Escape') {
+                  setSearchTerm('');
+                  setDebouncedSearchTerm('');
+                } else if (e.key === 'Enter') {
                   if (debounceRef.current) window.clearTimeout(debounceRef.current);
                   setDebouncedSearchTerm(searchTerm);
                 }
@@ -92,36 +89,43 @@ export default function Page() {
               className="bg-white rounded-xl w-full p-4 ps-10 lg:min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
             />
             {isFetching && (
-              <div aria-hidden className="absolute inset-y-0 end-10 my-auto size-4 rounded-full border-2 border-searchBg border-t-transparent animate-spin" />
+              <div
+                aria-hidden
+                className="absolute inset-y-0 end-10 my-auto size-4 rounded-full border-2 border-searchBg border-t-transparent animate-spin"
+              />
             )}
             {!!searchTerm && (
               <button
                 type="button"
                 onClick={() => {
-                  setSearchTerm("");
-                  setDebouncedSearchTerm("");
+                  setSearchTerm('');
+                  setDebouncedSearchTerm('');
                 }}
                 aria-label="مسح البحث"
                 className="absolute inset-y-0 end-2 my-auto size-6 flex items-center justify-center rounded-full bg-searchBg hover:bg-[#DAF1FF] text-[#666]"
               >
-                ×
-                <span className="sr-only">مسح</span>
+                ×<span className="sr-only">مسح</span>
               </button>
             )}
           </div>
           {/* <div className="bg-white size-10 flex items-center justify-center rounded-lg cursor-pointer hover:bg-searchBg shrink-0">
             <Image src={filterIcon} alt="filter icon" className=" size-6" />
           </div> */}
-          {!isAdmin && <Tooltip>
-            <TooltipTrigger asChild>
-              <Button className="bg-sidebaractive px-3 rounded-2xl shrink-0" onClick={() => router.push("/students/add-student")}>
-                <Image src={add} alt="add icon" className=" size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
-              <p className=" font-normal text-sm text-white font-vazirmatn">إضافة طالب</p>
-            </TooltipContent>
-          </Tooltip>}
+          {!isAdmin && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="bg-sidebaractive px-3 rounded-2xl shrink-0"
+                  onClick={() => router.push('/students/add-student')}
+                >
+                  <Image src={add} alt="add icon" className=" size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
+                <p className=" font-normal text-sm text-white font-vazirmatn">إضافة طالب</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       </div>
       {isLoading ? (
@@ -156,7 +160,7 @@ export default function Page() {
             </div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {data?.result?.data?.map((student) => (
+            {data?.result?.data?.map(student => (
               <StudentCard key={student.uniqueID} student={student} />
             ))}
           </div>

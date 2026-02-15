@@ -1,40 +1,28 @@
-"use client"
-import React, { useState, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
-import pen from "@/public/table/Pen.svg"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useToast } from "@/hooks/use-toast";
-import { useUpdateTypeMutation } from "@/services/types";
-import Image from 'next/image'
+'use client';
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import pen from '@/public/table/Pen.svg';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useToast } from '@/hooks/use-toast';
+import { useUpdateTypeMutation } from '@/services/types';
+import Image from 'next/image';
 
 // Consolidated validation schema
 const editTypeSchema = z.object({
-  name: z.string()
-    .min(1, { message: "الاسم مطلوب" })
-    .min(3, { message: "الاسم يجب أن يكون 3 أحرف على الأقل" })
-    .max(100, { message: "الاسم يجب أن يكون أقل من 100 حرف" })
-    .trim(),
-})
+  name: z
+    .string()
+    .min(1, { message: 'الاسم مطلوب' })
+    .min(3, { message: 'الاسم يجب أن يكون 3 أحرف على الأقل' })
+    .max(100, { message: 'الاسم يجب أن يكون أقل من 100 حرف' })
+    .trim()
+});
 
-export type EditTypeFormData = z.infer<typeof editTypeSchema>
+export type EditTypeFormData = z.infer<typeof editTypeSchema>;
 
 interface EditTypeModelProps {
   id: string;
@@ -49,28 +37,33 @@ export default function EditTypeModel({ id, name }: EditTypeModelProps) {
   const form = useForm<EditTypeFormData>({
     resolver: zodResolver(editTypeSchema),
     defaultValues: {
-      name: name || "",
-    },
+      name: name || ''
+    }
   });
 
-  const { handleSubmit, control, reset, formState: { errors, isDirty } } = form;
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isDirty }
+  } = form;
 
   // Reset form when name prop changes
   useEffect(() => {
-    reset({ name: name || "" });
+    reset({ name: name || '' });
   }, [name, reset]);
 
   const onSubmit = async (data: EditTypeFormData) => {
     try {
       await updateType({
         uniqueID: id,
-        name: data.name.trim(),
+        name: data.name.trim()
       }).unwrap();
 
       toast({
-        title: "تم بنجاح",
-        description: "تم تعديل نوع الدورة بنجاح",
-        variant: "default",
+        title: 'تم بنجاح',
+        description: 'تم تعديل نوع الدورة بنجاح',
+        variant: 'default'
       });
 
       // Close dialog and reset form
@@ -78,14 +71,18 @@ export default function EditTypeModel({ id, name }: EditTypeModelProps) {
       reset({ name: data.name.trim() });
     } catch (error: any) {
       console.error('Update type error:', error);
-      
+
       // Extract error message with better fallback handling
-      let errorMessage = "حدث خطأ غير متوقع";
-      
+      let errorMessage = 'حدث خطأ غير متوقع';
+
       if (error?.data) {
         if (error.data.errors && Array.isArray(error.data.errors) && error.data.errors.length > 0) {
           errorMessage = error.data.errors[0].message || error.data.errors[0];
-        } else if (error.data.errorMessages && Array.isArray(error.data.errorMessages) && error.data.errorMessages.length > 0) {
+        } else if (
+          error.data.errorMessages &&
+          Array.isArray(error.data.errorMessages) &&
+          error.data.errorMessages.length > 0
+        ) {
           errorMessage = error.data.errorMessages[0];
         } else if (error.data.message) {
           errorMessage = error.data.message;
@@ -97,15 +94,15 @@ export default function EditTypeModel({ id, name }: EditTypeModelProps) {
       }
 
       toast({
-        title: "خطأ",
+        title: 'خطأ',
         description: errorMessage,
-        variant: "destructive",
+        variant: 'destructive'
       });
     }
   };
 
   const handleCancel = () => {
-    reset({ name: name || "" });
+    reset({ name: name || '' });
     setIsOpen(false);
   };
 
@@ -118,10 +115,8 @@ export default function EditTypeModel({ id, name }: EditTypeModelProps) {
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] rtl [&>button]:hidden space-y-4" dir="rtl">
-          <DialogHeader className='text-right'>
-            <DialogTitle className="text-right font-vazirmatn font-bold text-[17px]">
-              تعديل نوع الدورة
-            </DialogTitle>
+          <DialogHeader className="text-right">
+            <DialogTitle className="text-right font-vazirmatn font-bold text-[17px]">تعديل نوع الدورة</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" dir="rtl">
@@ -144,24 +139,24 @@ export default function EditTypeModel({ id, name }: EditTypeModelProps) {
                 )}
               />
               <DialogFooter className="flex-row-reverse gap-3">
-                <Button 
-                  size="sm" 
-                  variant="ghost" 
-                  className='border text-[#222222] w-24 rounded-2xl font-vazirmatn' 
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="border text-[#222222] w-24 rounded-2xl font-vazirmatn"
                   onClick={handleCancel}
                   disabled={isLoading}
                   type="button"
                 >
                   إلغاء
                 </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className='bg-sidebaractive text-white w-24 rounded-2xl hover:bg-sidebaractive hover:brightness-110 hover:text-white font-vazirmatn' 
-                  type="submit" 
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-sidebaractive text-white w-24 rounded-2xl hover:bg-sidebaractive hover:brightness-110 hover:text-white font-vazirmatn"
+                  type="submit"
                   disabled={isLoading || !isDirty}
                 >
-                  {isLoading ? "جاري الحفظ..." : "حفظ"}
+                  {isLoading ? 'جاري الحفظ...' : 'حفظ'}
                 </Button>
               </DialogFooter>
             </form>
@@ -169,6 +164,5 @@ export default function EditTypeModel({ id, name }: EditTypeModelProps) {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
-

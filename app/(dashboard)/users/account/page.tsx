@@ -1,10 +1,10 @@
-import type { Metadata } from "next"
-import { UserProfile } from "@/components/pages/users/user-profile"
+import type { Metadata } from 'next';
+import { UserProfile } from '@/components/pages/users/user-profile';
 
 export const metadata: Metadata = {
-  title: "الحساب الشخصي | لوحة التحكم",
-  description: "إدارة الحساب الشخصي وعرض المعلومات",
-}
+  title: 'الحساب الشخصي | لوحة التحكم',
+  description: 'إدارة الحساب الشخصي وعرض المعلومات'
+};
 
 export default function AccountPage() {
   return (
@@ -16,6 +16,5 @@ export default function AccountPage() {
 
       <UserProfile />
     </div>
-  )
+  );
 }
-

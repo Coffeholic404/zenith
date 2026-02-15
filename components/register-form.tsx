@@ -1,56 +1,56 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { useRouter } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Eye, EyeOff, Loader2, UserCog, User } from "lucide-react"
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Eye, EyeOff, Loader2, UserCog, User } from 'lucide-react';
 
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useRegisterMutation } from "@/services/account"
-import { toast } from "sonner"
-import { cn } from "@/lib/utils"
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useRegisterMutation } from '@/services/account';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   username: z.string().min(3, {
-    message: "اسم المستخدم يجب أن يكون على الأقل 3 أحرف.",
+    message: 'اسم المستخدم يجب أن يكون على الأقل 3 أحرف.'
   }),
   email: z.string().email({
-    message: "يرجى إدخال بريد إلكتروني صحيح.",
+    message: 'يرجى إدخال بريد إلكتروني صحيح.'
   }),
   firstName: z.string().min(2, {
-    message: "الاسم الأول يجب أن يكون على الأقل حرفين.",
+    message: 'الاسم الأول يجب أن يكون على الأقل حرفين.'
   }),
   lastName: z.string().min(2, {
-    message: "اسم العائلة يجب أن يكون على الأقل حرفين.",
+    message: 'اسم العائلة يجب أن يكون على الأقل حرفين.'
   }),
   password: z.string().min(6, {
-    message: "كلمة المرور يجب أن تكون على الأقل 6 أحرف.",
+    message: 'كلمة المرور يجب أن تكون على الأقل 6 أحرف.'
   }),
-  role: z.string().refine((val) => val === "User" || val === "Admin", {
-    message: "يرجى اختيار نوع الحساب.",
-  }),
-})
+  role: z.string().refine(val => val === 'User' || val === 'Admin', {
+    message: 'يرجى اختيار نوع الحساب.'
+  })
+});
 
 export function RegisterForm() {
-  const router = useRouter()
-  const [showPassword, setShowPassword] = React.useState(false)
-  const [register, { isLoading }] = useRegisterMutation()
+  const router = useRouter();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [register, { isLoading }] = useRegisterMutation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      email: "",
-      firstName: "",
-      lastName: "",
-      password: "",
-      role: "User",
-    },
-  })
+      username: '',
+      email: '',
+      firstName: '',
+      lastName: '',
+      password: '',
+      role: 'User'
+    }
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -60,24 +60,22 @@ export function RegisterForm() {
         password: values.password,
         firstName: values.firstName,
         lastName: values.lastName,
-        role: values.role,
-      }).unwrap()
+        role: values.role
+      }).unwrap();
 
       if (!res.isSuccess) {
-        const errorMessage = res.errorMessages?.join(", ") || "فشل إنشاء الحساب"
-        toast.error(errorMessage)
-        return
+        const errorMessage = res.errorMessages?.join(', ') || 'فشل إنشاء الحساب';
+        toast.error(errorMessage);
+        return;
       }
 
-      toast.success("تم إنشاء الحساب بنجاح")
-      router.push("/users")
+      toast.success('تم إنشاء الحساب بنجاح');
+      router.push('/users');
     } catch (error: any) {
-      console.error("Registration error:", error)
+      console.error('Registration error:', error);
       const errorMessage =
-        error?.data?.errorMessages?.join(", ") ||
-        error?.message ||
-        "خطأ في الاتصال، يرجى المحاولة مرة أخرى"
-      toast.error(errorMessage)
+        error?.data?.errorMessages?.join(', ') || error?.message || 'خطأ في الاتصال، يرجى المحاولة مرة أخرى';
+      toast.error(errorMessage);
     }
   }
 
@@ -95,12 +93,12 @@ export function RegisterForm() {
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => field.onChange("User")}
+                    onClick={() => field.onChange('User')}
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-2 rounded-lg border-2 p-3 transition-all duration-200",
-                      field.value === "User"
-                        ? "border-sidebaractive bg-sidebaractive/10 text-sidebaractive"
-                        : "border-muted-foreground/30 text-muted-foreground hover:border-muted-foreground/50"
+                      'flex-1 flex items-center justify-center gap-2 rounded-lg border-2 p-3 transition-all duration-200',
+                      field.value === 'User'
+                        ? 'border-sidebaractive bg-sidebaractive/10 text-sidebaractive'
+                        : 'border-muted-foreground/30 text-muted-foreground hover:border-muted-foreground/50'
                     )}
                   >
                     <User className="h-5 w-5" />
@@ -108,12 +106,12 @@ export function RegisterForm() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => field.onChange("Admin")}
+                    onClick={() => field.onChange('Admin')}
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-2 rounded-lg border-2 p-3 transition-all duration-200",
-                      field.value === "Admin"
-                        ? "border-sidebaractive bg-sidebaractive/10 text-sidebaractive"
-                        : "border-muted-foreground/30 text-muted-foreground hover:border-muted-foreground/50"
+                      'flex-1 flex items-center justify-center gap-2 rounded-lg border-2 p-3 transition-all duration-200',
+                      field.value === 'Admin'
+                        ? 'border-sidebaractive bg-sidebaractive/10 text-sidebaractive'
+                        : 'border-muted-foreground/30 text-muted-foreground hover:border-muted-foreground/50'
                     )}
                   >
                     <UserCog className="h-5 w-5" />
@@ -194,7 +192,7 @@ export function RegisterForm() {
               <FormControl>
                 <div className="relative">
                   <Input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     {...field}
                     className="font-vazirmatn text-sm"
@@ -207,7 +205,7 @@ export function RegisterForm() {
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    <span className="sr-only">{showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}</span>
+                    <span className="sr-only">{showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}</span>
                   </Button>
                 </div>
               </FormControl>
@@ -224,17 +222,17 @@ export function RegisterForm() {
               جاري إنشاء الحساب...
             </>
           ) : (
-            "إنشاء حساب"
+            'إنشاء حساب'
           )}
         </Button>
 
         <div className="text-center text-sm">
-          لديك حساب بالفعل؟{" "}
-          <Button variant="link" className="px-0 font-normal" type="button" onClick={() => router.push("/login")}>
+          لديك حساب بالفعل؟{' '}
+          <Button variant="link" className="px-0 font-normal" type="button" onClick={() => router.push('/login')}>
             تسجيل الدخول
           </Button>
         </div>
       </form>
     </Form>
-  )
+  );
 }

@@ -1,10 +1,10 @@
-import type { Metadata } from "next"
-import { UserCards } from "@/components/pages/users/user-cards"
+import type { Metadata } from 'next';
+import { UserCards } from '@/components/pages/users/user-cards';
 
 export const metadata: Metadata = {
-  title: "بطاقات المستخدمين | لوحة التحكم",
-  description: "عرض المستخدمين في بطاقات جذابة",
-}
+  title: 'بطاقات المستخدمين | لوحة التحكم',
+  description: 'عرض المستخدمين في بطاقات جذابة'
+};
 
 export default function UserCardsPage() {
   return (
@@ -16,6 +16,5 @@ export default function UserCardsPage() {
 
       <UserCards />
     </div>
-  )
+  );
 }
-

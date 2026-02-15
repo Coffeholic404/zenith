@@ -1,62 +1,62 @@
-"use client"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Combobox } from "@/components/ui/combobox"
+  DialogTitle
+} from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Combobox } from '@/components/ui/combobox';
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "الاسم يجب أن يكون على الأقل حرفين.",
+    message: 'الاسم يجب أن يكون على الأقل حرفين.'
   }),
   email: z.string().email({
-    message: "يرجى إدخال بريد إلكتروني صحيح.",
+    message: 'يرجى إدخال بريد إلكتروني صحيح.'
   }),
   role: z.string({
-    required_error: "يرجى اختيار الدور.",
+    required_error: 'يرجى اختيار الدور.'
   }),
-  status: z.enum(["نشط", "غير نشط", "معلق"], {
-    required_error: "يرجى اختيار الحالة.",
-  }),
-})
+  status: z.enum(['نشط', 'غير نشط', 'معلق'], {
+    required_error: 'يرجى اختيار الحالة.'
+  })
+});
 
 const roleOptions = [
-  { value: "admin", label: "مدير" },
-  { value: "moderator", label: "مشرف" },
-  { value: "user", label: "مستخدم" },
-]
+  { value: 'admin', label: 'مدير' },
+  { value: 'moderator', label: 'مشرف' },
+  { value: 'user', label: 'مستخدم' }
+];
 
 interface UserFormModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function UserFormModal({ open, onOpenChange }: UserFormModalProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
-    },
-  })
+      name: '',
+      email: ''
+    }
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    onOpenChange(false)
+    console.log(values);
+    onOpenChange(false);
     // في بيئة الإنتاج، يمكنك إرسال البيانات إلى الخادم هنا
-    alert("تم إضافة المستخدم بنجاح!")
+    alert('تم إضافة المستخدم بنجاح!');
   }
 
   return (
@@ -155,6 +155,5 @@ export function UserFormModal({ open, onOpenChange }: UserFormModalProps) {
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-

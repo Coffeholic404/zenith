@@ -69,11 +69,11 @@ export function DataTable<TData extends adds, TValue, TNames>({
   loading = false,
   expandedStatus,
   type,
-  uniqueID,
+  uniqueID
 }: DataTableProps<TData, TValue, TNames>) {
   const { data: session } = useSession();
   const userRole = session?.user?.role;
-  const isAdmin = userRole === "Admin";
+  const isAdmin = userRole === 'Admin';
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -326,7 +326,7 @@ export function DataTable<TData extends adds, TValue, TNames>({
                   </TooltipContent>
                 </Tooltip>
               )}
-              {type === 'materials'  && <MarerialsModelButton />}
+              {type === 'materials' && <MarerialsModelButton />}
               {type === 'category' && <CategoryModel />}
               {type === 'units' && <UnitsModelButton />}
             </div>

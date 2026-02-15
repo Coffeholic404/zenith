@@ -72,29 +72,32 @@ export interface DeleteTrainingCourseResponse {
 
 // API endpoints definition
 export const trainingCoursesApi = api.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     // GET /api/TrainingCourses - Get all training courses with pagination
-    getTrainingCourses: builder.query<TrainingCoursesResponse, { pageNumber?: number; pageSize?: number; searchQuery?: string }>({
+    getTrainingCourses: builder.query<
+      TrainingCoursesResponse,
+      { pageNumber?: number; pageSize?: number; searchQuery?: string }
+    >({
       query: ({ pageNumber = 1, pageSize = 10, searchQuery = '' }) => ({
         url: '/api/TrainingCourses',
         method: 'GET',
         params: {
           pageNumber,
           pageSize,
-          searchQuery,
-        },
+          searchQuery
+        }
       }),
-      providesTags: ['getTrainingCourse'],
+      providesTags: ['getTrainingCourse']
     }),
 
     // POST /api/TrainingCourses - Create a new training course
     createTrainingCourse: builder.mutation<CreateTrainingCourseResponse, CreateTrainingCourseRequest>({
-      query: (body) => ({
+      query: body => ({
         url: '/api/TrainingCourses',
         method: 'POST',
-        body,
+        body
       }),
-      invalidatesTags: ['getTrainingCourse', 'addTrainingCourse'],
+      invalidatesTags: ['getTrainingCourse', 'addTrainingCourse']
     }),
 
     // PUT /api/TrainingCourses/{id} - Update an existing training course
@@ -102,29 +105,29 @@ export const trainingCoursesApi = api.injectEndpoints({
       query: ({ id, ...body }) => ({
         url: `/api/TrainingCourses/${id}`,
         method: 'PUT',
-        body,
+        body
       }),
-      invalidatesTags: ['getTrainingCourse', 'updateTrainingCourse'],
+      invalidatesTags: ['getTrainingCourse', 'updateTrainingCourse']
     }),
 
     // DELETE /api/TrainingCourses/{id} - Delete a training course
     deleteTrainingCourse: builder.mutation<DeleteTrainingCourseResponse, DeleteTrainingCourseRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/TrainingCourses/${uniqueID}`,
-        method: 'DELETE',
+        method: 'DELETE'
       }),
-      invalidatesTags: ['getTrainingCourse', 'deleteTrainingCourse'],
+      invalidatesTags: ['getTrainingCourse', 'deleteTrainingCourse']
     }),
 
     // GET /api/TrainingCourses/{id} - Get a specific training course by ID
     getTrainingCourseById: builder.query<TrainingCourseResponse, GetTrainingCourseByIdRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/TrainingCourses/${uniqueID}`,
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['getTrainingCourse'],
-    }),
-  }),
+      providesTags: ['getTrainingCourse']
+    })
+  })
 });
 
 // Export hooks for use in React components
@@ -133,5 +136,5 @@ export const {
   useCreateTrainingCourseMutation,
   useUpdateTrainingCourseMutation,
   useDeleteTrainingCourseMutation,
-  useGetTrainingCourseByIdQuery,
+  useGetTrainingCourseByIdQuery
 } = trainingCoursesApi;

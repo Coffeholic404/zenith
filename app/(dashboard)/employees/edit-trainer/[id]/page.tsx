@@ -1,48 +1,40 @@
-"use client";
-import { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import FileUploader from "@/components/utli/file-uploader";
-import BirthdayDate from "@/components/pages/employees/add-employe/birthday-date";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useGetEmployeeByIdQuery, useUpdateEmployeeMutation } from "@/services/employe";
-import { useToast } from "@/hooks/use-toast";
+'use client';
+import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import FileUploader from '@/components/utli/file-uploader';
+import BirthdayDate from '@/components/pages/employees/add-employe/birthday-date';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useGetEmployeeByIdQuery, useUpdateEmployeeMutation } from '@/services/employe';
+import { useToast } from '@/hooks/use-toast';
 const addEmployeeSchema = z.object({
-  AttachmentFile: z.instanceof(File, { message: "يرجى تحميل صورة شخصية" }).optional(),
-  Name: z.string().min(1, "الاسم الثلاثي مطلوب"),
-  BirthDate: z.string().min(1, "تاريخ الميلاد مطلوب").refine((date) => {
-    const birthDate = new Date(date);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      return age - 1 >= 18;
-    }
-    return age >= 18;
-  }, "يجب أن يكون عمر الموظف على الأقل 18 سنة"),
-  Phone : z.string().min(10, "رقم الهاتف غير صالح"),
-  JobTitle: z.string().min(1, "عنوان الوظيفة مطلوب"),
-  Character: z.string().min(1, "  رمز المدرب مطلوب").optional(),
-  LicenseNumber: z.string().min(1, "رقم رخصة القيادة مطلوب").optional(),
-  TypeOfTraining: z.string().min(1, "نوع التدريب مطلوب").optional(),
+  AttachmentFile: z.instanceof(File, { message: 'يرجى تحميل صورة شخصية' }).optional(),
+  Name: z.string().min(1, 'الاسم الثلاثي مطلوب'),
+  BirthDate: z
+    .string()
+    .min(1, 'تاريخ الميلاد مطلوب')
+    .refine(date => {
+      const birthDate = new Date(date);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        return age - 1 >= 18;
+      }
+      return age >= 18;
+    }, 'يجب أن يكون عمر الموظف على الأقل 18 سنة'),
+  Phone: z.string().min(10, 'رقم الهاتف غير صالح'),
+  JobTitle: z.string().min(1, 'عنوان الوظيفة مطلوب'),
+  Character: z.string().min(1, '  رمز المدرب مطلوب').optional(),
+  LicenseNumber: z.string().min(1, 'رقم رخصة القيادة مطلوب').optional(),
+  TypeOfTraining: z.string().min(1, 'نوع التدريب مطلوب').optional()
 });
 
 // Skeleton Loading Component
@@ -96,91 +88,84 @@ function EditFormSkeleton({ isTrainer }: { isTrainer: boolean }) {
   );
 }
 
-export default function EditForm(isEdit: boolean) {  
+export default function EditForm(isEdit: boolean) {
   const pathname = usePathname();
   const id = pathname.split('/').pop();
   const router = useRouter();
   const [isTrainer, setIsTrainer] = useState(false);
   const { toast } = useToast();
 
-  const { data: employee, isLoading: isEmployeeLoading } = useGetEmployeeByIdQuery(id || "");
+  const { data: employee, isLoading: isEmployeeLoading } = useGetEmployeeByIdQuery(id || '');
   const [updateEmployeeMutation, { isLoading: isUpdating }] = useUpdateEmployeeMutation();
 
   useEffect(() => {
     // Check if the URL contains 'add-trainer' in its path
-    if (pathname.includes('add-trainer') ) {
+    if (pathname.includes('add-trainer')) {
       setIsTrainer(true);
       return () => setIsTrainer(false);
-    } 
-    else if (pathname.includes('edit-trainer')) {
+    } else if (pathname.includes('edit-trainer')) {
       setIsTrainer(true);
       return () => setIsTrainer(false);
-    } 
-    else {
+    } else {
       setIsTrainer(false);
       return () => setIsTrainer(false);
     }
   }, [pathname]);
 
-
   async function onSubmit(values: z.infer<typeof addEmployeeSchema>) {
     try {
       const formData = new FormData();
-      formData.append("AttachmentFile", values.AttachmentFile || "");
-      formData.append("Name", values.Name);
+      formData.append('AttachmentFile', values.AttachmentFile || '');
+      formData.append('Name', values.Name);
       // Convert date string to ISO format for API
       const birthDate = new Date(values.BirthDate);
-      formData.append("BirthDate", birthDate.toISOString());
-      formData.append("Phone", values.Phone);
-      formData.append("JobTitle", values.JobTitle);
-      formData.append("Character", values.Character || "");
-      formData.append("LicenseNumber", values.LicenseNumber || "");
-      formData.append("TypeOfTraining", values.TypeOfTraining || "");
-      formData.append("EType", isTrainer ? "true" : "false");
-      
-      const response = await updateEmployeeMutation({ id: id || "", body: formData }).unwrap();
-      
+      formData.append('BirthDate', birthDate.toISOString());
+      formData.append('Phone', values.Phone);
+      formData.append('JobTitle', values.JobTitle);
+      formData.append('Character', values.Character || '');
+      formData.append('LicenseNumber', values.LicenseNumber || '');
+      formData.append('TypeOfTraining', values.TypeOfTraining || '');
+      formData.append('EType', isTrainer ? 'true' : 'false');
+
+      const response = await updateEmployeeMutation({ id: id || '', body: formData }).unwrap();
+
       // Show success toast
       toast({
-        title: "تم بنجاح",
-        description: "تم تحديث المدرب بنجاح",
-        variant: "default",
+        title: 'تم بنجاح',
+        description: 'تم تحديث المدرب بنجاح',
+        variant: 'default'
       });
-      
+
       // Reset form after successful submission
       form.reset();
-      
+
       // Navigate back to employees page
-      router.push("/employees");
-      
+      router.push('/employees');
     } catch (error: any) {
       // Show error toast with the exact error message from API
-      const errorMessage = error?.data?.errorMessages?.[0] || 
-                          error?.data?.message || 
-                          error?.message || 
-                          "حدث خطأ غير متوقع";
-      
+      const errorMessage =
+        error?.data?.errorMessages?.[0] || error?.data?.message || error?.message || 'حدث خطأ غير متوقع';
+
       toast({
-        title: "خطأ",
+        title: 'خطأ',
         description: errorMessage,
-        variant: "destructive",
+        variant: 'destructive'
       });
     }
   }
- 
 
   const form = useForm<z.infer<typeof addEmployeeSchema>>({
     resolver: zodResolver(addEmployeeSchema),
     defaultValues: {
       AttachmentFile: undefined,
-      Name: "",
-      BirthDate: "",
-      Phone: "",
-      JobTitle: "",
-      Character: "",
-      LicenseNumber: "",
-      TypeOfTraining: "",
-    },
+      Name: '',
+      BirthDate: '',
+      Phone: '',
+      JobTitle: '',
+      Character: '',
+      LicenseNumber: '',
+      TypeOfTraining: ''
+    }
   });
 
   // Update form values when employee data is loaded
@@ -188,13 +173,13 @@ export default function EditForm(isEdit: boolean) {
     if (employee?.result) {
       form.reset({
         AttachmentFile: undefined,
-        Name: employee.result.name || "",
-        BirthDate: employee.result.birthDate || "",
-        Phone: employee.result.phone || "",
-        JobTitle: employee.result.jobTitle || "",
-        Character: employee.result.character || "",
-        LicenseNumber: employee.result.licenseNumber || "",
-        TypeOfTraining: employee.result.typeOfTraining || "",
+        Name: employee.result.name || '',
+        BirthDate: employee.result.birthDate || '',
+        Phone: employee.result.phone || '',
+        JobTitle: employee.result.jobTitle || '',
+        Character: employee.result.character || '',
+        LicenseNumber: employee.result.licenseNumber || '',
+        TypeOfTraining: employee.result.typeOfTraining || ''
       });
     }
   }, [employee, form]);
@@ -236,23 +221,23 @@ export default function EditForm(isEdit: boolean) {
                 />
 
                 <FormField
-                    control={control}
-                    name="BirthDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          {/* <Input
+                  control={control}
+                  name="BirthDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        {/* <Input
                             {...field}
                             type="date"
                             placeholder="تاريخ الميلاد"
                             className=" w-[387px] bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           /> */}
-                          <BirthdayDate   {...field}/>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                        <BirthdayDate {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={control}
@@ -315,21 +300,21 @@ export default function EditForm(isEdit: boolean) {
                     )}
                   />
                   <FormField
-                  control={control}
-                  name="LicenseNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="رقم رخصة المدرب"
-                          className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    control={control}
+                    name="LicenseNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="رقم رخصة المدرب"
+                            className=" w-[387px]  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
                     control={control}
@@ -354,7 +339,7 @@ export default function EditForm(isEdit: boolean) {
           <div className="max-w-[830px] flex justify-end gap-4">
             <Button
               type="button"
-              onClick={() => router.push("/employees")}
+              onClick={() => router.push('/employees')}
               variant="ghost"
               className=" px-12 border rounded-[11px] border-cancelBtnTxt text-subtext font-vazirmatn font-normal text-[17px]"
             >

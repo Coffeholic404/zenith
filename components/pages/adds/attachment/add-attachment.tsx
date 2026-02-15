@@ -1,6 +1,6 @@
-"use client"
-import React, { useState } from 'react'
-import { Button } from "@/components/ui/button"
+'use client';
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -9,28 +9,22 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useToast } from "@/hooks/use-toast";
-import { useAddSubscriptionMutation } from "@/services/subscriptions";
+  DialogTrigger
+} from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useToast } from '@/hooks/use-toast';
+import { useAddSubscriptionMutation } from '@/services/subscriptions';
 import { Plus } from 'lucide-react';
 import { useCreateAttachmentTypeMutation } from '@/services/attachment';
 
 const addAttachmentTypeSchema = z.object({
-  name: z.string().min(1, { message: "الاسم مطلوب" }),
-})
-export type AddAttachmentTypeFormData = z.infer<typeof addAttachmentTypeSchema>
+  name: z.string().min(1, { message: 'الاسم مطلوب' })
+});
+export type AddAttachmentTypeFormData = z.infer<typeof addAttachmentTypeSchema>;
 function AttachmentAddModel() {
   const [isOpen, setIsOpen] = useState(false);
   const [addAttachmentType, { isLoading, isSuccess, isError, error }] = useCreateAttachmentTypeMutation();
@@ -39,31 +33,29 @@ function AttachmentAddModel() {
     try {
       const response = await addAttachmentType(data).unwrap();
       toast({
-        title: "تم بنجاح",
-        description: "تم إضافة أشتراك بنجاح",
-      })
+        title: 'تم بنجاح',
+        description: 'تم إضافة أشتراك بنجاح'
+      });
       // Close dialog on successful submission
       setIsOpen(false);
       // Reset form
       form.reset();
     } catch (error: any) {
-      const errorMessage = error?.data?.errorMessages?.[0] ||
-        error?.data?.message ||
-        error?.message ||
-        "حدث خطأ غير متوقع";
+      const errorMessage =
+        error?.data?.errorMessages?.[0] || error?.data?.message || error?.message || 'حدث خطأ غير متوقع';
       toast({
-        title: "Error",
-        description: errorMessage,
-      })
+        title: 'Error',
+        description: errorMessage
+      });
     }
-  }
+  };
   const form = useForm<AddAttachmentTypeFormData>({
     resolver: zodResolver(
       z.object({
-        name: z.string().min(3, { message: "الاسم يجب أن يكون على الأقل 3 أحرف" }),
+        name: z.string().min(3, { message: 'الاسم يجب أن يكون على الأقل 3 أحرف' })
       })
-    ),
-  })
+    )
+  });
   const { formState, handleSubmit, control } = form;
   return (
     <div>
@@ -74,7 +66,7 @@ function AttachmentAddModel() {
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] rtl [&>button]:hidden space-y-4" dir="rtl">
-          <DialogHeader className='text-right'>
+          <DialogHeader className="text-right">
             <DialogTitle className="text-right font-vazirmatn font-bold text-[17px]">أضافة نوع مرفق</DialogTitle>
             {/* <DialogDescription className='text-subtext text-right'>
                         يرجى إدخال أسم الجهة المرشحة
@@ -100,21 +92,30 @@ function AttachmentAddModel() {
                 )}
               />
               <DialogFooter className="flex-row-reverse gap-3">
-                <Button size="sm" variant="ghost" className='border text-[#222222] w-24 rounded-2xl font-vazirmatn' onClick={() => setIsOpen(false)}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="border text-[#222222] w-24 rounded-2xl font-vazirmatn"
+                  onClick={() => setIsOpen(false)}
+                >
                   إلغاء
                 </Button>
-                <Button size="sm" variant="outline" className='bg-sidebaractive text-white w-24 rounded-2xl hover:bg-sidebaractive hover:brightness-110 hover:text-white font-vazirmatn' type="submit" disabled={isLoading}>
-                  {isLoading ? "جاري الحفظ..." : "حفظ"}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-sidebaractive text-white w-24 rounded-2xl hover:bg-sidebaractive hover:brightness-110 hover:text-white font-vazirmatn"
+                  type="submit"
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'جاري الحفظ...' : 'حفظ'}
                 </Button>
-
               </DialogFooter>
             </form>
-
           </Form>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
 
-export default AttachmentAddModel
+export default AttachmentAddModel;

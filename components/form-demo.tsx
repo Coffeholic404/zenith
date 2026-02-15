@@ -1,96 +1,96 @@
-"use client"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Clock } from "lucide-react"
+'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Clock } from 'lucide-react';
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Card, CardContent } from "@/components/ui/card"
-import { FileUploader } from "@/components/forms/file-uploader"
-import { TimePickerDemo } from "@/components/forms/time-picker"
-import { DatePickerDemo } from "@/components/forms/date-picker"
-import { Combobox } from "@/components/ui/combobox"
-import { useGetTest1Query } from "@/services/test"
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Card, CardContent } from '@/components/ui/card';
+import { FileUploader } from '@/components/forms/file-uploader';
+import { TimePickerDemo } from '@/components/forms/time-picker';
+import { DatePickerDemo } from '@/components/forms/date-picker';
+import { Combobox } from '@/components/ui/combobox';
+import { useGetTest1Query } from '@/services/test';
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "الاسم يجب أن يكون على الأقل حرفين.",
+    message: 'الاسم يجب أن يكون على الأقل حرفين.'
   }),
   email: z.string().email({
-    message: "يرجى إدخال بريد إلكتروني صحيح.",
+    message: 'يرجى إدخال بريد إلكتروني صحيح.'
   }),
   bio: z
     .string()
     .min(10, {
-      message: "السيرة الذاتية يجب أن تكون على الأقل 10 أحرف.",
+      message: 'السيرة الذاتية يجب أن تكون على الأقل 10 أحرف.'
     })
     .max(160, {
-      message: "السيرة الذاتية يجب أن تكون أقل من 160 حرفًا.",
+      message: 'السيرة الذاتية يجب أن تكون أقل من 160 حرفًا.'
     }),
-  acceptTerms: z.boolean().refine((val) => val === true, {
-    message: "يجب الموافقة على الشروط والأحكام.",
+  acceptTerms: z.boolean().refine(val => val === true, {
+    message: 'يجب الموافقة على الشروط والأحكام.'
   }),
-  gender: z.enum(["male", "female", "other"], {
-    required_error: "يرجى اختيار الجنس.",
+  gender: z.enum(['male', 'female', 'other'], {
+    required_error: 'يرجى اختيار الجنس.'
   }),
   country: z.string({
-    required_error: "يرجى اختيار الدولة.",
+    required_error: 'يرجى اختيار الدولة.'
   }),
   birthDate: z.date({
-    required_error: "يرجى اختيار تاريخ الميلاد.",
+    required_error: 'يرجى اختيار تاريخ الميلاد.'
   }),
   appointmentTime: z.string({
-    required_error: "يرجى اختيار وقت الموعد.",
+    required_error: 'يرجى اختيار وقت الموعد.'
   }),
   files: z.array(z.string()).optional(),
-  multipleFiles: z.array(z.string()).optional(),
-})
+  multipleFiles: z.array(z.string()).optional()
+});
 
 const countryOptions = [
-  { value: "sa", label: "المملكة العربية السعودية" },
-  { value: "ae", label: "الإمارات العربية المتحدة" },
-  { value: "eg", label: "مصر" },
-  { value: "jo", label: "الأردن" },
-  { value: "kw", label: "الكويت" },
-  { value: "bh", label: "البحرين" },
-  { value: "qa", label: "قطر" },
-  { value: "om", label: "عمان" },
-  { value: "lb", label: "لبنان" },
-  { value: "sy", label: "سوريا" },
-  { value: "iq", label: "العراق" },
-  { value: "ye", label: "اليمن" },
-  { value: "ps", label: "فلسطين" },
-  { value: "ly", label: "ليبيا" },
-  { value: "tn", label: "تونس" },
-  { value: "dz", label: "الجزائر" },
-  { value: "ma", label: "المغرب" },
-  { value: "sd", label: "السودان" },
-]
+  { value: 'sa', label: 'المملكة العربية السعودية' },
+  { value: 'ae', label: 'الإمارات العربية المتحدة' },
+  { value: 'eg', label: 'مصر' },
+  { value: 'jo', label: 'الأردن' },
+  { value: 'kw', label: 'الكويت' },
+  { value: 'bh', label: 'البحرين' },
+  { value: 'qa', label: 'قطر' },
+  { value: 'om', label: 'عمان' },
+  { value: 'lb', label: 'لبنان' },
+  { value: 'sy', label: 'سوريا' },
+  { value: 'iq', label: 'العراق' },
+  { value: 'ye', label: 'اليمن' },
+  { value: 'ps', label: 'فلسطين' },
+  { value: 'ly', label: 'ليبيا' },
+  { value: 'tn', label: 'تونس' },
+  { value: 'dz', label: 'الجزائر' },
+  { value: 'ma', label: 'المغرب' },
+  { value: 'sd', label: 'السودان' }
+];
 
 export function FormDemo() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      bio: "",
+      name: '',
+      email: '',
+      bio: '',
       acceptTerms: false,
       files: [],
-      multipleFiles: [],
-    },
-  })
+      multipleFiles: []
+    }
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    console.log(values);
     // في بيئة الإنتاج، يمكنك إرسال البيانات إلى الخادم هنا
-    alert("تم إرسال النموذج بنجاح!")
+    alert('تم إرسال النموذج بنجاح!');
   }
   const { isFetching, data } = useGetTest1Query({});
   const recordsData = Array.isArray(data) ? data : [];
@@ -232,10 +232,10 @@ export function FormDemo() {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
+                            variant={'outline'}
                             className={cn(
-                              "w-full pl-3 text-right font-normal",
-                              !field.value && "text-muted-foreground",
+                              'w-full pl-3 text-right font-normal',
+                              !field.value && 'text-muted-foreground'
                             )}
                           >
                             {field.value || <span>اختر وقتًا</span>}
@@ -244,7 +244,7 @@ export function FormDemo() {
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-4" align="start">
-                        <TimePickerDemo setTime={(time) => field.onChange(time)} time={field.value} />
+                        <TimePickerDemo setTime={time => field.onChange(time)} time={field.value} />
                       </PopoverContent>
                     </Popover>
                     <FormDescription>اختر وقت الموعد المناسب لك.</FormDescription>
@@ -260,7 +260,11 @@ export function FormDemo() {
                   <FormItem>
                     <FormLabel>رفع ملف</FormLabel>
                     <FormControl>
-                      <FileUploader value={field.value || []} onChange={(urls) => field.onChange(urls)} multiple={false} />
+                      <FileUploader
+                        value={field.value || []}
+                        onChange={urls => field.onChange(urls)}
+                        multiple={false}
+                      />
                     </FormControl>
                     <FormDescription>قم برفع ملف واحد.</FormDescription>
                     <FormMessage />
@@ -275,7 +279,7 @@ export function FormDemo() {
                   <FormItem>
                     <FormLabel>رفع ملفات متعددة</FormLabel>
                     <FormControl>
-                      <FileUploader value={field.value || []} onChange={(urls) => field.onChange(urls)} multiple={true} />
+                      <FileUploader value={field.value || []} onChange={urls => field.onChange(urls)} multiple={true} />
                     </FormControl>
                     <FormDescription>قم برفع ملفات متعددة.</FormDescription>
                     <FormMessage />
@@ -308,6 +312,5 @@ export function FormDemo() {
         </Form>
       </CardContent>
     </Card>
-  )
+  );
 }
-

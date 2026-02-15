@@ -1,10 +1,10 @@
-import type { Metadata } from "next"
-import { FormDemo } from "@/components/form-demo"
+import type { Metadata } from 'next';
+import { FormDemo } from '@/components/form-demo';
 
 export const metadata: Metadata = {
-  title: "النماذج | لوحة التحكم",
-  description: "صفحة النماذج مع مختلف أنواع الإدخال",
-}
+  title: 'النماذج | لوحة التحكم',
+  description: 'صفحة النماذج مع مختلف أنواع الإدخال'
+};
 
 export default function FormPage() {
   return (
@@ -16,6 +16,5 @@ export default function FormPage() {
 
       <FormDemo />
     </div>
-  )
+  );
 }
-

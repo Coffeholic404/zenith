@@ -21,12 +21,7 @@ export function EvaluationFormRow({ participant, control, index }: EvaluationFor
       {/* Student Name Field (displays student name, but form value is co_St_TrId) */}
       <div className="relative">
         {/* Visible input showing student name */}
-        <Input
-          value={participant.studentName}
-          disabled
-          className="border-none"
-          autoComplete="off"
-        />
+        <Input value={participant.studentName} disabled className="border-none" autoComplete="off" />
         {/* Hidden controller for co_St_TrId value */}
         <Controller
           name={`evaluations.${index}.co_St_TrId`}

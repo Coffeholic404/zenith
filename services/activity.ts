@@ -26,20 +26,20 @@ export interface ActivityJumperWithId extends ActivityJumper {
 }
 
 export interface ActivityItem {
- uniqueID: string,
-    courseId: string,
-    courseName: string,
-    placeId: string,
-    placeName: string,
-    planeId: string,
-    planeName: string,
-    typeId: string | undefined,
-    typeName: string | undefined,
-    date: string,
-    time: string,
-    windSpeed: string,
-    jumpersCount: number,
-    accidentsCount: number,
+  uniqueID: string;
+  courseId: string;
+  courseName: string;
+  placeId: string;
+  placeName: string;
+  planeId: string;
+  planeName: string;
+  typeId: string | undefined;
+  typeName: string | undefined;
+  date: string;
+  time: string;
+  windSpeed: string;
+  jumpersCount: number;
+  accidentsCount: number;
   jumpers: ActivityJumperWithId[];
   createdAt?: string;
 }
@@ -162,7 +162,7 @@ export interface GetActivitiesByDateResponse {
 }
 
 export const activityApi = api.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     // GET /api/Activity - list activities
     getActivities: builder.query<GetActivitiesResponse, GetActivitiesRequest>({
       query: ({ pageNumber = 1, pageSize = 10, searchQuery }) => ({
@@ -171,29 +171,29 @@ export const activityApi = api.injectEndpoints({
         params: {
           pageNumber,
           pageSize,
-          ...(searchQuery && { searchQuery }),
-        },
+          ...(searchQuery && { searchQuery })
+        }
       }),
-      providesTags: ['Activity'],
+      providesTags: ['Activity']
     }),
 
     // GET /api/Activity/{id}
     getActivityById: builder.query<GetActivityByIdResponse, GetActivityByIdRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/Activity/${uniqueID}`,
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Activity'],
+      providesTags: ['Activity']
     }),
 
     // POST /api/Activity
     createActivity: builder.mutation<CreateActivityResponse, CreateActivityRequest>({
-      query: (body) => ({
+      query: body => ({
         url: '/api/Activity',
         method: 'POST',
-        body,
+        body
       }),
-      invalidatesTags: ['Activity'],
+      invalidatesTags: ['Activity']
     }),
 
     // PUT /api/Activity/{id}
@@ -201,47 +201,47 @@ export const activityApi = api.injectEndpoints({
       query: ({ uniqueID, ...body }) => ({
         url: `/api/Activity/${uniqueID}`,
         method: 'PUT',
-        body,
+        body
       }),
-      invalidatesTags: ['Activity'],
+      invalidatesTags: ['Activity']
     }),
 
     // DELETE /api/Activity/{id}
     deleteActivity: builder.mutation<DeleteActivityResponse, DeleteActivityRequest>({
       query: ({ uniqueID }) => ({
         url: `/api/Activity/${uniqueID}`,
-        method: 'DELETE',
+        method: 'DELETE'
       }),
-      invalidatesTags: ['deleteActivity' ,'Activity'],
+      invalidatesTags: ['deleteActivity', 'Activity']
     }),
 
     // GET /api/Activity/select
     getActivitySelect: builder.query<GetActivitySelectResponse, void>({
       query: () => ({
         url: '/api/Activity/select',
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Activity'],
+      providesTags: ['Activity']
     }),
 
     // GET /api/Activity/statistics
     getActivityStatistics: builder.query<GetActivityStatisticsResponse, void>({
       query: () => ({
         url: '/api/Activity/statistics',
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Activity'],
+      providesTags: ['Activity']
     }),
 
     // GET /api/Activity/by-date/{date}
     getActivitiesByDate: builder.query<GetActivitiesByDateResponse, GetActivitiesByDateRequest>({
       query: ({ date }) => ({
         url: `/api/Activity/by-date/${date}`,
-        method: 'GET',
+        method: 'GET'
       }),
-      providesTags: ['Activity'],
-    }),
-  }),
+      providesTags: ['Activity']
+    })
+  })
 });
 
 export const {
@@ -252,5 +252,5 @@ export const {
   useDeleteActivityMutation,
   useGetActivitySelectQuery,
   useGetActivityStatisticsQuery,
-  useGetActivitiesByDateQuery,
+  useGetActivitiesByDateQuery
 } = activityApi;

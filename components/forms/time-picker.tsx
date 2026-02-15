@@ -1,33 +1,33 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { format } from "date-fns"
-import { Clock } from "lucide-react"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
+import * as React from 'react';
+import { format } from 'date-fns';
+import { Clock } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 interface TimePickerProps {
-  time: string
-  setTime: (time: string) => void
+  time: string;
+  setTime: (time: string) => void;
 }
 
 export function TimePickerDemo({ time, setTime }: TimePickerProps) {
-  const hourRef = React.useRef<HTMLInputElement>(null)
-  const minuteRef = React.useRef<HTMLInputElement>(null)
-  const secondRef = React.useRef<HTMLInputElement>(null)
+  const hourRef = React.useRef<HTMLInputElement>(null);
+  const minuteRef = React.useRef<HTMLInputElement>(null);
+  const secondRef = React.useRef<HTMLInputElement>(null);
 
   // Initialize with formatted current time if no time is provided
-  const defaultTime = time || format(new Date(), "HH:mm:ss")
-  
-  const [hour, setHour] = React.useState<string>(() => defaultTime.split(":")[0])
-  const [minute, setMinute] = React.useState<string>(() => defaultTime.split(":")[1])
-  const [second, setSecond] = React.useState<string>(() => defaultTime.split(":")[2])
+  const defaultTime = time || format(new Date(), 'HH:mm:ss');
+
+  const [hour, setHour] = React.useState<string>(() => defaultTime.split(':')[0]);
+  const [minute, setMinute] = React.useState<string>(() => defaultTime.split(':')[1]);
+  const [second, setSecond] = React.useState<string>(() => defaultTime.split(':')[2]);
 
   // Update parent component when time changes
   React.useEffect(() => {
-    const formattedTime = `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:${second.padStart(2, '0')}`
-    setTime(formattedTime)
-  }, [hour, minute, second, setTime])
+    const formattedTime = `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:${second.padStart(2, '0')}`;
+    setTime(formattedTime);
+  }, [hour, minute, second, setTime]);
 
   // Handle input changes
   const handleInputChange = (
@@ -36,18 +36,18 @@ export function TimePickerDemo({ time, setTime }: TimePickerProps) {
     maxValue: number,
     nextRef: React.RefObject<HTMLInputElement> | null
   ) => {
-    let inputValue = e.target.value
+    let inputValue = e.target.value;
 
     if (/^\d{0,2}$/.test(inputValue)) {
-      let numericValue = inputValue ? Number.parseInt(inputValue, 10) : NaN
+      let numericValue = inputValue ? Number.parseInt(inputValue, 10) : NaN;
       if (isNaN(numericValue) || (numericValue >= 0 && numericValue <= maxValue)) {
-        setValue(inputValue)
+        setValue(inputValue);
         if (inputValue.length === 2 && nextRef) {
-          nextRef.current?.focus()
+          nextRef.current?.focus();
         }
       }
     }
-  }
+  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -64,7 +64,7 @@ export function TimePickerDemo({ time, setTime }: TimePickerProps) {
             id="hours"
             className="w-16 text-center"
             value={hour}
-            onChange={(e) => handleInputChange(e, setHour, 23, minuteRef)}
+            onChange={e => handleInputChange(e, setHour, 23, minuteRef)}
             placeholder="00"
             maxLength={2}
             inputMode="numeric"
@@ -80,7 +80,7 @@ export function TimePickerDemo({ time, setTime }: TimePickerProps) {
             id="minutes"
             className="w-16 text-center"
             value={minute}
-            onChange={(e) => handleInputChange(e, setMinute, 59, secondRef)}
+            onChange={e => handleInputChange(e, setMinute, 59, secondRef)}
             placeholder="00"
             maxLength={2}
             inputMode="numeric"
@@ -96,7 +96,7 @@ export function TimePickerDemo({ time, setTime }: TimePickerProps) {
             id="seconds"
             className="w-16 text-center"
             value={second}
-            onChange={(e) => handleInputChange(e, setSecond, 59, null)}
+            onChange={e => handleInputChange(e, setSecond, 59, null)}
             placeholder="00"
             maxLength={2}
             inputMode="numeric"
@@ -107,5 +107,5 @@ export function TimePickerDemo({ time, setTime }: TimePickerProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

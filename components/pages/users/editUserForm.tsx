@@ -1,69 +1,65 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { useRouter } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useGetUserByIdQuery, useUpdateUserMutation } from "@/services/users"
-import { toast } from "@/hooks/use-toast"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useGetUserByIdQuery, useUpdateUserMutation } from '@/services/users';
+import { toast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const formSchema = z.object({
   username: z.string().min(3, {
-    message: "اسم المستخدم يجب أن يكون على الأقل 3 أحرف.",
+    message: 'اسم المستخدم يجب أن يكون على الأقل 3 أحرف.'
   }),
   email: z.string().email({
-    message: "يرجى إدخال بريد إلكتروني صحيح.",
+    message: 'يرجى إدخال بريد إلكتروني صحيح.'
   }),
   firstName: z.string().min(2, {
-    message: "الاسم الأول يجب أن يكون على الأقل حرفين.",
+    message: 'الاسم الأول يجب أن يكون على الأقل حرفين.'
   }),
   lastName: z.string().min(2, {
-    message: "اسم العائلة يجب أن يكون على الأقل حرفين.",
-  }),
-})
+    message: 'اسم العائلة يجب أن يكون على الأقل حرفين.'
+  })
+});
 
 export function EditUserForm({ userId }: { userId: string }) {
-  const router = useRouter()
+  const router = useRouter();
 
   // Fetch user data
-  const {
-    data: userResponse,
-    isLoading: isLoadingUser,
-    isError: isErrorUser,
-  } = useGetUserByIdQuery({ id: userId })
+  const { data: userResponse, isLoading: isLoadingUser, isError: isErrorUser } = useGetUserByIdQuery({ id: userId });
 
   // Update mutation
-  const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation()
+  const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      email: "",
-      firstName: "",
-      lastName: "",
-    },
-  })
+      username: '',
+      email: '',
+      firstName: '',
+      lastName: ''
+    }
+  });
 
   // Prefill form with user data when loaded
   React.useEffect(() => {
     if (userResponse?.isSuccess && userResponse.result) {
-      const user = userResponse.result
+      const user = userResponse.result;
       form.reset({
-        username: user.userName || "",
-        email: user.email || "",
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-      })
+        username: user.userName || '',
+        email: user.email || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || ''
+      });
     }
-  }, [userResponse, form])
+  }, [userResponse, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -72,40 +68,40 @@ export function EditUserForm({ userId }: { userId: string }) {
         userName: values.username,
         email: values.email,
         firstName: values.firstName,
-        lastName: values.lastName,
-      }).unwrap()
+        lastName: values.lastName
+      }).unwrap();
 
       if (response.isSuccess) {
         toast({
-          title: "تم تحديث المستخدم بنجاح",
-          description: "تم تحديث بيانات المستخدم",
-          variant: "default",
-        })
-        router.push("/users")
+          title: 'تم تحديث المستخدم بنجاح',
+          description: 'تم تحديث بيانات المستخدم',
+          variant: 'default'
+        });
+        router.push('/users');
       } else {
         toast({
-          title: "فشل في تحديث المستخدم",
-          description: response.errorMessages.join(", "),
-          variant: "destructive",
-        })
+          title: 'فشل في تحديث المستخدم',
+          description: response.errorMessages.join(', '),
+          variant: 'destructive'
+        });
       }
     } catch (error: any) {
       // Extract error messages from ASP.NET Core validation errors
-      let errorMessages: string[] = ["حدث خطأ أثناء تحديث المستخدم"]
+      let errorMessages: string[] = ['حدث خطأ أثناء تحديث المستخدم'];
 
       if (error?.data?.errors) {
         // Convert errors object to array of messages
-        errorMessages = Object.values(error.data.errors).flat() as string[]
+        errorMessages = Object.values(error.data.errors).flat() as string[];
       } else if (error?.data?.errorMessages) {
         // Handle custom errorMessages format
-        errorMessages = error.data.errorMessages
+        errorMessages = error.data.errorMessages;
       }
 
       toast({
-        title: "فشل في تحديث المستخدم",
-        description: errorMessages.join(", "),
-        variant: "destructive",
-      })
+        title: 'فشل في تحديث المستخدم',
+        description: errorMessages.join(', '),
+        variant: 'destructive'
+      });
     }
   }
 
@@ -122,7 +118,7 @@ export function EditUserForm({ userId }: { userId: string }) {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   // Loading state
@@ -144,7 +140,7 @@ export function EditUserForm({ userId }: { userId: string }) {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -234,7 +230,7 @@ export function EditUserForm({ userId }: { userId: string }) {
                 <Button
                   variant="outline"
                   type="button"
-                  onClick={() => router.push("/users")}
+                  onClick={() => router.push('/users')}
                   className="w-[118px] text-[14px]"
                 >
                   إلغاء
@@ -244,7 +240,7 @@ export function EditUserForm({ userId }: { userId: string }) {
                   disabled={isUpdating}
                   className="w-[225px] bg-sidebaractive text-white text-[14px] hover:bg-sidebaractive hover:brightness-110"
                 >
-                  {isUpdating ? "جاري التحديث..." : "تحديث المستخدم"}
+                  {isUpdating ? 'جاري التحديث...' : 'تحديث المستخدم'}
                 </Button>
               </div>
             </form>
@@ -252,5 +248,5 @@ export function EditUserForm({ userId }: { userId: string }) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

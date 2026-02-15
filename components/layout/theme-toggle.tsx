@@ -1,36 +1,36 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { Moon, Sun, Palette } from "lucide-react"
-import { useTheme } from "next-themes"
+import * as React from 'react';
+import { Moon, Sun, Palette } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-type ColorTheme = "blue" | "yellow" | "green" | "purple"
+type ColorTheme = 'blue' | 'yellow' | 'green' | 'purple';
 
 export function ThemeToggle() {
-  const { setTheme, theme } = useTheme()
-  const [colorTheme, setColorTheme] = React.useState<ColorTheme>("blue")
-  const [open, setOpen] = React.useState(false)
+  const { setTheme, theme } = useTheme();
+  const [colorTheme, setColorTheme] = React.useState<ColorTheme>('blue');
+  const [open, setOpen] = React.useState(false);
 
   React.useEffect(() => {
-    const savedTheme = localStorage.getItem("color-theme") as ColorTheme
+    const savedTheme = localStorage.getItem('color-theme') as ColorTheme;
     if (savedTheme) {
-      setColorTheme(savedTheme)
-      document.documentElement.classList.remove("theme-blue", "theme-yellow", "theme-green", "theme-purple")
-      document.documentElement.classList.add(`theme-${savedTheme}`)
+      setColorTheme(savedTheme);
+      document.documentElement.classList.remove('theme-blue', 'theme-yellow', 'theme-green', 'theme-purple');
+      document.documentElement.classList.add(`theme-${savedTheme}`);
     }
-  }, [])
+  }, []);
 
   const setColorMode = (newTheme: ColorTheme) => {
-    document.documentElement.classList.remove("theme-blue", "theme-yellow", "theme-green", "theme-purple")
-    document.documentElement.classList.add(`theme-${newTheme}`)
-    localStorage.setItem("color-theme", newTheme)
-    setColorTheme(newTheme)
-  }
+    document.documentElement.classList.remove('theme-blue', 'theme-yellow', 'theme-green', 'theme-purple');
+    document.documentElement.classList.add(`theme-${newTheme}`);
+    localStorage.setItem('color-theme', newTheme);
+    setColorTheme(newTheme);
+  };
 
   return (
     <TooltipProvider>
@@ -63,8 +63,8 @@ export function ThemeToggle() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setTheme("light")}
-              className={cn("justify-start", theme === "light" && "bg-accent")}
+              onClick={() => setTheme('light')}
+              className={cn('justify-start', theme === 'light' && 'bg-accent')}
             >
               <Sun className="ml-2 h-4 w-4" />
               فاتح
@@ -72,21 +72,20 @@ export function ThemeToggle() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setTheme("dark")}
-              className={cn("justify-start", theme === "dark" && "bg-accent")}
+              onClick={() => setTheme('dark')}
+              className={cn('justify-start', theme === 'dark' && 'bg-accent')}
             >
               <Moon className="ml-2 h-4 w-4" />
               داكن
             </Button>
           </div>
           <div className="p-2 pt-0">
-             
             <div className="grid grid-cols-2 gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                className={cn("h-8 border-2 justify-center items-center", colorTheme === "blue" && "border-blue-600")}
-                onClick={() => setColorMode("blue")}
+                className={cn('h-8 border-2 justify-center items-center', colorTheme === 'blue' && 'border-blue-600')}
+                onClick={() => setColorMode('blue')}
               >
                 <div className="h-4 w-4 rounded-full bg-blue-600" />
               </Button>
@@ -94,18 +93,18 @@ export function ThemeToggle() {
                 variant="outline"
                 size="sm"
                 className={cn(
-                  "h-8 border-2 justify-center items-center",
-                  colorTheme === "yellow" && "border-yellow-400",
+                  'h-8 border-2 justify-center items-center',
+                  colorTheme === 'yellow' && 'border-yellow-400'
                 )}
-                onClick={() => setColorMode("yellow")}
+                onClick={() => setColorMode('yellow')}
               >
                 <div className="h-4 w-4 rounded-full bg-yellow-400" />
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className={cn("h-8 border-2 justify-center items-center", colorTheme === "green" && "border-green-500")}
-                onClick={() => setColorMode("green")}
+                className={cn('h-8 border-2 justify-center items-center', colorTheme === 'green' && 'border-green-500')}
+                onClick={() => setColorMode('green')}
               >
                 <div className="h-4 w-4 rounded-full bg-green-500" />
               </Button>
@@ -113,10 +112,10 @@ export function ThemeToggle() {
                 variant="outline"
                 size="sm"
                 className={cn(
-                  "h-8 border-2 justify-center items-center",
-                  colorTheme === "purple" && "border-purple-600",
+                  'h-8 border-2 justify-center items-center',
+                  colorTheme === 'purple' && 'border-purple-600'
                 )}
-                onClick={() => setColorMode("purple")}
+                onClick={() => setColorMode('purple')}
               >
                 <div className="h-4 w-4 rounded-full bg-purple-600" />
               </Button>
@@ -125,6 +124,5 @@ export function ThemeToggle() {
         </DropdownMenuContent>
       </DropdownMenu>
     </TooltipProvider>
-  )
+  );
 }
-
