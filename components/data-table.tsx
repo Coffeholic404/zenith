@@ -52,6 +52,7 @@ import { category } from './pages/adds/category/category-columns';
 import CategoryModel from './pages/adds/category/categoryModel';
 import UnitsModelButton from './pages/adds/units/unitsModel';
 import { unit } from './pages/adds/units/units-columns';
+import { inventory } from './pages/inventory/inventory-columns';
 interface DataTableProps<TData, TValue, TNames> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -61,7 +62,7 @@ interface DataTableProps<TData, TValue, TNames> {
   type?: string;
   uniqueID?: string;
 }
-type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType | material | category | unit;
+type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType | material | category | unit | inventory;
 export function DataTable<TData extends adds, TValue, TNames>({
   columns,
   data,

@@ -37,7 +37,7 @@ import {
   useSidebar
 } from '@/components/ui/sidebar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronLeft, PanelLeft, PanelRight, UsersRound, ReceiptText } from 'lucide-react';
+import { Cuboid, PanelLeft, PanelRight, UsersRound, ReceiptText } from 'lucide-react';
 const menuItems = [
   {
     title: 'الرئيسية',
@@ -95,7 +95,12 @@ const menuItems = [
     title: 'الفواتير',
     href: '/bills',
     icon: ReceiptText
-  }
+  },
+  {
+    title: 'الجرد',
+    href: '/inventory',
+    icon: Cuboid
+  },
   // {
   //   title: "المشتريات",
   //   href: "/purchases",
