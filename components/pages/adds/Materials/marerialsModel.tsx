@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -24,7 +25,6 @@ const addMaterialSchema = z.object({
   name: z.string().min(1, { message: 'الاسم المنتج مطلوب' }),
   unit: z.string().min(1, { message: 'الوحدة مطلوبة' }),
   category: z.string().min(1, { message: 'النوع مطلوب' }),
-  code: z.string().min(1, { message: 'الرمز مطلوب' }),
   producerCountry: z.string().min(1, { message: 'البلد المصنع مطلوب' }),
   tradeMark: z.string().min(1, { message: 'العلامة التجارية مطلوبة' }),
   weight: z.string().min(1, { message: 'الوزن مطلوب' }),
@@ -105,15 +105,23 @@ function MarerialsModel() {
           name="unit"
           render={({ field }) => (
             <FormItem className="text-right">
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="الوحدة"
-                  className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right"
-                  dir="rtl"
-                  autoComplete="off"
-                />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger
+                    dir="rtl"
+                    className="bg-searchBg rounded-xl font-vazirmatn text-subtext focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right"
+                  >
+                    <SelectValue placeholder="الوحدة" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent dir="rtl">
+                  <SelectItem value="قطعة">قطعة</SelectItem>
+                  <SelectItem value="كيلوغرام">كيلوغرام</SelectItem>
+                  <SelectItem value="لتر">لتر</SelectItem>
+                  <SelectItem value="متر">متر</SelectItem>
+                  <SelectItem value="طن">طن</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage className="text-right" />
             </FormItem>
           )}
@@ -123,33 +131,22 @@ function MarerialsModel() {
           name="category"
           render={({ field }) => (
             <FormItem className="text-right">
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="النوع"
-                  className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right"
-                  dir="rtl"
-                  autoComplete="off"
-                />
-              </FormControl>
-              <FormMessage className="text-right" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="code"
-          render={({ field }) => (
-            <FormItem className="text-right">
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="الرمز"
-                  className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right"
-                  dir="rtl"
-                  autoComplete="off"
-                />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger
+                    dir="rtl"
+                    className="bg-searchBg rounded-xl font-vazirmatn text-subtext focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right"
+                  >
+                    <SelectValue placeholder="النوع" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent dir="rtl">
+                  <SelectItem value="كهربائية">كهربائية</SelectItem>
+                  <SelectItem value="ميكانيكية">ميكانيكية</SelectItem>
+                  <SelectItem value="إلكترونية">إلكترونية</SelectItem>
+                  <SelectItem value="أخرى">أخرى</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage className="text-right" />
             </FormItem>
           )}
