@@ -1,8 +1,10 @@
 import type { ColumnDef } from '@tanstack/react-table';
 
 export type category = {
-  uniqueID: string;
-  name: string;
+  id: string;
+  categoryName: string;
+  createdAt: string;
+  itemCount: number;
 };
 
 export const categoryColumns: ColumnDef<category>[] = [
@@ -16,7 +18,7 @@ export const categoryColumns: ColumnDef<category>[] = [
     }
   },
   {
-    accessorKey: 'name',
+    accessorKey: 'categoryName',
     header: () => {
       return <p className=" font-vazirmatn font-normal text-base text-tableHeader">اسم الفئة</p>;
     }
@@ -53,5 +55,5 @@ export const categoryColumns: ColumnDef<category>[] = [
 
 export const categoryColumnsNames = [
   { label: 'ت', dataIndex: 'sequence' },
-  { label: 'اسم الفئة', dataIndex: 'name' }
+  { label: 'اسم الفئة', dataIndex: 'categoryName' }
 ];

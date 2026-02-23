@@ -46,7 +46,7 @@ import CoursesTypeAddModel from './pages/adds/coursesType/coursesTypesModel';
 import type { EvaluationRow } from '@/components/pages/evaluation/evaluation-columns';
 import { CoursesType } from '@/components/pages/adds/coursesType/coursesType-columns';
 import { useSession } from 'next-auth/react';
-import { material } from './pages/adds/Materials/materials-columns';
+import { Item } from '@/services/item';
 import MarerialsModelButton from './pages/adds/Materials/marerialsModel';
 import { category } from './pages/adds/category/category-columns';
 import CategoryModel from './pages/adds/category/categoryModel';
@@ -62,7 +62,7 @@ interface DataTableProps<TData, TValue, TNames> {
   type?: string;
   uniqueID?: string;
 }
-type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType | material | category | unit | inventory;
+type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType | Item | category | unit | inventory;
 export function DataTable<TData extends adds, TValue, TNames>({
   columns,
   data,
@@ -130,59 +130,32 @@ export function DataTable<TData extends adds, TValue, TNames>({
                 <Input
                   id="search"
                   placeholder="بحث ..."
-                  value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-                  onChange={event => table.getColumn('name')?.setFilterValue(event.target.value)}
+                  value={(table.getAllColumns().find(col => col.id !== 'sequence' && col.id !== 'actions' && col.getCanFilter())?.getFilterValue() as string) ?? ''}
+                  onChange={event => {
+                    const col = table.getAllColumns().find(col => col.id !== 'sequence' && col.id !== 'actions' && col.getCanFilter());
+                    col?.setFilterValue(event.target.value);
+                  }}
                   className=" bg-searchBg rounded-xl block w-full p-4 ps-10 min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
                 />
               </div>
-              <DropdownMenu>
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  {/* <Button variant="outline" className=" size-10 p-0 rounded-xl bg-searchBg">
+                  <Button variant="outline" className=" size-10 p-0 rounded-xl bg-searchBg">
                     <Image src={filterIcon} alt="filter icon" className=" size-[22px]" />
-                  </Button> */}
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuCheckboxItem
-                    checked={(table.getColumn('name')?.getFilterValue() as string[] | undefined)?.includes('نشط')}
-                    onCheckedChange={value => {
-                      const filterValues = (table.getColumn('name')?.getFilterValue() as string[]) || [];
-                      if (value) {
-                        table.getColumn('name')?.setFilterValue([...filterValues, 'نشط']);
-                      } else {
-                        table.getColumn('name')?.setFilterValue(filterValues.filter(val => val !== 'نشط'));
-                      }
-                    }}
-                  >
+                  <DropdownMenuCheckboxItem>
                     نشط
                   </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={(table.getColumn('name')?.getFilterValue() as string[] | undefined)?.includes('غير نشط')}
-                    onCheckedChange={value => {
-                      const filterValues = (table.getColumn('name')?.getFilterValue() as string[]) || [];
-                      if (value) {
-                        table.getColumn('name')?.setFilterValue([...filterValues, 'غير نشط']);
-                      } else {
-                        table.getColumn('name')?.setFilterValue(filterValues.filter(val => val !== 'غير نشط'));
-                      }
-                    }}
-                  >
+                  <DropdownMenuCheckboxItem>
                     غير نشط
                   </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={(table.getColumn('name')?.getFilterValue() as string[] | undefined)?.includes('معلق')}
-                    onCheckedChange={value => {
-                      const filterValues = (table.getColumn('name')?.getFilterValue() as string[]) || [];
-                      if (value) {
-                        table.getColumn('name')?.setFilterValue([...filterValues, 'معلق']);
-                      } else {
-                        table.getColumn('name')?.setFilterValue(filterValues.filter(val => val !== 'معلق'));
-                      }
-                    }}
-                  >
+                  <DropdownMenuCheckboxItem>
                     معلق
                   </DropdownMenuCheckboxItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
             </div>
 
             <div className="flex items-center space-x-2 space-x-reverse rtl:space-x-reverse">

@@ -22,13 +22,15 @@ import { useGetTrainingCoursesQuery, TrainingCourse } from '@/services/trainingC
 import { planeColumns, planeColumnsNames } from '@/components/pages/adds/plane/plane-columns';
 import { useGetPlanesQuery, Plane } from '@/services/plane';
 import { PlacesColumns, PlacesColumnsNames } from '@/components/pages/adds/places/places-columns';
-import { material, materialColumns, materialColumnsNames } from '@/components/pages/adds/Materials/materials-columns';
+import { materialColumns, materialColumnsNames } from '@/components/pages/adds/Materials/materials-columns';
+import { useGetItemsListQuery, Item } from '@/services/item';
 import { useGetPlacesQuery, PlaceItem } from '@/services/place';
 import { coursesTypeColumns, coursesTypeColumnsNames } from '@/components/pages/adds/coursesType/coursesType-columns';
 import { useGetTypesQuery, TypeItem } from '@/services/types';
+import { useGetCategoriesQuery, Category } from '@/services/category';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { category, categoryColumns, categoryColumnsNames } from '@/components/pages/adds/category/category-columns';
+import { categoryColumns, categoryColumnsNames } from '@/components/pages/adds/category/category-columns';
 import { unit, unitColumns, unitColumnsNames } from '@/components/pages/adds/units/units-columns';
 export default function Page() {
   const {
@@ -76,6 +78,18 @@ export default function Page() {
     isSuccess: placesSuccess
   } = useGetPlacesQuery({});
   const { data: types, isLoading: typesLoading, error: typesError, isSuccess: typesSuccess } = useGetTypesQuery({});
+  const {
+    data: categories,
+    isLoading: categoriesLoading,
+    error: categoriesError,
+    isSuccess: categoriesSuccess
+  } = useGetCategoriesQuery({});
+  const {
+    data: items,
+    isLoading: itemsLoading,
+    error: itemsError,
+    isSuccess: itemsSuccess
+  } = useGetItemsListQuery({});
 
   let nominatedPartiesData: NominatedParty[] = [];
   let subscriptionsData: subscriptionApi[] = [];
@@ -85,6 +99,8 @@ export default function Page() {
   let placesData: PlaceItem[] = [];
   let skillsData: Skill[] = [];
   let typesData: TypeItem[] = [];
+  let categoryData: Category[] = [];
+  let itemsData: Item[] = [];
 
   if (typesSuccess && types?.result?.data) {
     typesData = types?.result.data || [];
@@ -110,58 +126,12 @@ export default function Page() {
   if (placesSuccess && places?.result?.data) {
     placesData = places?.result.data || [];
   }
-  const materialsLoading = false;
-  const materialsData: material[] = [
-    {
-      uniqueID: '1',
-      name: 'material 1',
-      category: 'category 1',
-      unit: 'unit 1',
-      code: 'code 1',
-      producingCountry: 'producingCountry 1',
-      cost: 1,
-      weight: 1,
-      tradeMark: 'tradeMark 1'
-    },
-    {
-      uniqueID: '2',
-      name: 'material 2',
-      category: 'category 2',
-      unit: 'unit 2',
-      code: 'code 2',
-      producingCountry: 'producingCountry 2',
-      cost: 2,
-      weight: 2,
-      tradeMark: 'tradeMark 2'
-    },
-    {
-      uniqueID: '3',
-      name: 'material 3',
-      category: 'category 3',
-      unit: 'unit 3',
-      code: 'code 3',
-      producingCountry: 'producingCountry 3',
-      cost: 3,
-      weight: 3,
-      tradeMark: 'tradeMark 3'
-    }
-  ];
-
-  const categoryLoading = false;
-  const categoryData: category[] = [
-    {
-      uniqueID: '1',
-      name: 'category 1'
-    },
-    {
-      uniqueID: '2',
-      name: 'category 2'
-    },
-    {
-      uniqueID: '3',
-      name: 'category 3'
-    }
-  ];
+  if (categoriesSuccess && categories?.result?.data) {
+    categoryData = categories?.result.data || [];
+  }
+  if (itemsSuccess && items?.result?.data) {
+    itemsData = items?.result.data || [];
+  }
 
   const unitsLoading = false;
   const unitsData: unit[] = [
@@ -300,20 +270,28 @@ export default function Page() {
             )}
           </TabsContent>
           <TabsContent value="مواد" className="bg-white rounded-lg">
-            {materialsLoading ? (
-              <DataTableSkeleton columnCount={3} rowCount={5} showAddButton={true} />
+            {itemsLoading ? (
+              <DataTableSkeleton columnCount={8} rowCount={5} showAddButton={true} />
+            ) : itemsError ? (
+              <div className="p-8 text-center font-vazirmatn text-red-500">
+                حدث خطأ في تحميل المواد
+              </div>
             ) : (
               <DataTable
                 columns={materialColumns}
-                data={materialsData}
+                data={itemsData}
                 columnsNames={materialColumnsNames}
                 type="materials"
               />
             )}
           </TabsContent>
           <TabsContent value="الفئات" className="bg-white rounded-lg">
-            {categoryLoading ? (
+            {categoriesLoading ? (
               <DataTableSkeleton columnCount={3} rowCount={5} showAddButton={true} />
+            ) : categoriesError ? (
+              <div className="p-8 text-center font-vazirmatn text-red-500">
+                حدث خطأ في تحميل الفئات
+              </div>
             ) : (
               <DataTable
                 columns={categoryColumns}

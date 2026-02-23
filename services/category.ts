@@ -1,125 +1,134 @@
 import { api } from './api';
 
-export type GetCategoryRequestParams = {
-  skip?: number;
-  take?: number;
-  search?: string;
-};
+// Category entity interface based on API response
+export interface Category {
+  id: string;
+  categoryName: string;
+  createdAt: string;
+  itemCount: number;
+}
 
-export type GetCategoryResponse = {};
-export type AddCategoryPayload = { title: string; description: string; on_slider: string; img: string };
-export type AddCategoryMPayload = {
-  categorIds: string[];
-};
-export type UpdateDepartmentsPayload = {
-  name: string;
-};
-export type GetCategoryByIDResponse = {
-  id: number;
-};
+// Request types
+export interface GetCategoriesRequest {
+  pageNumber?: number;
+  pageSize?: number;
+  sortBy?: string;
+  isDescending?: boolean;
+  searchQuery?: string;
+}
 
-export const Category = api.injectEndpoints({
-  endpoints: build => ({
-    getCategoryAll: build.query<GetCategoryResponse, GetCategoryRequestParams>({
-      query: (params: GetCategoryRequestParams) => ({
-        url: `/category/forMerchant/all`,
+export interface GetCategoryByIdRequest {
+  id: string;
+}
+
+export interface CreateCategoryRequest {
+  categoryName: string;
+}
+
+export interface UpdateCategoryRequest {
+  id: string;
+  categoryName: string;
+}
+
+export interface DeleteCategoryRequest {
+  id: string;
+}
+
+// Response types
+export interface GetCategoriesResponse {
+  statusCode: number;
+  isSuccess: boolean;
+  errorMessages: string[];
+  result: {
+    data: Category[];
+    pageNumber: number;
+    pageSize: number;
+    totalPages: number;
+    totalCount: number;
+    hasPrevious: boolean;
+    hasNext: boolean;
+    searchQuery: string | null;
+  };
+}
+
+export interface CategoryResponse {
+  statusCode: number;
+  isSuccess: boolean;
+  errorMessages: string[];
+  result: Category;
+}
+
+export interface CategoryDeleteResponse {
+  statusCode: number;
+  isSuccess: boolean;
+  errorMessages: string[];
+  result: null;
+}
+
+// API endpoints for Category
+export const categoryApi = api.injectEndpoints({
+  endpoints: builder => ({
+    // GET /api/Category - List categories with pagination, sorting, and search
+    getCategories: builder.query<GetCategoriesResponse, GetCategoriesRequest>({
+      query: ({ pageNumber = 1, pageSize = 10, sortBy, isDescending, searchQuery }) => ({
+        url: '/api/Category',
         method: 'GET',
-        credentials: 'include',
-        params
-      }),
-      providesTags: ['getCategoryAll']
-    }),
-    getCategory: build.query<GetCategoryResponse, GetCategoryRequestParams>({
-      query: (params: GetCategoryRequestParams) => ({
-        url: `/category`,
-        method: 'GET',
-        credentials: 'include',
-        params
+        params: {
+          PageNumber: pageNumber,
+          PageSize: pageSize,
+          ...(sortBy && { SortBy: sortBy }),
+          ...(isDescending !== undefined && { IsDescending: isDescending }),
+          ...(searchQuery && { SearchQuery: searchQuery })
+        }
       }),
       providesTags: ['getCategory']
     }),
-    getCategoryM: build.query<GetCategoryResponse, GetCategoryRequestParams>({
-      query: (params: GetCategoryRequestParams) => ({
-        url: `/category/forMerchant`,
-        method: 'GET',
-        credentials: 'include',
-        params
-      }),
-      providesTags: ['getCategoryM']
-    }),
-    getCategoryByID: build.query<GetCategoryByIDResponse, string>({
-      query: (id: string) => ({
-        url: `/category/${id}`,
-        method: 'GET',
-        credentials: 'include'
+
+    // GET /api/Category/{id} - Get category by ID
+    getCategoryById: builder.query<CategoryResponse, GetCategoryByIdRequest>({
+      query: ({ id }) => ({
+        url: `/api/Category/${id}`,
+        method: 'GET'
       }),
       providesTags: ['getCategoryByID']
     }),
 
-    addCategory: build.mutation<any, AddCategoryPayload>({
-      query: (body: AddCategoryPayload) => ({
-        url: `/category`,
+    // POST /api/Category - Create a new category
+    createCategory: builder.mutation<CategoryResponse, CreateCategoryRequest>({
+      query: body => ({
+        url: '/api/Category',
         method: 'POST',
-        credentials: 'include',
         body
       }),
-      invalidatesTags: ['getCategory', 'addCategory', 'getCategoryByID', 'getCategoryAll', 'getCategoryM']
+      invalidatesTags: ['getCategory']
     }),
 
-    updateCategory: build.mutation<any, { body: AddCategoryPayload; id: string }>({
-      query: ({ body, id }: { body: AddCategoryPayload; id: string }) => ({
-        url: `/category/${id}`,
-        body,
-        method: 'PATCH',
-        credentials: 'include'
+    // PUT /api/Category/{id} - Update an existing category
+    updateCategory: builder.mutation<CategoryResponse, UpdateCategoryRequest>({
+      query: ({ id, ...body }) => ({
+        url: `/api/Category/${id}`,
+        method: 'PUT',
+        body
       }),
-      invalidatesTags: ['getCategory', 'updateCategory', 'getCategoryByID', 'getCategoryAll']
+      invalidatesTags: ['getCategory', 'getCategoryByID']
     }),
-    updateCategoryMerchant: build.mutation<any, AddCategoryMPayload>({
-      query: (body: AddCategoryMPayload) => ({
-        url: `/store/CategoryStore`,
-        body,
-        method: 'PATCH',
-        credentials: 'include'
+
+    // DELETE /api/Category/{id} - Delete a category
+    deleteCategory: builder.mutation<CategoryDeleteResponse, DeleteCategoryRequest>({
+      query: ({ id }) => ({
+        url: `/api/Category/${id}`,
+        method: 'DELETE'
       }),
-      invalidatesTags: ['updateCategoryMerchant', 'getCategoryM', 'getCategory', 'getCategoryAll']
-    }),
-    updateCategoryٍSlide: build.mutation<any, { id: string; status: string }>({
-      query: ({ id, status }: { id: string; status: string }) => ({
-        url: `/store/Status/${id}/${status}`,
-        method: 'PATCH',
-        credentials: 'include'
-      }),
-      invalidatesTags: ['updateCategoryٍSlide', 'getCategoryM', 'getCategoryAll', 'getCategory']
-    }),
-    deleteCategory: build.mutation<any, string>({
-      query: (id: string) => ({
-        url: `/category/${id}`,
-        method: 'DELETE',
-        credentials: 'include'
-      }),
-      invalidatesTags: ['getCategory', 'deleteCategory', 'getCategoryByID', 'getCategoryAll']
-    }),
-    deleteCategoryM: build.mutation<any, string>({
-      query: (id: string) => ({
-        url: `/store/CategoryStore/${id}`,
-        method: 'DELETE',
-        credentials: 'include'
-      }),
-      invalidatesTags: ['getCategoryM', 'deleteCategoryM', 'getCategoryAll']
+      invalidatesTags: ['getCategory']
     })
   })
 });
 
+// Hooks
 export const {
-  useGetCategoryQuery,
-  useGetCategoryMQuery,
-  useGetCategoryAllQuery,
-  useAddCategoryMutation,
+  useGetCategoriesQuery,
+  useGetCategoryByIdQuery,
+  useCreateCategoryMutation,
   useUpdateCategoryMutation,
-  useUpdateCategoryٍSlideMutation,
-  useUpdateCategoryMerchantMutation,
-  useDeleteCategoryMutation,
-  useDeleteCategoryMMutation,
-  useGetCategoryByIDQuery
-} = Category;
+  useDeleteCategoryMutation
+} = categoryApi;

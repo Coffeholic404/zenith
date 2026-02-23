@@ -1,18 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table';
+import { Item } from '@/services/item';
 
-export type material = {
-  uniqueID: string;
-  name: string;
-  category: string;
-  unit: string;
-  code: string;
-  producingCountry: string;
-  cost: number;
-  weight: number;
-  tradeMark: string;
-};
-
-export const materialColumns: ColumnDef<material>[] = [
+export const materialColumns: ColumnDef<Item>[] = [
   {
     accessorKey: 'sequence',
     header: () => {
@@ -23,49 +12,43 @@ export const materialColumns: ColumnDef<material>[] = [
     }
   },
   {
-    accessorKey: 'name',
+    accessorKey: 'itemName',
     header: () => {
       return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الاسم</p>;
     }
   },
   {
-    accessorKey: 'category',
+    accessorKey: 'categoryName',
     header: () => {
       return <p className=" font-vazirmatn font-normal text-base text-tableHeader">النوع</p>;
     }
   },
   {
-    accessorKey: 'unit',
+    accessorKey: 'unitName',
     header: () => {
       return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الوحدة</p>;
     }
   },
   {
-    accessorKey: 'code',
-    header: () => {
-      return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الرمز</p>;
-    }
-  },
-  {
-    accessorKey: 'producingCountry',
+    accessorKey: 'country',
     header: () => {
       return <p className=" font-vazirmatn font-normal text-base text-tableHeader">البلد</p>;
     }
   },
   {
-    accessorKey: 'cost',
+    accessorKey: 'limit',
     header: () => {
-      return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الكلفة</p>;
+      return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الحد الأدنى</p>;
     }
   },
   {
-    accessorKey: 'weight',
+    accessorKey: 'volume',
     header: () => {
-      return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الوزن</p>;
+      return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الحجم</p>;
     }
   },
   {
-    accessorKey: 'tradeMark',
+    accessorKey: 'brand',
     header: () => {
       return <p className=" font-vazirmatn font-normal text-base text-tableHeader">العلامة التجارية</p>;
     }
@@ -75,39 +58,16 @@ export const materialColumns: ColumnDef<material>[] = [
     header: () => {
       return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الإجراءات</p>;
     }
-    // cell: ({ row }) => {
-    //     return (
-    //         <div className="flex gap-2">
-    //             <Button
-    //                 variant="outline"
-    //                 size="icon"
-    //                 className="rounded-full"
-    //                 onClick={() => handleEdit(row.original)}
-    //             >
-    //                 <Pencil className="h-4 w-4" />
-    //             </Button>
-    //             <Button
-    //                 variant="outline"
-    //                 size="icon"
-    //                 className="rounded-full"
-    //                 onClick={() => handleDelete(row.original)}
-    //             >
-    //                 <Trash className="h-4 w-4" />
-    //             </Button>
-    //         </div>
-    //     )
-    // }
   }
 ];
 
 export const materialColumnsNames = [
   { label: 'ت', dataIndex: 'sequence' },
-  { label: 'الاسم', dataIndex: 'name' },
-  { label: 'النوع', dataIndex: 'category' },
-  { label: 'الوحدة', dataIndex: 'unit' },
-  { label: 'الرمز', dataIndex: 'code' },
-  { label: 'البلد', dataIndex: 'producingCountry' },
-  { label: 'الكلفة', dataIndex: 'cost' },
-  { label: 'الوزن', dataIndex: 'weight' },
-  { label: 'العلامة التجارية', dataIndex: 'tradeMark' }
+  { label: 'الاسم', dataIndex: 'itemName' },
+  { label: 'النوع', dataIndex: 'categoryName' },
+  { label: 'الوحدة', dataIndex: 'unitName' },
+  { label: 'البلد', dataIndex: 'country' },
+  { label: 'الحد الأدنى', dataIndex: 'limit' },
+  { label: 'الحجم', dataIndex: 'volume' },
+  { label: 'العلامة التجارية', dataIndex: 'brand' }
 ];
