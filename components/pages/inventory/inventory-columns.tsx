@@ -103,7 +103,7 @@ export const inventoryColumns: ColumnDef<inventory>[] = [
         },
         cell: ({ row }) => {
             return (
-                <div className="flex gap-2">
+                <div className="flex gap-2 justify-end">
                     <Button
                         variant="ghost"
                         size="icon"

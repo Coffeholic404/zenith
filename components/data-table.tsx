@@ -330,6 +330,21 @@ export function DataTable<TData extends adds, TValue, TNames>({
               {type === 'materials' && <MarerialsModelButton />}
               {type === 'category' && <CategoryModel />}
               {type === 'units' && <UnitsModelButton />}
+              {type === 'inventory' && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      className="bg-sidebaractive px-3 rounded-2xl shrink-0"
+                      onClick={() => router.push('/inventory/add-item')}
+                    >
+                      <Image src={add} alt="add icon" className=" size-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className=" bg-sidebaractive text-white">
+                    <p className=" font-normal text-sm text-white font-vazirmatn">إضافة منتج</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </div>
           </div>
 
