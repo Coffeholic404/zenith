@@ -28,10 +28,11 @@ import { useGetPlacesQuery, PlaceItem } from '@/services/place';
 import { coursesTypeColumns, coursesTypeColumnsNames } from '@/components/pages/adds/coursesType/coursesType-columns';
 import { useGetTypesQuery, TypeItem } from '@/services/types';
 import { useGetCategoriesQuery, Category } from '@/services/category';
+import { useGetUnitsListQuery, Unit } from '@/services/unit';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { categoryColumns, categoryColumnsNames } from '@/components/pages/adds/category/category-columns';
-import { unit, unitColumns, unitColumnsNames } from '@/components/pages/adds/units/units-columns';
+import { unitColumns, unitColumnsNames } from '@/components/pages/adds/units/units-columns';
 export default function Page() {
   const {
     data: nominatedParties,
@@ -132,22 +133,16 @@ export default function Page() {
   if (itemsSuccess && items?.result?.data) {
     itemsData = items?.result.data || [];
   }
-
-  const unitsLoading = false;
-  const unitsData: unit[] = [
-    {
-      uniqueID: '1',
-      name: 'unit 1'
-    },
-    {
-      uniqueID: '2',
-      name: 'unit 2'
-    },
-    {
-      uniqueID: '3',
-      name: 'unit 3'
-    }
-  ];
+  const {
+    data: unitsResponse,
+    isLoading: unitsLoading,
+    error: unitsError,
+    isSuccess: unitsSuccess
+  } = useGetUnitsListQuery({});
+  let unitsData: Unit[] = [];
+  if (unitsSuccess && unitsResponse?.result?.data) {
+    unitsData = unitsResponse?.result.data || [];
+  }
 
   const tabs = [
     {
@@ -304,6 +299,10 @@ export default function Page() {
           <TabsContent value="الوحدات" className="bg-white rounded-lg">
             {unitsLoading ? (
               <DataTableSkeleton columnCount={3} rowCount={5} showAddButton={true} />
+            ) : unitsError ? (
+              <div className="p-8 text-center font-vazirmatn text-red-500">
+                حدث خطأ في تحميل الوحدات
+              </div>
             ) : (
               <DataTable columns={unitColumns} data={unitsData} columnsNames={unitColumnsNames} type="units" />
             )}
