@@ -34,13 +34,17 @@ import { cn } from '@/lib/utils';
 import {
     CalendarDays,
     Plus,
-    ArrowRight
+    ArrowRight,
+    Loader2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { Card, CardContent } from '@/components/ui/card';
 import BillItemsList from '@/components/pages/bills/bill-items-list';
 import type { BillItemEntry } from '@/components/pages/bills/bill-items-list';
+import { useCreateBillMutation } from '@/services/bills';
+import { useGetItemsListQuery } from '@/services/item';
+import type { CreateBillRequest } from '@/services/bills';
 
 // ── Schemas ──────────────────────────────────────────────────────────────────
 
@@ -67,15 +71,7 @@ type AddBillFormData = z.infer<typeof addBillSchema>;
 
 // ── Item type for the list ───────────────────────────────────────────────────
 
-// Dummy items for the select (replace with actual data later)
-const availableItems = [
-    { value: 'item-1', label: 'قطع غيار محرك' },
-    { value: 'item-2', label: 'زيوت تشحيم' },
-    { value: 'item-3', label: 'فلاتر هواء' },
-    { value: 'item-4', label: 'إطارات' },
-    { value: 'item-5', label: 'بطاريات' },
-    { value: 'item-6', label: 'أسلاك كهربائية' }
-];
+
 
 // ── Input class shorthand ────────────────────────────────────────────────────
 
@@ -95,6 +91,19 @@ export default function AddBillPage() {
     const { toast } = useToast();
     const router = useRouter();
     const [items, setItems] = useState<BillItemEntry[]>([]);
+
+    // ── API hooks ─────────────────────────────────────────────────────────
+    const [createBill, { isLoading: isCreating }] = useCreateBillMutation();
+    const { data: itemsData, isLoading: isLoadingItems } = useGetItemsListQuery({
+        pageNumber: 1,
+        pageSize: 100
+    });
+
+    // Map API items to select options
+    const availableItems = (itemsData?.result?.data ?? []).map((item) => ({
+        value: item.id,
+        label: item.itemName
+    }));
 
     // Bill form
     const billForm = useForm<AddBillFormData>({
@@ -149,7 +158,7 @@ export default function AddBillPage() {
 
     // ── Submit the full bill ─────────────────────────────────────────────────
 
-    const handleSubmitBill = (data: AddBillFormData) => {
+    const handleSubmitBill = async (data: AddBillFormData) => {
         if (items.length === 0) {
             toast({
                 title: 'خطأ',
@@ -159,17 +168,40 @@ export default function AddBillPage() {
             return;
         }
 
-        const billPayload = {
-            ...data,
-            items
+        const payload: CreateBillRequest = {
+            supplier: data.supplier,
+            date: data.date.toISOString(),
+            orderNo: data.orderNumber,
+            note: data.notes ?? '',
+            subImports: items.map((item) => ({
+                itemId: item.item,
+                qty: item.amount,
+                cost: item.cost,
+                note: '',
+                code: item.code,
+                status: item.status,
+                distribution: item.allowDistribute ? 'true' : 'false'
+            }))
         };
 
-        // TODO: replace with actual API call
-        console.log('Bill Payload:', billPayload);
-        toast({
-            title: 'تم بنجاح',
-            description: 'تم حفظ الفاتورة بنجاح'
-        });
+        try {
+            await createBill(payload).unwrap();
+            toast({
+                title: 'تم بنجاح',
+                description: 'تم حفظ الفاتورة بنجاح'
+            });
+            router.push('/bills');
+        } catch (error: any) {
+            const errorMessage =
+                error?.data?.errorMessages?.[0] ??
+                error?.data?.message ??
+                'حدث خطأ أثناء حفظ الفاتورة';
+            toast({
+                title: 'خطأ',
+                description: errorMessage,
+                variant: 'destructive'
+            });
+        }
     };
 
     // ── Computed total ────────────────────────────────────────────────────────
@@ -544,9 +576,17 @@ export default function AddBillPage() {
                 <Button
                     type="submit"
                     form="bill-form"
+                    disabled={isCreating}
                     className="bg-sidebaractive text-white w-28 rounded-2xl hover:bg-sidebaractive hover:brightness-110 font-vazirmatn"
                 >
-                    حفظ الفاتورة
+                    {isCreating ? (
+                        <>
+                            <Loader2 className="size-4 animate-spin" />
+                            جاري الحفظ
+                        </>
+                    ) : (
+                        'حفظ الفاتورة'
+                    )}
                 </Button>
             </div>
         </div>

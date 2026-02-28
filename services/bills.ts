@@ -49,22 +49,10 @@ export interface CreateSubImportRequest {
   note: string;
   code: string;
   status: string;
-  packagerId: string;
-  packetCoachId: string;
-  sameFlag: string;
   distribution: string;
 }
 
 export interface CreateBillRequest {
-  supplier: string;
-  date: string;
-  orderNo: string;
-  note: string;
-  subImports: CreateSubImportRequest[];
-}
-
-export interface UpdateBillRequest {
-  id: string;
   supplier: string;
   date: string;
   orderNo: string;
@@ -107,6 +95,19 @@ export interface BillDeleteResponse {
   result: null;
 }
 
+export interface ReverseBillRequest {
+  id: string;
+}
+
+export interface ReverseBillResponse {
+  statusCode: number;
+  isSuccess: boolean;
+  errorMessages: string[];
+  result: {
+    message: string;
+  };
+}
+
 // API endpoints for Bills (StImport)
 export const billsApi = api.injectEndpoints({
   endpoints: builder => ({
@@ -145,21 +146,20 @@ export const billsApi = api.injectEndpoints({
       invalidatesTags: ['getSimport']
     }),
 
-    // PUT /api/StImport/{id} - Update an existing bill
-    updateBill: builder.mutation<BillResponse, UpdateBillRequest>({
-      query: ({ id, ...body }) => ({
-        url: `/api/StImport/${id}`,
-        method: 'PUT',
-        body
-      }),
-      invalidatesTags: ['getSimport']
-    }),
-
     // DELETE /api/StImport/{id} - Delete a bill
     deleteBill: builder.mutation<BillDeleteResponse, DeleteBillRequest>({
       query: ({ id }) => ({
         url: `/api/StImport/${id}`,
         method: 'DELETE'
+      }),
+      invalidatesTags: ['getSimport']
+    }),
+
+    // PUT /api/StImport/{id}/reverse - Reverse a bill
+    reverseBill: builder.mutation<ReverseBillResponse, ReverseBillRequest>({
+      query: ({ id }) => ({
+        url: `/api/StImport/${id}/reverse`,
+        method: 'PUT'
       }),
       invalidatesTags: ['getSimport']
     })
@@ -171,6 +171,6 @@ export const {
   useGetBillsQuery,
   useGetBillByIdQuery,
   useCreateBillMutation,
-  useUpdateBillMutation,
-  useDeleteBillMutation
+  useDeleteBillMutation,
+  useReverseBillMutation
 } = billsApi;
