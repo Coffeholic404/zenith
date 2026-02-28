@@ -1,66 +1,59 @@
 'use client';
+import { useMemo } from 'react';
 import { DataTable } from '@/components/data-table';
 import {
     inventoryColumns,
     inventoryColumnsNames,
     type inventory
 } from '@/components/pages/inventory/inventory-columns';
-
-
-const inventoryData: inventory[] = [
-    {
-        uniqueID: '1',
-        name: 'قطع غيار محرك',
-        code: 'ENG-001',
-        cost: 250000,
-        bundle: 'رزمة أ',
-        bundleSupervisor: 'أحمد محمد',
-        date: '2026-01-15',
-        status: 'new'
-    },
-    {
-        uniqueID: '2',
-        name: 'زيوت تشحيم',
-        code: 'OIL-042',
-        cost: 75000,
-        bundle: 'رزمة ب',
-        bundleSupervisor: 'علي حسين',
-        date: '2026-01-20',
-        status: 'used'
-    },
-    {
-        uniqueID: '3',
-        name: 'فلاتر هواء',
-        code: 'FLT-018',
-        cost: 35000,
-        bundle: 'رزمة أ',
-        bundleSupervisor: 'أحمد محمد',
-        date: '2026-02-01',
-        status: 'new'
-    },
-    {
-        uniqueID: '4',
-        name: 'إطارات',
-        code: 'TIR-007',
-        cost: 500000,
-        bundle: 'رزمة ج',
-        bundleSupervisor: 'محمد عبدالله',
-        date: '2026-02-10',
-        status: 'broken'
-    },
-    {
-        uniqueID: '5',
-        name: 'بطاريات',
-        code: 'BAT-003',
-        cost: 180000,
-        bundle: 'رزمة ب',
-        bundleSupervisor: 'علي حسين',
-        date: '2026-02-15',
-        status: 'new'
-    }
-];
+import { useGetStocksQuery } from '@/services/stock';
+import { useGetStudentsQuery } from '@/services/students';
+import { useGetTrainersQuery } from '@/services/employe';
 
 export default function InventoryPage() {
+    const { data, isLoading } = useGetStocksQuery({
+        pageNumber: 1,
+        pageSize: 100
+    });
+
+    const { data: studentsData } = useGetStudentsQuery({
+        pageNumber: 1,
+        pageSize: 1000
+    });
+
+    const { data: trainersData } = useGetTrainersQuery({
+        pageNumber: 1,
+        pageSize: 1000
+    });
+
+    // Build lookup maps: id → name
+    const studentNameMap = useMemo(() => {
+        const map = new Map<string, string>();
+        (studentsData?.result?.data ?? []).forEach((s) => {
+            map.set(s.uniqueID, s.name);
+        });
+        return map;
+    }, [studentsData]);
+
+    const trainerNameMap = useMemo(() => {
+        const map = new Map<string, string>();
+        (trainersData?.result?.data ?? []).forEach((t) => {
+            if (t.id) map.set(t.id, t.name);
+        });
+        return map;
+    }, [trainersData]);
+
+    const inventoryData: inventory[] = (data?.result?.data ?? []).map((stock) => ({
+        uniqueID: stock.id,
+        name: stock.itemName ?? stock.itemId,
+        code: stock.code,
+        cost: stock.cost,
+        bundle: studentNameMap.get(stock.packagerId) ?? stock.packagerId,
+        bundleSupervisor: trainerNameMap.get(stock.packetCoachId) ?? stock.packetCoachId,
+        date: stock.createdAt?.substring(0, 10) ?? '',
+        status: 'new' as const
+    }));
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
@@ -74,6 +67,7 @@ export default function InventoryPage() {
                 data={inventoryData}
                 columnsNames={inventoryColumnsNames}
                 type="inventory"
+                loading={isLoading}
             />
         </div>
     );

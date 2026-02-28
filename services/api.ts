@@ -287,7 +287,10 @@ export const api = createApi({
     'deleteEvaluation',
 
     //Users
-    'User'
+    'User',
+
+    //Stock
+    'Stock'
   ],
   endpoints: build => ({})
 });

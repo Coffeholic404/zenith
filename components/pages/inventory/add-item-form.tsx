@@ -10,32 +10,38 @@ import {
     FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Calendar } from '@/components/ui/calendar';
+import { Textarea } from '@/components/ui/textarea';
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger
-} from '@/components/ui/popover';
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod/v4';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { CalendarDays, ArrowRight } from 'lucide-react';
-import { format } from 'date-fns';
-import { ar } from 'date-fns/locale';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Combobox } from '@/components/ui/combobox';
+import { useCreateStockMutation } from '@/services/stock';
+import { useGetItemsListQuery } from '@/services/item';
+import { useGetTrainersQuery } from '@/services/employe';
+import { useGetStudentsQuery } from '@/services/students';
 
 // ── Schema ───────────────────────────────────────────────────────────────────
 
 const addItemSchema = z.object({
-    name: z.string().min(1, { message: 'المنتج مطلوب' }),
+    itemId: z.string().min(1, { message: 'المنتج مطلوب' }),
     code: z.string().min(1, { message: 'الكود مطلوب' }),
     cost: z.string().min(1, { message: 'التكلفة مطلوبة' }),
-    bundle: z.string().min(1, { message: 'الرزام مطلوب' }),
-    bundleSupervisor: z.string().min(1, { message: 'مشرف الرزم مطلوب' }),
-    date: z.date({ message: 'التاريخ مطلوب' })
+    packagerId: z.string().min(1, { message: 'الرزام مطلوب' }),
+    packetCoachId: z.string().min(1, { message: 'مشرف الرزم مطلوب' }),
+    note: z.string().optional(),
+    status: z.string().min(1, { message: 'الحالة مطلوبة' }),
+    distribution: z.string().min(1, { message: 'حالة التوزيع مطلوبة' })
 });
 
 type AddItemFormData = z.infer<typeof addItemSchema>;
@@ -47,30 +53,93 @@ const inputClasses =
 
 const labelClasses = 'font-vazirmatn text-cardTxt font-semibold text-[13px]';
 
+const comboboxTriggerClasses =
+    'bg-searchBg rounded-xl font-vazirmatn border-input hover:bg-searchBg text-right';
+
 // ── Component ────────────────────────────────────────────────────────────────
 
 export default function AddItemForm() {
     const { toast } = useToast();
     const router = useRouter();
 
+    // ── API hooks ────────────────────────────────────────────────────────
+    const [createStock, { isLoading: isCreating }] = useCreateStockMutation();
+
+    const { data: itemsData, isLoading: isLoadingItems } = useGetItemsListQuery({
+        pageNumber: 1,
+        pageSize: 1000
+    });
+
+    const { data: studentsData, isLoading: isLoadingStudents } = useGetStudentsQuery({
+        pageNumber: 1,
+        pageSize: 1000
+    });
+
+    const { data: trainersData, isLoading: isLoadingTrainers } = useGetTrainersQuery({
+        pageNumber: 1,
+        pageSize: 1000
+    });
+
+    // ── Combobox options ─────────────────────────────────────────────────
+    const itemOptions = (itemsData?.result?.data ?? []).map((item) => ({
+        value: item.id,
+        label: item.itemName
+    }));
+
+    const studentOptions = (studentsData?.result?.data ?? []).map((student) => ({
+        value: student.uniqueID,
+        label: student.name
+    }));
+
+    const trainerOptions = (trainersData?.result?.data ?? []).map((trainer) => ({
+        value: trainer.id ?? '',
+        label: trainer.name
+    }));
+
+    // ── Form ─────────────────────────────────────────────────────────────
     const form = useForm<AddItemFormData>({
         resolver: zodResolver(addItemSchema),
         defaultValues: {
-            name: '',
+            itemId: '',
             code: '',
             cost: '',
-            bundle: '',
-            bundleSupervisor: ''
+            packagerId: '',
+            packetCoachId: '',
+            note: '',
+            status: '',
+            distribution: ''
         }
     });
 
-    const handleSubmit = (data: AddItemFormData) => {
-        console.log('Submit item:', data);
-        toast({
-            title: 'تم بنجاح',
-            description: 'تم إضافة المنتج بنجاح'
-        });
-        router.push('/inventory');
+    const handleSubmit = async (data: AddItemFormData) => {
+        try {
+            await createStock({
+                itemId: data.itemId,
+                code: data.code,
+                cost: Number(data.cost),
+                packagerId: data.packagerId,
+                packetCoachId: data.packetCoachId,
+                note: data.note ?? '',
+                status: data.status,
+                distribution: data.distribution
+            }).unwrap();
+
+            toast({
+                title: 'تم بنجاح',
+                description: 'تم إضافة المنتج بنجاح'
+            });
+            router.push('/inventory');
+        } catch (error: any) {
+            const errorMessage =
+                error?.data?.errorMessages?.[0] ??
+                error?.data?.message ??
+                'حدث خطأ أثناء إضافة المنتج';
+            toast({
+                title: 'خطأ',
+                description: errorMessage,
+                variant: 'destructive'
+            });
+        }
     };
 
     return (
@@ -107,20 +176,21 @@ export default function AddItemForm() {
                             className="grid grid-cols-1 md:grid-cols-2 gap-6"
                             dir="rtl"
                         >
-                            {/* المنتج */}
+                            {/* المنتج - Combobox */}
                             <FormField
                                 control={form.control}
-                                name="name"
+                                name="itemId"
                                 render={({ field }) => (
                                     <FormItem className="text-right">
                                         <FormLabel className={labelClasses}>المنتج</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                {...field}
-                                                placeholder="اسم المنتج"
-                                                className={inputClasses}
-                                                dir="rtl"
-                                                autoComplete="off"
+                                            <Combobox
+                                                options={itemOptions}
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                placeholder={isLoadingItems ? 'جاري التحميل...' : 'اختر المنتج'}
+                                                emptyMessage="لا توجد منتجات"
+                                                triggerClassName={comboboxTriggerClasses}
                                             />
                                         </FormControl>
                                         <FormMessage className="text-right" />
@@ -171,20 +241,21 @@ export default function AddItemForm() {
                                 )}
                             />
 
-                            {/* الرزام */}
+                            {/* الرزام - Combobox (Employees) */}
                             <FormField
                                 control={form.control}
-                                name="bundle"
+                                name="packagerId"
                                 render={({ field }) => (
                                     <FormItem className="text-right">
                                         <FormLabel className={labelClasses}>الرزام</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                {...field}
-                                                placeholder="اسم الرزام"
-                                                className={inputClasses}
-                                                dir="rtl"
-                                                autoComplete="off"
+                                            <Combobox
+                                                options={studentOptions}
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                placeholder={isLoadingStudents ? 'جاري التحميل...' : 'اختر الرزام'}
+                                                emptyMessage="لا يوجد طلاب"
+                                                triggerClassName={comboboxTriggerClasses}
                                             />
                                         </FormControl>
                                         <FormMessage className="text-right" />
@@ -192,20 +263,21 @@ export default function AddItemForm() {
                                 )}
                             />
 
-                            {/* مشرف الرزم */}
+                            {/* مشرف الرزم - Combobox (Trainers) */}
                             <FormField
                                 control={form.control}
-                                name="bundleSupervisor"
+                                name="packetCoachId"
                                 render={({ field }) => (
                                     <FormItem className="text-right">
                                         <FormLabel className={labelClasses}>مشرف الرزم</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                {...field}
-                                                placeholder="اسم مشرف الرزم"
-                                                className={inputClasses}
-                                                dir="rtl"
-                                                autoComplete="off"
+                                            <Combobox
+                                                options={trainerOptions}
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                placeholder={isLoadingTrainers ? 'جاري التحميل...' : 'اختر مشرف الرزم'}
+                                                emptyMessage="لا يوجد مدربون"
+                                                triggerClassName={comboboxTriggerClasses}
                                             />
                                         </FormControl>
                                         <FormMessage className="text-right" />
@@ -213,41 +285,74 @@ export default function AddItemForm() {
                                 )}
                             />
 
-                            {/* التاريخ */}
+                            {/* الحالة */}
                             <FormField
                                 control={form.control}
-                                name="date"
+                                name="status"
                                 render={({ field }) => (
-                                    <FormItem className="text-right flex flex-col">
-                                        <FormLabel className={labelClasses}>التاريخ</FormLabel>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <FormControl>
-                                                    <Button
-                                                        variant="outline"
-                                                        className={cn(
-                                                            'justify-start text-right font-vazirmatn gap-2',
-                                                            'bg-searchBg rounded-xl border-input hover:bg-searchBg',
-                                                            !field.value && 'text-subtext'
-                                                        )}
-                                                    >
-                                                        <CalendarDays className="size-4 text-subtext" />
-                                                        {field.value
-                                                            ? format(field.value, 'PPP', { locale: ar })
-                                                            : 'اختر التاريخ'}
-                                                    </Button>
-                                                </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    locale={ar}
-                                                    initialFocus
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
+                                    <FormItem className="text-right">
+                                        <FormLabel className={labelClasses}>الحالة</FormLabel>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger
+                                                    className={`${inputClasses} w-full`}
+                                                    dir="rtl"
+                                                >
+                                                    <SelectValue placeholder="اختر الحالة" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="new" className="font-vazirmatn">جديد</SelectItem>
+                                                <SelectItem value="used" className="font-vazirmatn">مستعمل</SelectItem>
+                                                <SelectItem value="broken" className="font-vazirmatn">تالف</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage className="text-right" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* التوزيع */}
+                            <FormField
+                                control={form.control}
+                                name="distribution"
+                                render={({ field }) => (
+                                    <FormItem className="text-right">
+                                        <FormLabel className={labelClasses}>التوزيع</FormLabel>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger
+                                                    className={`${inputClasses} w-full`}
+                                                    dir="rtl"
+                                                >
+                                                    <SelectValue placeholder="اختر حالة التوزيع" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="true" className="font-vazirmatn">مسموح</SelectItem>
+                                                <SelectItem value="false" className="font-vazirmatn">غير مسموح</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage className="text-right" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* ملاحظات */}
+                            <FormField
+                                control={form.control}
+                                name="note"
+                                render={({ field }) => (
+                                    <FormItem className="text-right md:col-span-2">
+                                        <FormLabel className={labelClasses}>ملاحظات</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                {...field}
+                                                placeholder="أدخل ملاحظات (اختياري)"
+                                                className={`${inputClasses} min-h-[80px] resize-none`}
+                                                dir="rtl"
+                                            />
+                                        </FormControl>
                                         <FormMessage className="text-right" />
                                     </FormItem>
                                 )}
@@ -260,14 +365,23 @@ export default function AddItemForm() {
                                     type="button"
                                     className="font-vazirmatn text-subtext rounded-2xl px-6"
                                     onClick={() => router.back()}
+                                    disabled={isCreating}
                                 >
                                     إلغاء
                                 </Button>
                                 <Button
                                     type="submit"
+                                    disabled={isCreating}
                                     className="bg-sidebaractive hover:bg-sidebaractive hover:brightness-110 text-white font-vazirmatn rounded-2xl px-6"
                                 >
-                                    حفظ المنتج
+                                    {isCreating ? (
+                                        <>
+                                            <Loader2 className="size-4 animate-spin ml-2" />
+                                            جاري الحفظ...
+                                        </>
+                                    ) : (
+                                        'حفظ المنتج'
+                                    )}
                                 </Button>
                             </div>
                         </form>
