@@ -12,6 +12,9 @@ export interface StockItem {
   code: string;
   packagerId: string;
   packetCoachId: string;
+  status: string;
+  date: string;
+  distribution: string;
 }
 
 // Request types
@@ -35,14 +38,23 @@ export interface CreateStockRequest {
   packagerId: string;
   packetCoachId: string;
   status: string;
+  date: string;
+  distribution: string;
+}
+
+export interface UpdateStockRequest {
+  id: string;
+  note: string;
+  cost: number;
+  code: string;
+  packagerId: string;
+  packetCoachId: string;
+  status: string;
+  date: string;
   distribution: string;
 }
 
 export interface DeleteStockRequest {
-  id: string;
-}
-
-export interface ReverseStockRequest {
   id: string;
 }
 
@@ -77,20 +89,22 @@ export interface StockDeleteResponse {
   result: null;
 }
 
-export interface ReverseStockResponse {
-  statusCode: number;
-  isSuccess: boolean;
-  errorMessages: string[];
-  result: {
-    message: string;
-  };
+export interface GetStockDatesRequest {
+  from?: string;
+  to?: string;
+  search?: string;
+}
+
+export interface StockDateItem {
+  id: string;
+  createdAt: string;
 }
 
 export interface StockDatesResponse {
   statusCode: number;
   isSuccess: boolean;
   errorMessages: string[];
-  result: string[];
+  result: StockDateItem[];
 }
 
 // API endpoints for Stock
@@ -128,7 +142,7 @@ export const stockApi = api.injectEndpoints({
         method: 'POST',
         body
       }),
-      invalidatesTags: ['Stock']
+      invalidatesTags: ['Stock', 'Inventory']
     }),
 
     // DELETE /api/Stock/{id} - Delete a stock entry
@@ -137,23 +151,29 @@ export const stockApi = api.injectEndpoints({
         url: `/api/Stock/${id}`,
         method: 'DELETE'
       }),
-      invalidatesTags: ['Stock']
+      invalidatesTags: ['Stock', 'Inventory']
     }),
 
-    // PUT /api/Stock/{id}/reverse - Reverse a stock entry
-    reverseStock: builder.mutation<ReverseStockResponse, ReverseStockRequest>({
-      query: ({ id }) => ({
-        url: `/api/Stock/${id}/reverse`,
-        method: 'PUT'
+    // PUT /api/Stock/{id} - Update a stock entry
+    updateStock: builder.mutation<StockResponse, UpdateStockRequest>({
+      query: ({ id, ...body }) => ({
+        url: `/api/Stock/${id}`,
+        method: 'PUT',
+        body
       }),
-      invalidatesTags: ['Stock']
+      invalidatesTags: ['Stock', 'Inventory']
     }),
 
     // GET /api/Stock/dates - Get stock dates
-    getStockDates: builder.query<StockDatesResponse, void>({
-      query: () => ({
+    getStockDates: builder.query<StockDatesResponse, GetStockDatesRequest>({
+      query: ({ from, to, search } = {}) => ({
         url: '/api/Stock/dates',
-        method: 'GET'
+        method: 'GET',
+        params: {
+          ...(from && { from }),
+          ...(to && { to }),
+          ...(search && { search })
+        }
       }),
       providesTags: ['Stock']
     })
@@ -166,6 +186,6 @@ export const {
   useGetStockByIdQuery,
   useCreateStockMutation,
   useDeleteStockMutation,
-  useReverseStockMutation,
+  useUpdateStockMutation,
   useGetStockDatesQuery
 } = stockApi;

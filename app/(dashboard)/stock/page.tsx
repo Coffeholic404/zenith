@@ -2,11 +2,11 @@
 import { useMemo, useState } from 'react';
 import { DataTable, type DateFilter } from '@/components/data-table';
 import {
-    InventoryColumns,
-    InventoryColumnsNames,
-    type InventoryRow
-} from '@/components/pages/Inventory/Inventory-columns';
-import { useGetInventoryQuery, useGetInventoryDatesQuery } from '@/services/Inventory';
+    inventoryColumns,
+    inventoryColumnsNames,
+    type inventory
+} from '@/components/pages/stock/stock-columns';
+import { useGetStocksQuery, useGetStockDatesQuery } from '@/services/stock';
 import { useGetStudentsQuery } from '@/services/students';
 import { useGetTrainersQuery } from '@/services/employe';
 
@@ -15,13 +15,13 @@ export default function InventoryPage() {
     const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
     const [toDate, setToDate] = useState<Date | undefined>(undefined);
 
-    const { data, isLoading } = useGetInventoryQuery({
+    const { data, isLoading } = useGetStocksQuery({
         pageNumber: 1,
         pageSize: 100
     });
 
-    // Fetch filtered inventory IDs when dates are selected
-    const { data: inventoryDatesData } = useGetInventoryDatesQuery({
+    // Fetch filtered stock IDs when dates are selected
+    const { data: stockDatesData } = useGetStockDatesQuery({
         ...(fromDate && { from: fromDate.toISOString() }),
         ...(toDate && { to: toDate.toISOString() }),
     });
@@ -53,35 +53,33 @@ export default function InventoryPage() {
         return map;
     }, [trainersData]);
 
-    // Set of inventory IDs that match the date filter
-    const filteredIds = useMemo(() => {
+    // Set of stock IDs that match the date filter
+    const filteredStockIds = useMemo(() => {
         if (!fromDate && !toDate) return null; // no filter active
         const ids = new Set<string>();
-        (inventoryDatesData?.result ?? []).forEach((item) => {
+        (stockDatesData?.result ?? []).forEach((item) => {
             ids.add(item.id);
         });
         return ids;
-    }, [inventoryDatesData, fromDate, toDate]);
+    }, [stockDatesData, fromDate, toDate]);
 
-    const inventoryData: InventoryRow[] = (data?.result?.data ?? [])
-        .filter((item) => {
-            if (filteredIds !== null) {
-                return filteredIds.has(item.uniqueID);
+    const inventoryData: inventory[] = (data?.result?.data ?? [])
+        .filter((stock) => {
+            // If date filter is active, only show stocks whose ID is in the filtered set
+            if (filteredStockIds !== null) {
+                return filteredStockIds.has(stock.id);
             }
             return true;
         })
-        .map((item) => ({
-            uniqueID: item.uniqueID,
-            itemName: item.itemName,
-            generatedCode: item.generatedCode,
-            code: item.code,
-            status: item.status,
-            packagerName: item.packagerId
-                ? (studentNameMap.get(item.packagerId) ?? item.packagerId)
-                : '—',
-            packetCoachName: item.packetCoachId
-                ? (trainerNameMap.get(item.packetCoachId) ?? item.packetCoachId)
-                : '—'
+        .map((stock) => ({
+            uniqueID: stock.id,
+            name: stock.itemName ?? stock.itemId,
+            code: stock.code,
+            cost: stock.cost,
+            bundle: studentNameMap.get(stock.packagerId) ?? stock.packagerId,
+            bundleSupervisor: trainerNameMap.get(stock.packetCoachId) ?? stock.packetCoachId,
+            date: stock.createdAt?.substring(0, 10) ?? '',
+            status: (stock.status ?? 'new').toLowerCase() as 'new' | 'used' | 'broken'
         }));
 
     const dateFilter: DateFilter = {
@@ -95,15 +93,15 @@ export default function InventoryPage() {
         <div className="space-y-6">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
                 <div className="font-vazirmatn">
-                    <p className="font-bold text-cardTxt">إدارة المخزون</p>
-                    <p className="font-light text-subtext text-lg">تنظيم وإدارة المخزون والمنتجات</p>
+                    <p className="font-bold text-cardTxt">إدارة الجرد</p>
+                    <p className="font-light text-subtext text-lg">تنظيم وإدارة المنتجات والمخزون</p>
                 </div>
             </div>
             <DataTable
-                columns={InventoryColumns}
+                columns={inventoryColumns}
                 data={inventoryData}
-                columnsNames={InventoryColumnsNames}
-                type="Inventory"
+                columnsNames={inventoryColumnsNames}
+                type="inventory"
                 loading={isLoading}
                 dateFilter={dateFilter}
             />

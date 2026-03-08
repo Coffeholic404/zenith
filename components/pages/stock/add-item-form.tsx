@@ -18,14 +18,19 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod/v4';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight, CalendarIcon, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Combobox } from '@/components/ui/combobox';
+import { format } from 'date-fns';
+import { ar } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 import { useCreateStockMutation } from '@/services/stock';
 import { useGetItemsListQuery } from '@/services/item';
 import { useGetTrainersQuery } from '@/services/employe';
@@ -39,6 +44,7 @@ const addItemSchema = z.object({
     cost: z.string().min(1, { message: 'التكلفة مطلوبة' }),
     packagerId: z.string().min(1, { message: 'الرزام مطلوب' }),
     packetCoachId: z.string().min(1, { message: 'مشرف الرزم مطلوب' }),
+    date: z.date({ message: 'التاريخ مطلوب' }),
     note: z.string().optional(),
     status: z.string().min(1, { message: 'الحالة مطلوبة' }),
     distribution: z.string().min(1, { message: 'حالة التوزيع مطلوبة' })
@@ -105,6 +111,7 @@ export default function AddItemForm() {
             cost: '',
             packagerId: '',
             packetCoachId: '',
+            date: undefined,
             note: '',
             status: '',
             distribution: ''
@@ -119,6 +126,7 @@ export default function AddItemForm() {
                 cost: Number(data.cost),
                 packagerId: data.packagerId,
                 packetCoachId: data.packetCoachId,
+                date: data.date.toISOString(),
                 note: data.note ?? '',
                 status: data.status,
                 distribution: data.distribution
@@ -128,7 +136,7 @@ export default function AddItemForm() {
                 title: 'تم بنجاح',
                 description: 'تم إضافة المنتج بنجاح'
             });
-            router.push('/inventory');
+            router.push('/stock');
         } catch (error: any) {
             const errorMessage =
                 error?.data?.errorMessages?.[0] ??
@@ -280,6 +288,45 @@ export default function AddItemForm() {
                                                 triggerClassName={comboboxTriggerClasses}
                                             />
                                         </FormControl>
+                                        <FormMessage className="text-right" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* التاريخ */}
+                            <FormField
+                                control={form.control}
+                                name="date"
+                                render={({ field }) => (
+                                    <FormItem className="text-right">
+                                        <FormLabel className={labelClasses}>التاريخ</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant="outline"
+                                                        className={cn(
+                                                            `${inputClasses} w-full justify-between font-normal`,
+                                                            !field.value && 'text-subtext'
+                                                        )}
+                                                    >
+                                                        {field.value
+                                                            ? format(field.value, 'yyyy-MM-dd', { locale: ar })
+                                                            : 'اختر التاريخ'}
+                                                        <CalendarIcon className="size-4 text-subtext" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    locale={ar}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
                                         <FormMessage className="text-right" />
                                     </FormItem>
                                 )}

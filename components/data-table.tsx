@@ -52,7 +52,12 @@ import { category } from './pages/adds/category/category-columns';
 import CategoryModel from './pages/adds/category/categoryModel';
 import UnitsModelButton from './pages/adds/units/unitsModel';
 import { unit } from './pages/adds/units/units-columns';
-import { inventory } from './pages/inventory/inventory-columns';
+import { inventory } from './pages/stock/stock-columns';
+import { InventoryRow } from './pages/Inventory/Inventory-columns';
+import { DateRangeFilter, type DateRangeFilterProps } from '@/components/date-range-filter';
+
+export type DateFilter = DateRangeFilterProps;
+
 interface DataTableProps<TData, TValue, TNames> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -61,8 +66,9 @@ interface DataTableProps<TData, TValue, TNames> {
   expandedStatus?: boolean;
   type?: string;
   uniqueID?: string;
+  dateFilter?: DateFilter;
 }
-type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType | Item | category | unit | inventory;
+type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType | Item | category | unit | inventory | InventoryRow;
 export function DataTable<TData extends adds, TValue, TNames>({
   columns,
   data,
@@ -70,7 +76,8 @@ export function DataTable<TData extends adds, TValue, TNames>({
   loading = false,
   expandedStatus,
   type,
-  uniqueID
+  uniqueID,
+  dateFilter
 }: DataTableProps<TData, TValue, TNames>) {
   const { data: session } = useSession();
   const userRole = session?.user?.role;
@@ -138,6 +145,15 @@ export function DataTable<TData extends adds, TValue, TNames>({
                   className=" bg-searchBg rounded-xl block w-full p-4 ps-10 min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
                 />
               </div>
+              {/* Date filter */}
+              {dateFilter && (
+                <DateRangeFilter
+                  from={dateFilter.from}
+                  to={dateFilter.to}
+                  onFromChange={dateFilter.onFromChange}
+                  onToChange={dateFilter.onToChange}
+                />
+              )}
               {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className=" size-10 p-0 rounded-xl bg-searchBg">
@@ -308,7 +324,7 @@ export function DataTable<TData extends adds, TValue, TNames>({
                   <TooltipTrigger asChild>
                     <Button
                       className="bg-sidebaractive px-3 rounded-2xl shrink-0"
-                      onClick={() => router.push('/inventory/add-item')}
+                      onClick={() => router.push('/stock/add-item')}
                     >
                       <Image src={add} alt="add icon" className=" size-5" />
                     </Button>

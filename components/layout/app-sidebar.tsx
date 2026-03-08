@@ -36,8 +36,11 @@ import {
   SidebarTrigger,
   useSidebar
 } from '@/components/ui/sidebar';
+
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Cuboid, PanelLeft, PanelRight, UsersRound, ReceiptText } from 'lucide-react';
+import { Cuboid, PanelLeft, PanelRight, UsersRound, ReceiptText, Layers } from 'lucide-react';
+
+
 const menuItems = [
   {
     title: 'الرئيسية',
@@ -98,7 +101,7 @@ const menuItems = [
   },
   {
     title: 'الجرد',
-    href: '/inventory',
+    href: '/stock',
     icon: Cuboid
   },
   // {
@@ -106,11 +109,11 @@ const menuItems = [
   //   href: "/purchases",
   //   icon: DocumentIcon,
   // },
-  // {
-  //   title: "المخزن",
-  //   href: "/warehouse",
-  //   icon: ArchiveIcon,
-  // },
+  {
+    title: "المخزن",
+    href: "/Inventory",
+    icon: Layers,
+  },
 ];
 
 export function AppSidebar() {

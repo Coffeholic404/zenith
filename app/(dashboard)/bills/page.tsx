@@ -62,7 +62,7 @@ export default function Page() {
     supplier: bill.supplier,
     date: bill.date,
     orderNo: bill.orderNo,
-    status: bill.status
+    status: bill.accepted
   }));
 
   return (

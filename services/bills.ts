@@ -25,7 +25,7 @@ export interface Bill {
   orderNo: string;
   note: string;
   createdAt: string;
-  status: boolean;
+  accepted: boolean;
   subImports: SubImport[];
 }
 
@@ -143,7 +143,7 @@ export const billsApi = api.injectEndpoints({
         method: 'POST',
         body
       }),
-      invalidatesTags: ['getSimport']
+      invalidatesTags: ['getSimport', 'Inventory']
     }),
 
     // DELETE /api/StImport/{id} - Delete a bill
@@ -152,7 +152,7 @@ export const billsApi = api.injectEndpoints({
         url: `/api/StImport/${id}`,
         method: 'DELETE'
       }),
-      invalidatesTags: ['getSimport']
+      invalidatesTags: ['getSimport', 'Inventory']
     }),
 
     // PUT /api/StImport/{id}/reverse - Reverse a bill
@@ -161,7 +161,7 @@ export const billsApi = api.injectEndpoints({
         url: `/api/StImport/${id}/reverse`,
         method: 'PUT'
       }),
-      invalidatesTags: ['getSimport']
+      invalidatesTags: ['getSimport', 'Inventory']
     })
   })
 });

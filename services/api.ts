@@ -290,7 +290,10 @@ export const api = createApi({
     'User',
 
     //Stock
-    'Stock'
+    'Stock',
+
+    //Inventory
+    'Inventory'
   ],
   endpoints: build => ({})
 });
