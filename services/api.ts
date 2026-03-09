@@ -293,7 +293,10 @@ export const api = createApi({
     'Stock',
 
     //Inventory
-    'Inventory'
+    'Inventory',
+
+    //InventoryHistory
+    'InventoryHistory'
   ],
   endpoints: build => ({})
 });

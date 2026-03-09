@@ -26,6 +26,8 @@ export interface Bill {
   note: string;
   createdAt: string;
   accepted: boolean;
+  uniqueID: string;
+  status: string;
   subImports: SubImport[];
 }
 

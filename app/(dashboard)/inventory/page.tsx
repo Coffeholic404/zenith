@@ -81,7 +81,9 @@ export default function InventoryPage() {
                 : '—',
             packetCoachName: item.packetCoachId
                 ? (trainerNameMap.get(item.packetCoachId) ?? item.packetCoachId)
-                : '—'
+                : '—',
+            date: item.date,
+            distribution: item.distribution
         }));
 
     const dateFilter: DateFilter = {

@@ -261,7 +261,7 @@ function EditInventoryForm({ inventoryItem }: { inventoryItem: InventoryItem }) 
                         </div>
                         <div className="space-y-1">
                             <p className={labelClasses}>الرمز المولد</p>
-                            <p className="font-vazirmatn text-tableRow text-sm font-mono">
+                            <p className="font-vazirmatn text-tableRow text-sm">
                                 {inventoryItem?.generatedCode ?? '—'}
                             </p>
                         </div>

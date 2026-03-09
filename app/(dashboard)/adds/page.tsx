@@ -146,6 +146,10 @@ export default function Page() {
 
   const tabs = [
     {
+      value: 'مواد',
+      label: 'مواد'
+    },
+    {
       value: 'الطائرات',
       label: 'الطائرات'
     },
@@ -164,10 +168,6 @@ export default function Page() {
     {
       value: 'دورات بدنية',
       label: 'دورات بدنية'
-    },
-    {
-      value: 'مواد',
-      label: 'مواد'
     },
     {
       value: 'الفئات',
@@ -194,7 +194,7 @@ export default function Page() {
   return (
     <div>
       <section>
-        <Tabs defaultValue="الطائرات" className="w-full bg-transparent ">
+        <Tabs defaultValue="مواد" className="w-full bg-transparent ">
           <TabsList className="flex justify-start items-center md:flex-wrap md:shrink bg-transparent h-auto space-x-2">
             {tabs.map(tab => (
               <TabsTrigger
@@ -207,11 +207,20 @@ export default function Page() {
             ))}
           </TabsList>
 
-          <TabsContent value="الطائرات" className="bg-white rounded-lg">
-            {planesLoading ? (
-              <DataTableSkeleton columnCount={3} rowCount={5} showAddButton={true} />
+          <TabsContent value="مواد" className="bg-white rounded-lg">
+            {itemsLoading ? (
+              <DataTableSkeleton columnCount={8} rowCount={5} showAddButton={true} />
+            ) : itemsError ? (
+              <div className="p-8 text-center font-vazirmatn text-red-500">
+                حدث خطأ في تحميل المواد
+              </div>
             ) : (
-              <DataTable columns={planeColumns} data={planesData} columnsNames={planeColumnsNames} type="plane" />
+              <DataTable
+                columns={materialColumns}
+                data={itemsData}
+                columnsNames={materialColumnsNames}
+                type="materials"
+              />
             )}
           </TabsContent>
           <TabsContent value="الاماكن" className="bg-white rounded-lg">
@@ -264,20 +273,11 @@ export default function Page() {
               <DataTable columns={SkillsColumns} data={skillsData} columnsNames={SkillsColumnsNames} type="skills" />
             )}
           </TabsContent>
-          <TabsContent value="مواد" className="bg-white rounded-lg">
-            {itemsLoading ? (
-              <DataTableSkeleton columnCount={8} rowCount={5} showAddButton={true} />
-            ) : itemsError ? (
-              <div className="p-8 text-center font-vazirmatn text-red-500">
-                حدث خطأ في تحميل المواد
-              </div>
+          <TabsContent value="الطائرات" className="bg-white rounded-lg">
+            {planesLoading ? (
+              <DataTableSkeleton columnCount={3} rowCount={5} showAddButton={true} />
             ) : (
-              <DataTable
-                columns={materialColumns}
-                data={itemsData}
-                columnsNames={materialColumnsNames}
-                type="materials"
-              />
+              <DataTable columns={planeColumns} data={planesData} columnsNames={planeColumnsNames} type="plane" />
             )}
           </TabsContent>
           <TabsContent value="الفئات" className="bg-white rounded-lg">
