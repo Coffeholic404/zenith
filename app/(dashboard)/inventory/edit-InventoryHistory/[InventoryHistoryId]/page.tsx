@@ -426,6 +426,7 @@ function EditInventoryHistoryForm({
                             <FormField
                                 control={form.control}
                                 name="code"
+                                disabled={true}
                                 render={({ field }) => (
                                     <FormItem className="text-right">
                                         <FormLabel className={labelClasses}>الرمز</FormLabel>
@@ -444,6 +445,7 @@ function EditInventoryHistoryForm({
                             {/* الرمز المولد */}
                             <FormField
                                 control={form.control}
+                                disabled={true}
                                 name="generatedCode"
                                 render={({ field }) => (
                                     <FormItem className="text-right">

@@ -239,7 +239,7 @@ export default function InventoryDetailPage() {
                         onClick={() => router.push(`/Inventory/AddInventoryHistory/${id}`)}
                     >
                         <Plus className="size-4" />
-                        إضافة سجل تاريخ
+                        أضافة فحص
                     </Button>
                     <Button
                         variant="ghost"

@@ -79,7 +79,8 @@ export default function InventoryPage() {
             bundle: studentNameMap.get(stock.packagerId) ?? stock.packagerId,
             bundleSupervisor: trainerNameMap.get(stock.packetCoachId) ?? stock.packetCoachId,
             date: stock.createdAt?.substring(0, 10) ?? '',
-            status: (stock.status ?? 'new').toLowerCase() as 'new' | 'used' | 'broken'
+            status: (stock.status ?? 'new').toLowerCase() as 'new' | 'used' | 'broken',
+            distribution: String(stock.distribution ?? '')
         }));
 
     const dateFilter: DateFilter = {

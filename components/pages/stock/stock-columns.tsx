@@ -30,6 +30,7 @@ export type inventory = {
     bundleSupervisor: string;
     date: string;
     status: 'new' | 'used' | 'broken';
+    distribution: string;
 };
 
 const statusLabels: Record<string, string> = {
@@ -42,6 +43,16 @@ const statusColors: Record<string, string> = {
     new: 'bg-emerald-100 text-emerald-700 border-emerald-200',
     used: 'bg-amber-100 text-amber-700 border-amber-200',
     broken: 'bg-red-100 text-red-700 border-red-200'
+};
+
+const distributionLabels: Record<string, string> = {
+    true: 'يسمح بالتوزيع',
+    false: 'لا يسمح بالتوزيع'
+};
+
+const distributionColors: Record<string, string> = {
+    true: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    false: 'bg-red-100 text-red-700 border-red-200'
 };
 
 // ── Delete Confirmation Dialog ───────────────────────────────────────────────
@@ -172,6 +183,26 @@ export const inventoryColumns: ColumnDef<inventory>[] = [
         }
     },
     {
+        accessorKey: 'distribution',
+        header: () => {
+            return <p className=" font-vazirmatn font-normal text-base text-tableHeader">التوزيع</p>;
+        },
+        cell: ({ row }) => {
+            const distribution = String(row.getValue('distribution') ?? '').toLowerCase();
+            if (!distribution) return '—';
+            return (
+                <Badge
+                    className={cn(
+                        'text-[11px] font-vazirmatn rounded-md border px-2 py-0.5',
+                        distributionColors[distribution] ?? 'bg-gray-100 text-gray-700 border-gray-200'
+                    )}
+                >
+                    {distributionLabels[distribution] ?? distribution}
+                </Badge>
+            );
+        }
+    },
+    {
         id: 'actions',
         header: () => {
             return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الإجراءات</p>;
@@ -261,5 +292,6 @@ export const inventoryColumnsNames = [
     { label: 'مشرف الرزم', dataIndex: 'bundleSupervisor' },
     { label: 'التاريخ', dataIndex: 'date' },
     { label: 'حالة المنتج', dataIndex: 'status' },
+    { label: 'التوزيع', dataIndex: 'distribution' },
     { label: 'الإجراءات', dataIndex: 'actions' }
 ];

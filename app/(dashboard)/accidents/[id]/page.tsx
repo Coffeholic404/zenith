@@ -116,7 +116,7 @@ export default function AccidentDetails({ params }: { params: Promise<{ id: stri
         {/* Side Content (Stack) - Left Side in RTL */}
         <div className="md:col-span-2 md:order-2 space-y-6">
           {/* Equipment Card */}
-          {/* <Card className="border-none shadow-sm bg-white rounded-3xl">
+          <Card className="border-none shadow-sm bg-white rounded-3xl">
                         <CardHeader className="pb-2 pt-6 px-6">
                             <CardTitle className="text-lg font-bold text-gray-400 text-right">المعدات</CardTitle>
                         </CardHeader>
@@ -127,7 +127,7 @@ export default function AccidentDetails({ params }: { params: Promise<{ id: stri
                                 <div className="text-right text-gray-500 font-medium pb-2 border-b border-gray-50 last:border-0">خوذة</div>
                             </div>
                         </CardContent>
-                    </Card> */}
+                    </Card>
 
           {/* Committee Card */}
           <Card className="border-none shadow-sm bg-white rounded-3xl">
