@@ -54,6 +54,7 @@ import UnitsModelButton from './pages/adds/units/unitsModel';
 import { unit } from './pages/adds/units/units-columns';
 import { inventory } from './pages/stock/stock-columns';
 import { InventoryRow } from './pages/Inventory/Inventory-columns';
+import { InventoryHistoryRow } from './pages/InventoryHistory/InventoryHistory-columns';
 import { DateRangeFilter, type DateRangeFilterProps } from '@/components/date-range-filter';
 
 export type DateFilter = DateRangeFilterProps;
@@ -68,7 +69,7 @@ interface DataTableProps<TData, TValue, TNames> {
   uniqueID?: string;
   dateFilter?: DateFilter;
 }
-type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType | Item | category | unit | inventory | InventoryRow;
+type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType | Item | category | unit | inventory | InventoryRow | InventoryHistoryRow;
 export function DataTable<TData extends adds, TValue, TNames>({
   columns,
   data,

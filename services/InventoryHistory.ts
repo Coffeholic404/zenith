@@ -29,6 +29,7 @@ export interface CreateInventoryHistoryRequest {
   packagerId: string;
   packetCoachId: string;
   newDate: string;
+  status: string;
 }
 
 export interface UpdateInventoryHistoryRequest {
