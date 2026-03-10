@@ -126,7 +126,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(250px,1fr)_1fr] xl:grid-cols-[minmax(310px,1fr)_435px_435px] gap-4">
         {/* Students List */}
-        <div id="student-list" className="">
+        <div id="student-list" className="lg:row-span-2">
           <Card className=" min-h-full">
             <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2 flex flex-row justify-between items-center">
               الطلاب
@@ -239,7 +239,42 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             </CardContent>
           </Card>
         </div>
+
+        {/* Equipment Card */}
+        <div id="equipment-list" className="lg:col-start-2 xl:col-start-2 xl:col-span-2">
+          <Card className="min-h-full">
+            <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2 flex flex-row justify-between items-center">
+              المعدات
+              <span>{selectedJumper ? 5 : 0}</span>
+            </CardHeader>
+            <Separator className="my-2" />
+            <CardContent className="px-2">
+              {!selectedJumper ? (
+                <p className="text-center text-subtext font-vazirmatn text-sm py-4">اختر طالب لعرض المعدات</p>
+              ) : (
+                <>
+                  {/* Placeholder equipment items */}
+                  {[
+                    { name: 'خوذة' },
+                    { name: 'خوذة' },
+                    { name: 'خوذة' },
+                    { name: 'خوذة' },
+                  ].map((item, index, arr) => (
+                    <div key={index}>
+                      <div className="flex flex-row justify-between items-center py-3">
+                        <p className="font-vazirmatn font-normal text-[16px] text-[#7B7B7B]">{item.name}</p>
+                      </div>
+                      {index < arr.length - 1 && <Separator />}
+                    </div>
+                  ))}
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+
     </div>
   );
 }

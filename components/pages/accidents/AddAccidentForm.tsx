@@ -704,7 +704,57 @@ export default function AddAccidentForm() {
           </Card>
         </div>
 
-        <div className=" max-w-5xl mx-auto">
+        <div className=" max-w-5xl mx-auto space-y-4">
+          <Card className=" p-4">
+            <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
+              المعدات
+            </CardHeader>
+            <CardContent className=" bg-searchBg p-4 rounded-xl">
+              <Controller
+                name="committeeMembers"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <div className="space-y-2 ">
+                    {
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {employeesData.map((commission: any) => (
+                          <div key={commission.value} className="flex items-center space-x-2 space-x-reverse py-2">
+                            <FieldGroup data-slot="checkbox-group">
+                              <Field orientation="horizontal">
+                                <Checkbox
+                                  id={`commission-${commission.value}`}
+                                  checked={field.value?.some(member => member.employeeId === commission.value) || false}
+                                  onCheckedChange={checked => {
+                                    const currentValues = field.value || [];
+                                    if (checked) {
+                                      // Add employee to array if not already present
+                                      if (!currentValues.some(member => member.employeeId === commission.value)) {
+                                        field.onChange([...currentValues, { employeeId: commission.value }]);
+                                      }
+                                    } else {
+                                      // Remove employee from array
+                                      field.onChange(
+                                        currentValues.filter(member => member.employeeId !== commission.value)
+                                      );
+                                    }
+                                  }}
+                                  className="size-5 rounded-sm border-2 border-[#A3A2AA] data-[state=checked]:bg-sidebaractive"
+                                />
+                                <FieldLabel htmlFor="form-rhf-checkbox-responses" className="font-normal">
+                                  {commission.label}
+                                </FieldLabel>
+                              </Field>
+                            </FieldGroup>
+                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                          </div>
+                        ))}
+                      </div>
+                    }
+                  </div>
+                )}
+              />
+            </CardContent>
+          </Card>
           <Card className=" p-4">
             <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
               لجنة الحوادث
