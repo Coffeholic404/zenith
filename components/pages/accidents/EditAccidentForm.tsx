@@ -20,8 +20,9 @@ import { useGetEmployeesQuery } from '@/services/employe';
 import { useGetCoStTrQuery } from '@/services/CoStTr';
 import { useGetCoursesQuery } from '@/services/courses';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@radix-ui/react-checkbox';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useGetInventoryQuery } from '@/services/Inventory';
 
 const EditAccidentFormSchema = z.object({
   course: z.string().optional(),
@@ -59,7 +60,8 @@ const EditAccidentFormSchema = z.object({
   trainer3Id: z.string().optional(),
   trainer3Note: z.string().optional(),
   finalReport: z.string().optional(),
-  committeeMembers: z.array(z.string()).optional()
+  committeeMembers: z.array(z.string()).optional(),
+  itemInventoryIds: z.array(z.string()).optional()
 });
 
 export default function EditAccidentForm({ accidentId }: { accidentId: string }) {
@@ -117,6 +119,24 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
     pageNumber: 1,
     pageSize: 100
   });
+
+  const {
+    data: inventory,
+    isLoading: isLoadingInventory,
+    isSuccess: isSuccessInventory
+  } = useGetInventoryQuery({
+    pageNumber: 1,
+    pageSize: 100
+  });
+
+  let inventoryData: any = [];
+  if (isSuccessInventory) {
+    inventoryData =
+      inventory?.result?.data?.map((item: any) => ({
+        value: item.uniqueID,
+        label: item.itemName
+      })) || [];
+  }
 
   // Fetch activities
   const {
@@ -186,7 +206,8 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
       trainer3Id: '',
       trainer3Note: '',
       finalReport: '',
-      committeeMembers: []
+      committeeMembers: [],
+      itemInventoryIds: []
     }
   });
 
@@ -295,6 +316,9 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         courseId = courseWithStudent?.uniqueID || '';
       }
 
+      // Extract inventory item IDs
+      const itemInventoryIds = accident.items?.map(item => item.inventoryId) || [];
+
       // Reset form with accident data
       form.reset({
         course: courseId,
@@ -314,7 +338,8 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         trainer3Id: accident.trainer3Id || '',
         trainer3Note: accident.trainer3Note || '',
         finalReport: accident.finalReport || '',
-        committeeMembers: committeeMemberIds
+        committeeMembers: committeeMemberIds,
+        itemInventoryIds: itemInventoryIds
       });
 
       // Set loadedAccidentId AFTER resetting form as a fallback if cascading data check fails
@@ -431,7 +456,8 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
         trainer3Note: values.trainer3Note || null,
         finalReport: values.finalReport || '',
         committeeMembersToAdd,
-        committeeMembersToDelete
+        committeeMembersToDelete,
+        itemInventoryIds: values.itemInventoryIds || [] // Including even if not in type to match pattern
       };
 
       const response = await updateAccident(requestData).unwrap();
@@ -495,7 +521,12 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
 
   // Loading state - wait for all data to be loaded AND form to be populated
   const isLoading =
-    isLoadingAccident || isLoadingEmployees || isLoadingCourses || isLoadingActivities || isLoadingCoStTr;
+    isLoadingAccident ||
+    isLoadingEmployees ||
+    isLoadingCourses ||
+    isLoadingActivities ||
+    isLoadingCoStTr ||
+    isLoadingInventory;
   const isFormReady = loadedAccidentId === accidentId;
 
   if (isLoading || !isFormReady) {
@@ -802,7 +833,6 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                         type="number"
                         aria-invalid={fieldState.invalid}
                         placeholder="أدخل ارتفاع فتح المظلة"
-                        autoComplete="off"
                         onChange={e => field.onChange(e.target.valueAsNumber)}
                         value={field.value || ''}
                         className="  bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -812,6 +842,49 @@ export default function EditAccidentForm({ accidentId }: { accidentId: string })
                   )}
                 />
               </FieldGroup>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="max-w-5xl mx-auto">
+          <Card className=" p-4">
+            <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
+              المعدات
+            </CardHeader>
+            <CardContent className=" bg-searchBg p-4 rounded-xl">
+              <Controller
+                name="itemInventoryIds"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <div className="space-y-2 ">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {inventoryData.map((item: any) => (
+                        <div key={item.value} className="flex items-center space-x-2 space-x-reverse py-2">
+                          <Checkbox
+                            id={`inventory-${item.value}`}
+                            checked={(field.value ?? []).includes(item.value)}
+                            onCheckedChange={checked => {
+                              const currentValues = field.value || [];
+                              if (checked) {
+                                if (!currentValues.includes(item.value)) {
+                                  field.onChange([...currentValues, item.value]);
+                                }
+                              } else {
+                                field.onChange(currentValues.filter((id: string) => id !== item.value));
+                              }
+                            }}
+                            className="size-5 rounded-sm border-2 border-[#A3A2AA] data-[state=checked]:bg-sidebaractive"
+                          />
+                          <FieldLabel htmlFor={`inventory-${item.value}`} className="font-normal">
+                            {item.label}
+                          </FieldLabel>
+                          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              />
             </CardContent>
           </Card>
         </div>

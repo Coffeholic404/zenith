@@ -31,6 +31,9 @@ import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { useGetEmployeesQuery } from '@/services/employe';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useGetInventoryQuery } from '@/services/Inventory';
+import { Checkbox } from '@/components/ui/checkbox';
+import { FieldLabel } from '@/components/ui/field';
 
 const EditActivitiesFormSchema = z.object({
   character: z.string().min(1, {
@@ -62,7 +65,8 @@ const EditActivitiesFormSchema = z.object({
   currentFreeFallTime: z.string().optional(),
   currentParachuteOpiningTime: z.string().optional(),
   currentParachuteOpinignHeight: z.string().optional(),
-  currentPlaneExitHeight: z.string().optional()
+  currentPlaneExitHeight: z.string().optional(),
+  currentItemInventoryIds: z.array(z.string()).optional()
 });
 
 // Interface for jumper with display info and tracking
@@ -115,6 +119,23 @@ export default function EditActivityForm({ activityId }: { activityId: string })
     pageNumber: 1,
     pageSize: 100
   });
+  const {
+    data: inventory,
+    isLoading: isLoadingInventory,
+    isSuccess: isSuccessInventory
+  } = useGetInventoryQuery({
+    pageNumber: 1,
+    pageSize: 100
+  });
+
+  let inventoryData: any = [];
+  if (isSuccessInventory) {
+    inventoryData =
+      inventory?.result?.data?.map((item: any) => ({
+        value: item.uniqueID,
+        label: item.itemName
+      })) || [];
+  }
 
   let trainers: any = [];
   if (isSuccessEmployees) {
@@ -192,7 +213,8 @@ export default function EditActivityForm({ activityId }: { activityId: string })
       currentFreeFallTime: '',
       currentParachuteOpiningTime: '',
       currentParachuteOpinignHeight: '',
-      currentPlaneExitHeight: ''
+      currentPlaneExitHeight: '',
+      currentItemInventoryIds: []
     }
   });
 
@@ -299,6 +321,9 @@ export default function EditActivityForm({ activityId }: { activityId: string })
         trainer2Note: jumper.trainer2Note || undefined,
         trainer3Id: jumper.trainer3Id || undefined,
         trainer3Note: jumper.trainer3Note || undefined,
+        itemInventoryIds: (jumper.itemInventoryIds && jumper.itemInventoryIds.length > 0) 
+          ? jumper.itemInventoryIds 
+          : (jumper.items?.map(it => it.inventoryId) || []),
         isNew: false,
         isModified: false
       }));
@@ -407,6 +432,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
       trainer2Note: form.getValues('currentTrainer2Note') || undefined,
       trainer3Id: form.getValues('currentTrainer3Id') || undefined,
       trainer3Note: form.getValues('currentTrainer3Note') || undefined,
+      itemInventoryIds: form.getValues('currentItemInventoryIds') || [],
       isNew: true, // Mark as new jumper
       isModified: false
     };
@@ -437,7 +463,9 @@ export default function EditActivityForm({ activityId }: { activityId: string })
     form.setValue('currentFreeFallTime', '');
     form.setValue('currentParachuteOpiningTime', '');
     form.setValue('currentParachuteOpinignHeight', '');
+    form.setValue('currentParachuteOpinignHeight', '');
     form.setValue('currentPlaneExitHeight', '');
+    form.setValue('currentItemInventoryIds', []);
   };
 
   // Handle removing student from jumpers list
@@ -494,6 +522,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
     form.setValue('currentParachuteOpiningTime', jumper.freefallAltitude.toString());
     form.setValue('currentParachuteOpinignHeight', jumper.deployAltitude.toString());
     form.setValue('currentPlaneExitHeight', jumper.exitAltitude.toString());
+    form.setValue('currentItemInventoryIds', jumper.itemInventoryIds || []);
   };
 
   // Handle updating an existing jumper
@@ -549,6 +578,7 @@ export default function EditActivityForm({ activityId }: { activityId: string })
       trainer2Note: form.getValues('currentTrainer2Note') || undefined,
       trainer3Id: form.getValues('currentTrainer3Id') || undefined,
       trainer3Note: form.getValues('currentTrainer3Note') || undefined,
+      itemInventoryIds: form.getValues('currentItemInventoryIds') || [],
       isNew: existingJumper.isNew, // Keep the isNew flag
       isModified: !existingJumper.isNew // Mark as modified if it was an existing jumper
     };
@@ -604,13 +634,11 @@ export default function EditActivityForm({ activityId }: { activityId: string })
           jumperId,
           ...jumperData
         });
-        // } else if (jumperId) {
-        //   // Existing unmodified jumper - still include in jumpersToUpdate to keep it
-        //   jumpersToUpdate.push({
-        //     jumperId,
-        //     ...jumperData
-        //   });
-        // }
+      } else if (jumperId) {
+        // Even if not modified, we should probably include it in jumpersToUpdate 
+        // if the API requires the full list or to ensure it's not deleted.
+        // However, based on the UpdateActivityRequest, it seems only changes are needed.
+        // But if itemInventoryIds changed, isModified would be true anyway.
       }
     });
 
@@ -657,7 +685,13 @@ export default function EditActivityForm({ activityId }: { activityId: string })
   });
 
   // Loading state - wait for all data to be loaded AND form to be populated
-  const isLoading = isLoadingActivity || isCoursesLoading || isPlanesLoading || isPlacesLoading || isLoadingEmployees;
+  const isLoading =
+    isLoadingActivity ||
+    isCoursesLoading ||
+    isPlanesLoading ||
+    isPlacesLoading ||
+    isLoadingEmployees ||
+    isLoadingInventory;
   const isFormReady = loadedActivityId === activityId;
 
   if (isLoading || !isFormReady) {
@@ -1350,6 +1384,46 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                     )}
                   />
                 </div>
+
+                <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
+                  المعدات
+                </CardHeader>
+                <div className="bg-searchBg p-4 rounded-xl mb-4">
+                  <Controller
+                    name="currentItemInventoryIds"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <div className="space-y-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {inventoryData.map((item: any) => (
+                            <div key={item.value} className="flex items-center space-x-2 space-x-reverse py-2">
+                              <Checkbox
+                                id={`inventory-${item.value}`}
+                                checked={(field.value ?? []).includes(item.value)}
+                                onCheckedChange={checked => {
+                                  const currentValues = field.value || [];
+                                  if (checked) {
+                                    if (!currentValues.includes(item.value)) {
+                                      field.onChange([...currentValues, item.value]);
+                                    }
+                                  } else {
+                                    field.onChange(currentValues.filter((id: string) => id !== item.value));
+                                  }
+                                }}
+                                className="size-5 rounded-sm border-2 border-[#A3A2AA] data-[state=checked]:bg-sidebaractive"
+                              />
+                              <FieldLabel htmlFor={`inventory-${item.value}`} className="font-normal">
+                                {item.label}
+                              </FieldLabel>
+                              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  />
+                </div>
+
                 {isEditingJumper ? (
                   <div className="flex gap-2">
                     <Button

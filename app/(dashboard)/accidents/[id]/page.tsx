@@ -51,7 +51,7 @@ export default function AccidentDetails({ params }: { params: Promise<{ id: stri
         {/* Right Column (Basic Info) - Takes 2 columns in the grid */}
         <div className="md:col-span-2 md:order-1">
           <Card className="h-full border-none shadow-sm bg-white rounded-3xl overflow-hidden">
-            <CardHeader className="pb-2 pt-8 px-8">
+            <CardHeader className="pb-2 pt-8 px-8 flex flex-row items-center justify-between">
               <CardTitle className="text-xl font-bold text-gray-400 text-right">المعلومات الاساسية</CardTitle>
             </CardHeader>
             <CardContent className="px-8 pb-8 pt-4">
@@ -117,17 +117,27 @@ export default function AccidentDetails({ params }: { params: Promise<{ id: stri
         <div className="md:col-span-2 md:order-2 space-y-6">
           {/* Equipment Card */}
           <Card className="border-none shadow-sm bg-white rounded-3xl">
-                        <CardHeader className="pb-2 pt-6 px-6">
-                            <CardTitle className="text-lg font-bold text-gray-400 text-right">المعدات</CardTitle>
-                        </CardHeader>
-                        <CardContent className="px-6 pb-6">
-                            <div className="space-y-3">
-                                <div className="text-right text-gray-500 font-medium pb-2 border-b border-gray-50 last:border-0">خوذة</div>
-                                <div className="text-right text-gray-500 font-medium pb-2 border-b border-gray-50 last:border-0">خوذة</div>
-                                <div className="text-right text-gray-500 font-medium pb-2 border-b border-gray-50 last:border-0">خوذة</div>
-                            </div>
-                        </CardContent>
-                    </Card>
+            <CardHeader className="pb-2 pt-6 px-6 flex flex-row items-center justify-between">
+              <CardTitle className="text-lg font-bold text-gray-400 text-right">المعدات</CardTitle>
+              <span className="text-gray-400 text-sm font-medium">{accident.items?.length || 0}</span>
+            </CardHeader>
+            <CardContent className="px-6 pb-6">
+              <div className="space-y-3">
+                {accident.items && accident.items.length > 0 ? (
+                  accident.items.map((item, index) => (
+                    <div
+                      key={item.uniqueID || index}
+                      className="text-right text-gray-500 font-medium pb-2 border-b border-gray-50 last:border-0"
+                    >
+                      {item.itemName}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-right text-gray-400 text-sm">لا يوجد معدات</div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Committee Card */}
           <Card className="border-none shadow-sm bg-white rounded-3xl">

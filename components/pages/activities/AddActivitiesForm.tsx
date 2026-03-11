@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { FieldLabel } from '@/components/ui/field';
 import { cn } from '@/lib/utils';
 import trash from '@/public/employees/TrashBin.svg';
 import Image from 'next/image';
@@ -23,6 +24,8 @@ import { useCreateActivityMutation, ActivityJumper } from '@/services/activity';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { useGetEmployeesQuery } from '@/services/employe';
+import { useGetInventoryQuery } from '@/services/Inventory';
+import { Checkbox } from '@radix-ui/react-checkbox';
 
 // Schema for individual jumper entry (student with trainers)
 const jumperSchema = z.object({
@@ -79,7 +82,8 @@ const AddActivitiesFormSchema = z.object({
   currentFreeFallTime: z.string().optional(),
   currentParachuteOpiningTime: z.string().optional(),
   currentParachuteOpinignHeight: z.string().optional(),
-  currentPlaneExitHeight: z.string().optional()
+  currentPlaneExitHeight: z.string().optional(),
+  currentItemInventoryIds: z.array(z.string()).optional()
 });
 
 // Interface for jumper with display info
@@ -130,6 +134,23 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
         value: item.id,
         label: item.name
       }));
+  }
+
+  const {
+    data: inventory,
+    isLoading: isLoadingInventory,
+    isSuccess: isSuccessInventory
+  } = useGetInventoryQuery({
+    pageNumber: 1,
+    pageSize: 100
+  });
+
+  let inventoryData: any = [];
+  if (isSuccessInventory) {
+    inventoryData = inventory?.result?.data?.map((item: any) => ({
+      value: item.uniqueID,
+      label: item.itemName
+    })) || [];
   }
 
   const [createActivity, { isLoading: isCreating }] = useCreateActivityMutation();
@@ -197,7 +218,8 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
       currentFreeFallTime: '',
       currentParachuteOpiningTime: '',
       currentParachuteOpinignHeight: '',
-      currentPlaneExitHeight: ''
+      currentPlaneExitHeight: '',
+      currentItemInventoryIds: []
     }
   });
 
@@ -324,7 +346,8 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
       trainer2Note: form.getValues('currentTrainer2Note') || undefined,
       trainer3Id:
         form.getValues('currentTrainer3Id') === 'none' ? undefined : form.getValues('currentTrainer3Id') || undefined,
-      trainer3Note: form.getValues('currentTrainer3Note') || undefined
+      trainer3Note: form.getValues('currentTrainer3Note') || undefined,
+      itemInventoryIds: form.getValues('currentItemInventoryIds') || []
     };
 
     setAddedJumpers([...addedJumpers, newJumper]);
@@ -375,6 +398,7 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
       form.setValue('currentParachuteOpiningTime', '');
       form.setValue('currentParachuteOpinignHeight', '');
       form.setValue('currentPlaneExitHeight', '');
+      form.setValue('currentItemInventoryIds', []);
     } else if (selectedJumperIndex !== null && removedIndex < selectedJumperIndex) {
       // Adjust selected index if a student before the selected one was removed
       setSelectedJumperIndex(selectedJumperIndex - 1);
@@ -413,6 +437,7 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
     form.setValue('currentParachuteOpiningTime', jumper.freefallAltitude.toString());
     form.setValue('currentParachuteOpinignHeight', jumper.deployAltitude.toString());
     form.setValue('currentPlaneExitHeight', jumper.exitAltitude.toString());
+    form.setValue('currentItemInventoryIds', jumper.itemInventoryIds || []);
   };
 
   // Handle updating an existing jumper
@@ -468,7 +493,8 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
       trainer2Note: form.getValues('currentTrainer2Note') || undefined,
       trainer3Id:
         form.getValues('currentTrainer3Id') === 'none' ? undefined : form.getValues('currentTrainer3Id') || undefined,
-      trainer3Note: form.getValues('currentTrainer3Note') || undefined
+      trainer3Note: form.getValues('currentTrainer3Note') || undefined,
+      itemInventoryIds: form.getValues('currentItemInventoryIds') || []
     };
 
     // Update the jumper in the array
@@ -522,6 +548,7 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
     form.setValue('currentParachuteOpiningTime', '');
     form.setValue('currentParachuteOpinignHeight', '');
     form.setValue('currentPlaneExitHeight', '');
+    form.setValue('currentItemInventoryIds', []);
   };
 
   // Loading state - wait for all data to be loaded AND form to be populated
@@ -1194,6 +1221,53 @@ export default function AddActivitiesForm({ courseId }: { courseId: string }) {
                         />
                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                       </Field>
+                    )}
+                  />
+                </div>
+                
+                <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2">
+                  المعدات
+                </CardHeader>
+                <div className="bg-searchBg p-4 rounded-xl">
+                  <Controller
+                    name="currentItemInventoryIds"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <div className="space-y-2">
+                        {
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {inventoryData.map((item: any) => (
+                              <div key={item.value} className="flex items-center space-x-2 space-x-reverse py-2">
+                                <FieldGroup data-slot="checkbox-group">
+                                  <Field orientation="horizontal">
+                                    <Checkbox
+                                      id={`inventory-${item.value}`}
+                                      checked={(field.value ?? []).includes(item.value)}
+                                      onCheckedChange={checked => {
+                                        const currentValues = field.value || [];
+                                        if (checked) {
+                                          if (!currentValues.includes(item.value)) {
+                                            field.onChange([...currentValues, item.value]);
+                                          }
+                                        } else {
+                                          field.onChange(
+                                            currentValues.filter((id: string) => id !== item.value)
+                                          );
+                                        }
+                                      }}
+                                      className="size-5 rounded-sm border-2 border-[#A3A2AA] data-[state=checked]:bg-sidebaractive"
+                                    />
+                                    <FieldLabel htmlFor={`inventory-${item.value}`} className="font-normal">
+                                      {item.label}
+                                    </FieldLabel>
+                                  </Field>
+                                </FieldGroup>
+                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                              </div>
+                            ))}
+                          </div>
+                        }
+                      </div>
                     )}
                   />
                 </div>

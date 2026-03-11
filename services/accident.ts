@@ -13,6 +13,16 @@ export interface CommitteeMemberFull {
   employeePhone: string;
 }
 
+export interface AccidentInventoryItem {
+  uniqueID: string;
+  accidentId: string;
+  inventoryId: string;
+  inventoryCode: string;
+  inventoryGeneratedCode: string;
+  itemName: string;
+  inventoryStatus: string;
+}
+
 export interface AccidentItem {
   id: string;
   co_St_TrId: string;
@@ -44,6 +54,7 @@ export interface AccidentItem {
   finalReport: string;
   committeeCount: number;
   committeeMembers: CommitteeMemberFull[];
+  items: AccidentInventoryItem[];
 }
 
 export interface GetAccidentsRequest {
@@ -86,6 +97,7 @@ export interface CreateAccidentRequest {
   trainer3Note: string | null;
   finalReport: string;
   committeeMembers: CommitteeMember[];
+  itemInventoryIds: string[];
 }
 
 export interface CreateAccidentResponse {

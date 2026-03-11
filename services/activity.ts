@@ -1,5 +1,14 @@
 import { api } from './api';
 
+export interface ActivityInventoryItem {
+  uniqueID: string;
+  inventoryId: string;
+  itemName: string;
+  inventoryCode: string;
+  inventoryGeneratedCode: string;
+  inventoryStatus: string;
+}
+
 export interface ActivityJumper {
   co_St_TrId: string;
   jumperCount: number;
@@ -15,6 +24,7 @@ export interface ActivityJumper {
   trainer2Note?: string;
   trainer3Id?: string;
   trainer3Note?: string;
+  itemInventoryIds: string[];
 }
 
 export interface ActivityJumperWithId extends ActivityJumper {
@@ -23,6 +33,7 @@ export interface ActivityJumperWithId extends ActivityJumper {
   trainer1Name?: string;
   trainer2Name?: string;
   trainer3Name?: string;
+  items?: ActivityInventoryItem[];
 }
 
 export interface ActivityItem {

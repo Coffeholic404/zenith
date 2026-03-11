@@ -8,6 +8,7 @@ import { useGetActivityByIdQuery, ActivityJumperWithId } from '@/services/activi
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useGetCoStTrQuery } from '@/services/CoStTr';
+import { useGetInventoryQuery } from '@/services/Inventory';
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id: activityId } = React.use(params);
@@ -22,7 +23,18 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     pageNumber: 1,
     pageSize: 100
   });
+
+  const {
+    data: inventory,
+    isLoading: isLoadingInventory,
+    isSuccess: isSuccessInventory
+  } = useGetInventoryQuery({
+    pageNumber: 1,
+    pageSize: 100
+  });
+
   const activity = data?.result;
+  console.log(activity);
   const jumpers = activity?.jumpers || [];
   const selectedJumper = selectedJumperIndex !== null ? jumpers[selectedJumperIndex] : null;
 
@@ -245,28 +257,33 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           <Card className="min-h-full">
             <CardHeader className="font-vazirmatn text-subtext font-light text-[16px] px-3 py-2 flex flex-row justify-between items-center">
               المعدات
-              <span>{selectedJumper ? 5 : 0}</span>
+              <span>{selectedJumper?.items?.length || 0}</span>
             </CardHeader>
             <Separator className="my-2" />
             <CardContent className="px-2">
               {!selectedJumper ? (
                 <p className="text-center text-subtext font-vazirmatn text-sm py-4">اختر طالب لعرض المعدات</p>
+              ) : !selectedJumper.items || selectedJumper.items.length === 0 ? (
+                <p className="text-center text-subtext font-vazirmatn text-sm py-4">لا يوجد معدات</p>
               ) : (
                 <>
-                  {/* Placeholder equipment items */}
-                  {[
-                    { name: 'خوذة' },
-                    { name: 'خوذة' },
-                    { name: 'خوذة' },
-                    { name: 'خوذة' },
-                  ].map((item, index, arr) => (
-                    <div key={index}>
-                      <div className="flex flex-row justify-between items-center py-3">
-                        <p className="font-vazirmatn font-normal text-[16px] text-[#7B7B7B]">{item.name}</p>
+                  {selectedJumper.items.map((item, index, arr) => {
+                    // Find actual item name from inventory list
+                    const inventoryItem =
+                      isSuccessInventory && inventory?.result?.data
+                        ? inventory.result.data.find((it: any) => it.uniqueID === item.inventoryId)
+                        : null;
+                    const itemName = inventoryItem?.itemName || item.itemName || 'معدات';
+
+                    return (
+                      <div key={item.uniqueID || index}>
+                        <div className="flex flex-row justify-between items-center py-3 px-3">
+                          <p className="font-vazirmatn font-normal text-[16px] text-[#7B7B7B]">{itemName}</p>
+                        </div>
+                        {index < arr.length - 1 && <Separator />}
                       </div>
-                      {index < arr.length - 1 && <Separator />}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </>
               )}
             </CardContent>
