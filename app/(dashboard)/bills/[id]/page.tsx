@@ -203,7 +203,7 @@ export default function BillDetailPage() {
                                 variant="ghost"
                                 className="font-vazirmatn text-amber-600 gap-2 border border-amber-200 rounded-2xl hover:bg-amber-50"
                                 onClick={() => setIsReverseDialogOpen(true)}
-                                disabled={!bill.status}
+                                disabled={!bill.accepted}
                             >
                                 <ShieldX className="size-4" />
                                 رفض الفاتورة
@@ -238,17 +238,17 @@ export default function BillDetailPage() {
                     <Badge
                         className={cn(
                             'text-xs font-vazirmatn rounded-lg border px-3 py-1 gap-1',
-                            bill.status
+                            bill.accepted
                                 ? 'bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
                                 : 'bg-red-100 text-red-600 border-red-200 hover:bg-red-100'
                         )}
                     >
-                        {bill.status ? (
+                        {bill.accepted ? (
                             <CircleCheckBig className="size-3.5" />
                         ) : (
                             <ShieldX className="size-3.5" />
                         )}
-                        {bill.status ? 'مقبولة' : 'مرفوضة'}
+                        {bill.accepted ? 'مقبولة' : 'مرفوضة'}
                     </Badge>
                 </div>
                 <CardContent className="p-6">

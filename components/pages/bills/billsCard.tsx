@@ -37,6 +37,16 @@ export default function BillCard({ bill }: { bill: BillItem }) {
   const [deleteBill, { isLoading: isDeleting }] = useDeleteBillMutation();
 
   const handleDeleteBill = async () => {
+    if (bill.status) {
+      toast({
+        title: 'غير مسموح',
+        description: 'لا يمكن حذف فاتورة مقبولة',
+        variant: 'destructive'
+      });
+      setIsDeleteDialogOpen(false);
+      return;
+    }
+
     try {
       await deleteBill({ id: bill.id }).unwrap();
       toast({
@@ -92,7 +102,17 @@ export default function BillCard({ bill }: { bill: BillItem }) {
                         <Button
                           variant="ghost"
                           className=" hover:bg-red-400"
-                          onClick={() => setIsDeleteDialogOpen(true)}
+                          onClick={() => {
+                            if (bill.status) {
+                              toast({
+                                title: 'غير مسموح',
+                                description: 'لا يمكن حذف فاتورة مقبولة',
+                                variant: 'destructive'
+                              });
+                            } else {
+                              setIsDeleteDialogOpen(true);
+                            }
+                          }}
                         >
                           <Image src={trash} alt="trash" className="size-[18px]" />
                           <p className=" font-vazirmatn text-sm">حذف</p>
