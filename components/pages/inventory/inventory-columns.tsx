@@ -21,12 +21,14 @@ export type InventoryRow = {
 
 const statusLabels: Record<string, string> = {
     new: 'جديد',
+    New: 'جديد',
     used: 'مستعمل',
     broken: 'تالف'
 };
 
 const statusColors: Record<string, string> = {
     new: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    New: 'bg-emerald-100 text-emerald-700 border-emerald-200',
     used: 'bg-amber-100 text-amber-700 border-amber-200',
     broken: 'bg-red-100 text-red-700 border-red-200'
 };
