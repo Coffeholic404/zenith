@@ -298,7 +298,7 @@ function EditStockForm({ stockItem }: { stockItem: StockItem }) {
                         <div className="space-y-1">
                             <p className={labelClasses}>التكلفة</p>
                             <p className="font-vazirmatn text-tableRow text-sm">
-                                {stockItem?.cost?.toLocaleString('ar-IQ') ?? '—'}
+                                {stockItem?.cost?.toLocaleString('en-US') ?? '—'}
                             </p>
                         </div>
                     </div>

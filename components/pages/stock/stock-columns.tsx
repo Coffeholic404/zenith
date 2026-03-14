@@ -20,6 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 export type inventory = {
     uniqueID: string;
@@ -31,6 +32,7 @@ export type inventory = {
     date: string;
     status: 'new' | 'used' | 'broken';
     distribution: string;
+    note: string;
 };
 
 const statusLabels: Record<string, string> = {
@@ -142,7 +144,7 @@ export const inventoryColumns: ColumnDef<inventory>[] = [
         },
         cell: ({ row }) => {
             const cost = row.getValue('cost') as number;
-            return <span>{cost.toLocaleString('ar-IQ')}</span>;
+            return <span>{cost.toLocaleString('en-US')}</span>;
         }
     },
     {
@@ -161,6 +163,15 @@ export const inventoryColumns: ColumnDef<inventory>[] = [
         accessorKey: 'date',
         header: () => {
             return <p className=" font-vazirmatn font-normal text-base text-tableHeader">التاريخ</p>;
+        },
+        cell: ({ row }) => {
+            const date = row.getValue('date') as string;
+            if (!date) return '—';
+            return new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
         }
     },
     {
@@ -199,6 +210,27 @@ export const inventoryColumns: ColumnDef<inventory>[] = [
                 >
                     {distributionLabels[distribution] ?? distribution}
                 </Badge>
+            );
+        }
+    },
+    {
+        accessorKey: 'note',
+        header: () => {
+            return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الملاحظة</p>;
+        },
+        cell: ({ row }) => {
+            const text = row.original.note;
+            if (!text) return <p className="font-vazirmatn font-normal text-sm">—</p>;
+            if (text.length <= 25) return <p className="font-vazirmatn font-normal text-sm">{text}</p>;
+            return (
+                <Popover>
+                    <PopoverTrigger className="font-vazirmatn font-normal text-sm text-right cursor-pointer block underline decoration-dotted underline-offset-2">
+                        {text.slice(0, 25)}...
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 text-right p-4 font-vazirmatn" side="top" dir="rtl">
+                        <p className="text-sm break-words">{text}</p>
+                    </PopoverContent>
+                </Popover>
             );
         }
     },
@@ -293,5 +325,6 @@ export const inventoryColumnsNames = [
     { label: 'التاريخ', dataIndex: 'date' },
     { label: 'حالة المنتج', dataIndex: 'status' },
     { label: 'التوزيع', dataIndex: 'distribution' },
+    { label: 'الملاحظة', dataIndex: 'note' },
     { label: 'الإجراءات', dataIndex: 'actions' }
 ];

@@ -125,7 +125,11 @@ export const InventoryColumns: ColumnDef<InventoryRow>[] = [
         cell: ({ row }) => {
             const date = row.getValue('date') as string;
             if (!date) return '—';
-            return new Date(date).toLocaleDateString('ar-IQ');
+            return new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
         }
     },
     {

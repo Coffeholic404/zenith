@@ -18,6 +18,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 const DeleteConfirmationDialog = ({
   isOpen,
@@ -79,7 +80,7 @@ export const materialColumns: ColumnDef<Item>[] = [
   {
     accessorKey: 'categoryName',
     header: () => {
-      return <p className=" font-vazirmatn font-normal text-base text-tableHeader">النوع</p>;
+      return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الفئة</p>;
     }
   },
   {
@@ -110,6 +111,48 @@ export const materialColumns: ColumnDef<Item>[] = [
     accessorKey: 'brand',
     header: () => {
       return <p className=" font-vazirmatn font-normal text-base text-tableHeader">العلامة التجارية</p>;
+    }
+  },
+  {
+    accessorKey: 'note',
+    header: () => {
+      return <p className=" font-vazirmatn font-normal text-base text-tableHeader">ملاحظة</p>;
+    },
+    cell: ({ row }) => {
+      const text = row.original.note;
+      if (!text) return <p className="font-vazirmatn font-normal text-sm">-</p>;
+      if (text.length <= 25) return <p className="font-vazirmatn font-normal text-sm">{text}</p>;
+      return (
+        <Popover>
+          <PopoverTrigger className="font-vazirmatn font-normal text-sm text-right cursor-pointer block underline decoration-dotted underline-offset-2">
+            {text.slice(0, 25)}...
+          </PopoverTrigger>
+          <PopoverContent className="w-80 text-right p-4 font-vazirmatn" side="top" dir="rtl">
+            <p className="text-sm break-words">{text}</p>
+          </PopoverContent>
+        </Popover>
+      );
+    }
+  },
+  {
+    accessorKey: 'description',
+    header: () => {
+      return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الوصف</p>;
+    },
+    cell: ({ row }) => {
+      const text = row.original.description;
+      if (!text) return <p className="font-vazirmatn font-normal text-sm">-</p>;
+      if (text.length <= 25) return <p className="font-vazirmatn font-normal text-sm">{text}</p>;
+      return (
+        <Popover>
+          <PopoverTrigger className="font-vazirmatn font-normal text-sm text-right cursor-pointer block underline decoration-dotted underline-offset-2">
+            {text.slice(0, 25)}...
+          </PopoverTrigger>
+          <PopoverContent className="w-80 text-right p-4 font-vazirmatn" side="top" dir="rtl">
+            <p className="text-sm break-words">{text}</p>
+          </PopoverContent>
+        </Popover>
+      );
     }
   },
   {
@@ -179,5 +222,7 @@ export const materialColumnsNames = [
   { label: 'الحد الأدنى', dataIndex: 'limit' },
   { label: 'الحجم', dataIndex: 'volume' },
   { label: 'العلامة التجارية', dataIndex: 'brand' },
+  { label: 'ملاحظة', dataIndex: 'note' },
+  { label: 'الوصف', dataIndex: 'description' },
   { label: 'إجراءات', dataIndex: 'actions' }
 ];

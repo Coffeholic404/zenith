@@ -76,6 +76,7 @@ export default function InventoryPage() {
             name: stock.itemName ?? stock.itemId,
             code: stock.code,
             cost: stock.cost,
+            note: stock.note,
             bundle: studentNameMap.get(stock.packagerId) ?? stock.packagerId,
             bundleSupervisor: trainerNameMap.get(stock.packetCoachId) ?? stock.packetCoachId,
             date: stock.createdAt?.substring(0, 10) ?? '',

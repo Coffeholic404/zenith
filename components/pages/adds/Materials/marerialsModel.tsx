@@ -273,7 +273,7 @@ export default function MarerialsModelButton({ btnClassName }: { btnClassName?: 
                       <Input
                         {...field}
                         type="number"
-                        placeholder="الحد الأدنى"
+                        placeholder="الوزن المسموح"
                         className="bg-searchBg rounded-xl font-vazirmatn placeholder:text-subtext placeholder:font-normal focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right"
                         dir="rtl"
                         autoComplete="off"

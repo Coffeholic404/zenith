@@ -308,7 +308,7 @@ export default function BillDetailPage() {
                             المواد
                         </p>
                         <Badge className="bg-badgeClr text-sidebaractive font-vazirmatn text-xs rounded-lg hover:bg-badgeClr">
-                            {bill.subImports?.length ?? 0} مادة
+                            {(bill.subImports?.length ?? 0).toLocaleString('en-US')} مادة
                         </Badge>
                     </div>
                 </div>
@@ -351,16 +351,16 @@ export default function BillDetailPage() {
                                     {bill.subImports?.map((sub: SubImport, index: number) => (
                                         <TableRow key={sub.id} className="border-none text-tableRow">
                                             <TableCell className="font-vazirmatn">
-                                                {index + 1}
+                                                {(index + 1).toLocaleString('en-US')}
                                             </TableCell>
                                             <TableCell className="font-vazirmatn font-semibold">
                                                 {sub.itemName ?? sub.itemId}
                                             </TableCell>
                                             <TableCell className="font-vazirmatn">
-                                                {sub.qty}
+                                                {Number(sub.qty).toLocaleString('en-US')}
                                             </TableCell>
                                             <TableCell className="font-vazirmatn">
-                                                {sub.cost.toLocaleString('ar-IQ')}
+                                                {Number(sub.cost).toLocaleString('en-US')}
                                             </TableCell>
                                             <TableCell className="font-vazirmatn">
                                                 {sub.code ?? '—'}
