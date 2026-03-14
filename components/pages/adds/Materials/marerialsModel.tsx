@@ -147,7 +147,7 @@ export default function MarerialsModelButton({ btnClassName }: { btnClassName?: 
                           dir="rtl"
                           className="bg-searchBg rounded-xl font-vazirmatn text-subtext focus:border-sidebaractive focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right"
                         >
-                          <SelectValue placeholder="النوع" />
+                          <SelectValue placeholder="الفئة" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent dir="rtl">

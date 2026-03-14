@@ -98,7 +98,7 @@ export const materialColumns: ColumnDef<Item>[] = [
   {
     accessorKey: 'limit',
     header: () => {
-      return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الحد الأدنى</p>;
+      return <p className=" font-vazirmatn font-normal text-base text-tableHeader">الوزن المسموح</p>;
     }
   },
   {
@@ -182,9 +182,16 @@ export const materialColumns: ColumnDef<Item>[] = [
             title: `تم حذف ${row.original.itemName}`
           });
           setShowDeleteDialog(false);
-        } catch (error) {
+        } catch (error: any) {
+          const errorMessage =
+            error?.data?.errorMessages?.[0] ||
+            error?.data?.message ||
+            error?.message ||
+            `حدث خطأ أثناء حذف ${row.original.itemName}`;
+
           toast({
-            title: `حدث خطأ أثناء حذف ${row.original.itemName}`,
+            title: 'خطأ',
+            description: errorMessage,
             variant: 'destructive'
           });
         }

@@ -110,9 +110,16 @@ export const categoryColumns: ColumnDef<category>[] = [
             title: `تم حذف ${row.original.categoryName}`
           });
           setShowDeleteDialog(false);
-        } catch (error) {
+        } catch (error: any) {
+          const errorMessage =
+            error?.data?.errorMessages?.[0] ||
+            error?.data?.message ||
+            error?.message ||
+            `حدث خطأ أثناء حذف ${row.original.categoryName}`;
+
           toast({
-            title: `حدث خطأ أثناء حذف ${row.original.categoryName}`,
+            title: 'خطأ',
+            description: errorMessage,
             variant: 'destructive'
           });
         }
