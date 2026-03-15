@@ -243,15 +243,6 @@ export default function InventoryDetailPage() {
                     </Button>
                     <Button
                         variant="ghost"
-                        size="icon"
-                        className="size-9 rounded-lg text-subtext hover:text-sidebaractive hover:bg-blue-50"
-                        onClick={() => router.push(`/Inventory/edit-inventory/${id}`)}
-                        title="تعديل"
-                    >
-                        <Pencil className="size-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
                         className="font-vazirmatn text-subtext gap-2"
                         onClick={() => router.back()}
                     >

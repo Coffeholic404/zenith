@@ -99,7 +99,7 @@ export const inventoryApi = api.injectEndpoints({
           ...(searchQuery && { SearchQuery: searchQuery })
         }
       }),
-      providesTags: ['Inventory']
+      providesTags: ['Inventory', 'Stock']
     }),
 
     // GET /api/Inventory/{id} - Get inventory by ID
@@ -108,7 +108,7 @@ export const inventoryApi = api.injectEndpoints({
         url: `/api/Inventory/${id}`,
         method: 'GET'
       }),
-      providesTags: ['Inventory']
+      providesTags: ['Inventory', 'Stock']
     }),
 
     // PUT /api/Inventory/{id} - Update an inventory entry
@@ -118,7 +118,7 @@ export const inventoryApi = api.injectEndpoints({
         method: 'PUT',
         body
       }),
-      invalidatesTags: ['Inventory']
+      invalidatesTags: ['Inventory', 'Stock']
     }),
 
     // GET /api/Inventory/dates - Get inventory dates
@@ -134,7 +134,7 @@ export const inventoryApi = api.injectEndpoints({
           ...(pageSize && { PageSize: pageSize })
         }
       }),
-      providesTags: ['Inventory']
+      providesTags: ['Inventory', 'Stock']
     })
   })
 });
