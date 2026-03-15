@@ -15,9 +15,12 @@ export default function InventoryPage() {
     const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
     const [toDate, setToDate] = useState<Date | undefined>(undefined);
 
-    const { data, isLoading } = useGetStocksQuery({
-        pageNumber: 1,
-        pageSize: 100
+    const [Curent, setCurent] = useState(1);
+    const [search, setSearch] = useState("");
+
+    const { data: InventoryData, isLoading } = useGetStocksQuery({
+        pageNumber: Curent,
+        pageSize: 10
     });
 
     // Fetch filtered stock IDs when dates are selected
@@ -63,7 +66,7 @@ export default function InventoryPage() {
         return ids;
     }, [stockDatesData, fromDate, toDate]);
 
-    const inventoryData: inventory[] = (data?.result?.data ?? [])
+    const inventoryData: inventory[] = (InventoryData?.result?.data ?? [])
         .filter((stock) => {
             // If date filter is active, only show stocks whose ID is in the filtered set
             if (filteredStockIds !== null) {
@@ -106,6 +109,9 @@ export default function InventoryPage() {
                 type="inventory"
                 loading={isLoading}
                 dateFilter={dateFilter}
+                setCurent={(value: any) => setCurent(Number(value))}
+                Curent={Curent}
+                totalRecords={InventoryData?.result?.totalCount || 1}
             />
         </div>
     );

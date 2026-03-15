@@ -51,8 +51,9 @@ export const InventoryColumns: ColumnDef<InventoryRow>[] = [
         header: () => {
             return <p className=" font-vazirmatn font-normal text-base text-tableHeader">ت</p>;
         },
-        cell: ({ row }) => {
-            return row.index + 1;
+        cell: ({ row, table }) => {
+            const current = (table.options.meta as any)?.Curent || 1;
+            return (current - 1) * 10 + row.index + 1;
         }
     },
     {

@@ -32,6 +32,8 @@ export interface GetInventoryByIdRequest {
 
 export interface UpdateInventoryRequest {
   id: string;
+  code: string;
+  generatedCode: string;
   status: string;
   packagerId: string;
   packetCoachId: string;
@@ -43,6 +45,8 @@ export interface GetInventoryDatesRequest {
   from?: string;
   to?: string;
   search?: string;
+  pageNumber?: number;
+  pageSize?: number;
 }
 
 // Response types
@@ -119,13 +123,15 @@ export const inventoryApi = api.injectEndpoints({
 
     // GET /api/Inventory/dates - Get inventory dates
     getInventoryDates: builder.query<InventoryDatesResponse, GetInventoryDatesRequest>({
-      query: ({ from, to, search } = {}) => ({
+      query: ({ from, to, search, pageNumber, pageSize } = {}) => ({
         url: '/api/Inventory/dates',
         method: 'GET',
         params: {
           ...(from && { from }),
           ...(to && { to }),
-          ...(search && { search })
+          ...(search && { search }),
+          ...(pageNumber && { PageNumber: pageNumber }),
+          ...(pageSize && { PageSize: pageSize })
         }
       }),
       providesTags: ['Inventory']

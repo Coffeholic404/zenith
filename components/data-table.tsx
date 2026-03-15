@@ -68,6 +68,9 @@ interface DataTableProps<TData, TValue, TNames> {
   type?: string;
   uniqueID?: string;
   dateFilter?: DateFilter;
+  setCurent?: (value: any) => void;
+  Curent?: number;
+  totalRecords?: number;
 }
 type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType | Item | category | unit | inventory | InventoryRow | InventoryHistoryRow;
 export function DataTable<TData extends adds, TValue, TNames>({
@@ -78,7 +81,10 @@ export function DataTable<TData extends adds, TValue, TNames>({
   expandedStatus,
   type,
   uniqueID,
-  dateFilter
+  dateFilter,
+  setCurent,
+  Curent,
+  totalRecords
 }: DataTableProps<TData, TValue, TNames>) {
   const { data: session } = useSession();
   const userRole = session?.user?.role;
@@ -108,8 +114,12 @@ export function DataTable<TData extends adds, TValue, TNames>({
       columnVisibility,
       rowSelection,
       expanded
+    },
+    meta: {
+      Curent: Curent || 1
     }
   });
+  const totalPages = Math.ceil(Number(totalRecords || 1) / 10);
 
   // const toggleRowExpanded = (id: string) => {
   //   setExpandedRows((prev) => ({
@@ -428,12 +438,16 @@ export function DataTable<TData extends adds, TValue, TNames>({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
+                onClick={() => {
+                  setCurent && setCurent(Number(Curent || 1) - 1);
+                }}
+                disabled={Curent === 1}
               >
                 السابق
               </Button>
-              <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+              <Button variant="outline" size="sm" onClick={() => {
+                  setCurent && setCurent(Number(Curent || 1) + 1);
+                }} disabled={Curent === totalPages}>
                 التالي
               </Button>
             </div>

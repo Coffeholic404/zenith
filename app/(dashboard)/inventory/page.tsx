@@ -14,16 +14,21 @@ export default function InventoryPage() {
     // Date filter state
     const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
     const [toDate, setToDate] = useState<Date | undefined>(undefined);
-
-    const { data, isLoading } = useGetInventoryQuery({
-        pageNumber: 1,
-        pageSize: 100
+    const [Curent, setCurent] = useState(1);
+    const [search, setSearch] = useState("");
+    const { data: InventoryData, isLoading } = useGetInventoryQuery({
+        pageNumber: Curent,
+        pageSize: 10
     });
+
+    console.log(`InventoryData length => ${InventoryData?.result?.data?.length}, Total count => ${InventoryData?.result?.totalCount}`)
 
     // Fetch filtered inventory IDs when dates are selected
     const { data: inventoryDatesData } = useGetInventoryDatesQuery({
         ...(fromDate && { from: fromDate.toISOString() }),
         ...(toDate && { to: toDate.toISOString() }),
+        pageNumber: 1,
+        pageSize: 1000,
     });
 
     const { data: studentsData } = useGetStudentsQuery({
@@ -62,8 +67,7 @@ export default function InventoryPage() {
         });
         return ids;
     }, [inventoryDatesData, fromDate, toDate]);
-
-    const inventoryData: InventoryRow[] = (data?.result?.data ?? [])
+    const inventoryData: InventoryRow[] = (InventoryData?.result?.data ?? [])
         .filter((item) => {
             if (filteredIds !== null) {
                 return filteredIds.has(item.uniqueID);
@@ -108,6 +112,9 @@ export default function InventoryPage() {
                 type="Inventory"
                 loading={isLoading}
                 dateFilter={dateFilter}
+                setCurent={(value: any) => setCurent(Number(value))}
+                Curent={Curent}
+                totalRecords={InventoryData?.result?.totalCount || 1}
             />
         </div>
     );

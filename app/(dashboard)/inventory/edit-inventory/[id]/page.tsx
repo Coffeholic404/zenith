@@ -34,6 +34,8 @@ import { useGetTrainersQuery } from '@/services/employe';
 // ── Schema ───────────────────────────────────────────────────────────────────
 
 const editInventorySchema = z.object({
+    code: z.string().min(1, { message: 'الرمز مطلوب' }),
+    generatedCode: z.string().min(1, { message: 'الرمز المولد مطلوب' }),
     status: z.string().min(1, { message: 'الحالة مطلوبة' }),
     packagerId: z.string().min(1, { message: 'الرزام مطلوب' }),
     packetCoachId: z.string().min(1, { message: 'مشرف الرزم مطلوب' }),
@@ -178,6 +180,8 @@ function EditInventoryForm({ inventoryItem }: { inventoryItem: InventoryItem }) 
     const form = useForm<EditInventoryFormData>({
         resolver: zodResolver(editInventorySchema),
         defaultValues: {
+            code: inventoryItem.code ?? '',
+            generatedCode: inventoryItem.generatedCode ?? '',
             status: (inventoryItem.status ?? '').toLowerCase(),
             packagerId: inventoryItem.packagerId ?? '',
             packetCoachId: inventoryItem.packetCoachId ?? '',
@@ -191,6 +195,8 @@ function EditInventoryForm({ inventoryItem }: { inventoryItem: InventoryItem }) 
         try {
             await updateInventory({
                 id: inventoryItem.uniqueID,
+                code: data.code,
+                generatedCode: data.generatedCode,
                 status: data.status,
                 packagerId: data.packagerId,
                 packetCoachId: data.packetCoachId,
@@ -289,6 +295,44 @@ function EditInventoryForm({ inventoryItem }: { inventoryItem: InventoryItem }) 
                             className="grid grid-cols-1 md:grid-cols-2 gap-6"
                             dir="rtl"
                         >
+                            {/* الرمز المولد */}
+                            <FormField
+                                control={form.control}
+                                name="generatedCode"
+                                render={({ field }) => (
+                                    <FormItem className="text-right">
+                                        <FormLabel className={labelClasses}>الرمز المولد</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                className={inputClasses}
+                                                placeholder="الرمز المولد"
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-right" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* الرمز */}
+                            <FormField
+                                control={form.control}
+                                name="code"
+                                render={({ field }) => (
+                                    <FormItem className="text-right">
+                                        <FormLabel className={labelClasses}>الرمز</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                className={inputClasses}
+                                                placeholder="الرمز"
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-right" />
+                                    </FormItem>
+                                )}
+                            />
+
                             {/* الحالة */}
                             <FormField
                                 control={form.control}
