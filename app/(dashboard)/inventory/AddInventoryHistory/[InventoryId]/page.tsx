@@ -376,9 +376,9 @@ function AddInventoryHistoryForm({
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="New">جديد</SelectItem>
-                                                <SelectItem value="Used">مستعمل</SelectItem>
-                                                <SelectItem value="Broken">تالف</SelectItem>
+                                                <SelectItem value="new">جديد</SelectItem>
+                                                <SelectItem value="used">مستعمل</SelectItem>
+                                                <SelectItem value="broken">تالف</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage className="text-right" />
