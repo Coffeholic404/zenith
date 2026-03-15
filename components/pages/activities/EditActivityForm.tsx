@@ -119,13 +119,24 @@ export default function EditActivityForm({ activityId }: { activityId: string })
     pageNumber: 1,
     pageSize: 100
   });
+  const [inventorySearchQuery, setInventorySearchQuery] = useState('');
+  const [debouncedInventorySearch, setDebouncedInventorySearch] = useState('');
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedInventorySearch(inventorySearchQuery);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [inventorySearchQuery]);
+
   const {
     data: inventory,
     isLoading: isLoadingInventory,
     isSuccess: isSuccessInventory
   } = useGetInventoryQuery({
     pageNumber: 1,
-    pageSize: 100
+    pageSize: 100,
+    searchQuery: debouncedInventorySearch
   });
 
   let inventoryData: any = [];
@@ -133,7 +144,8 @@ export default function EditActivityForm({ activityId }: { activityId: string })
     inventoryData =
       inventory?.result?.data?.map((item: any) => ({
         value: item.uniqueID,
-        label: item.itemName
+        label: item.itemName,
+        code: item.generatedCode || item.code || ''
       })) || [];
   }
 
@@ -1389,6 +1401,14 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                   المعدات
                 </CardHeader>
                 <div className="bg-searchBg p-4 rounded-xl mb-4">
+                  <div className="mb-4">
+                    <Input
+                      placeholder="ابحث عن المعدات..."
+                      value={inventorySearchQuery}
+                      onChange={e => setInventorySearchQuery(e.target.value)}
+                      className="bg-white rounded-xl font-vazirmatn focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-sidebaractive"
+                    />
+                  </div>
                   <Controller
                     name="currentItemInventoryIds"
                     control={form.control}
@@ -1412,8 +1432,13 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                                 }}
                                 className="size-5 rounded-sm border-2 border-[#A3A2AA] data-[state=checked]:bg-sidebaractive"
                               />
-                              <FieldLabel htmlFor={`inventory-${item.value}`} className="font-normal">
+                              <FieldLabel htmlFor={`inventory-${item.value}`} className="font-normal flex items-center gap-1">
                                 {item.label}
+                                {item.code && (
+                                  <span className="text-[12px] text-subtext/70">
+                                    - {item.code}
+                                  </span>
+                                )}
                               </FieldLabel>
                               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                             </div>
