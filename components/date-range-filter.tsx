@@ -32,19 +32,26 @@ export function DateRangeFilter({
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
-                        className={`h-10 min-w-[160px] justify-start gap-2 rounded-xl bg-searchBg border-none text-right font-vazirmatn text-sm ${from ? 'text-foreground' : 'text-muted-foreground'
+                        className={`h-10 min-w-[180px] justify-start gap-2 rounded-xl bg-searchBg border-none text-right font-vazirmatn text-sm ${from ? 'text-foreground' : 'text-muted-foreground'
                             }`}
                     >
                         <CalendarIcon className="size-4 shrink-0 opacity-60" />
                         {from ? format(from, 'yyyy/MM/dd') : fromPlaceholder}
                         {from && (
-                            <X
-                                className="mr-auto size-3.5 opacity-60 hover:opacity-100"
+                            <span
+                                className="mr-auto"
+                                onPointerDown={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                }}
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    e.preventDefault();
                                     onFromChange(undefined);
                                 }}
-                            />
+                            >
+                                <X className="size-3.5 opacity-60 hover:opacity-100" />
+                            </span>
                         )}
                     </Button>
                 </PopoverTrigger>
@@ -64,19 +71,26 @@ export function DateRangeFilter({
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
-                        className={`h-10 min-w-[160px] justify-start gap-2 rounded-xl bg-searchBg border-none text-right font-vazirmatn text-sm ${to ? 'text-foreground' : 'text-muted-foreground'
+                        className={`h-10 min-w-[180px] justify-start gap-2 rounded-xl bg-searchBg border-none text-right font-vazirmatn text-sm ${to ? 'text-foreground' : 'text-muted-foreground'
                             }`}
                     >
                         <CalendarIcon className="size-4 shrink-0 opacity-60" />
                         {to ? format(to, 'yyyy/MM/dd') : toPlaceholder}
                         {to && (
-                            <X
-                                className="mr-auto size-3.5 opacity-60 hover:opacity-100"
+                            <span
+                                className="mr-auto"
+                                onPointerDown={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                }}
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    e.preventDefault();
                                     onToChange(undefined);
                                 }}
-                            />
+                            >
+                                <X className="size-3.5 opacity-60 hover:opacity-100" />
+                            </span>
                         )}
                     </Button>
                 </PopoverTrigger>

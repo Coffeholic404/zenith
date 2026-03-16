@@ -113,7 +113,7 @@ export const unitApi = api.injectEndpoints({
         method: 'PUT',
         body
       }),
-      invalidatesTags: ['getUnits', 'getUnitsByID']
+      invalidatesTags: ['getUnits', 'getUnitsByID', 'getItems', 'getItemsByID']
     }),
 
     // DELETE /api/Unit/{id} - Delete a unit
@@ -122,7 +122,7 @@ export const unitApi = api.injectEndpoints({
         url: `/api/Unit/${id}`,
         method: 'DELETE'
       }),
-      invalidatesTags: ['getUnits']
+      invalidatesTags: ['getUnits', 'getItems']
     })
   })
 });

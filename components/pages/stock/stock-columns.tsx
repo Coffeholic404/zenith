@@ -82,7 +82,7 @@ const DeleteConfirmationDialog = ({
                     <AlertDialogDescription className="text-right font-vazirmatn text-subtext">
                         هل أنت متأكد من حذف المنتج &quot;{itemName}&quot;؟
                         <br />
-                        <span className="text-sm text-red-500">لا يمكن التراجع عن هذا الإجراء.</span>
+                        <span className="text-sm text-red-500"> سيتم حذف جميع سجلات الفحص المرتبطة بهذا المنتج.</span>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="flex gap-2">

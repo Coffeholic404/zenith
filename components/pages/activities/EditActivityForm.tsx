@@ -1435,8 +1435,8 @@ export default function EditActivityForm({ activityId }: { activityId: string })
                               <FieldLabel htmlFor={`inventory-${item.value}`} className="font-normal flex items-center gap-1">
                                 {item.label}
                                 {item.code && (
-                                  <span className="text-[12px] text-subtext/70">
-                                    - {item.code}
+                                  <span className="text-[10px] text-subtext/70">
+                                    ({item.code})
                                   </span>
                                 )}
                               </FieldLabel>

@@ -240,14 +240,14 @@ function EditInventoryHistoryForm({
 
             toast({
                 title: 'تم بنجاح',
-                description: 'تم تعديل سجل التاريخ بنجاح'
+                description: 'تم تعديل سجل الفحص بنجاح'
             });
             router.back();
         } catch (error: any) {
             const errorMessage =
                 error?.data?.errorMessages?.[0] ??
                 error?.data?.message ??
-                'حدث خطأ أثناء تعديل سجل التاريخ';
+                'حدث خطأ أثناء تعديل سجل الفحص';
             toast({
                 title: 'خطأ',
                 description: errorMessage,
@@ -264,10 +264,7 @@ function EditInventoryHistoryForm({
             {/* ── Header ──────────────────────────────────────────────────────── */}
             <div className="flex items-center justify-between">
                 <div className="font-vazirmatn">
-                    <p className="font-bold text-cardTxt text-lg">تعديل سجل التاريخ</p>
-                    <p className="font-light text-subtext text-sm">
-                        تعديل بيانات سجل التاريخ
-                    </p>
+                    <p className="font-bold text-cardTxt text-lg">تعديل سجل الفحص</p>
                 </div>
                 <Button
                     variant="ghost"
@@ -433,6 +430,8 @@ function EditInventoryHistoryForm({
                                         <FormControl>
                                             <Input
                                                 {...field}
+                                                disabled
+                                                readOnly
                                                 placeholder="الرمز"
                                                 className={inputClasses}
                                             />
@@ -453,6 +452,8 @@ function EditInventoryHistoryForm({
                                         <FormControl>
                                             <Input
                                                 {...field}
+                                                disabled
+                                                readOnly
                                                 placeholder="الرمز المولد"
                                                 className={inputClasses}
                                             />

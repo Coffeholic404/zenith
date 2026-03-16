@@ -110,7 +110,7 @@ export const categoryApi = api.injectEndpoints({
         method: 'PUT',
         body
       }),
-      invalidatesTags: ['getCategory', 'getCategoryByID']
+      invalidatesTags: ['getCategory', 'getCategoryByID', 'getItems', 'getItemsByID']
     }),
 
     // DELETE /api/Category/{id} - Delete a category
@@ -119,7 +119,7 @@ export const categoryApi = api.injectEndpoints({
         url: `/api/Category/${id}`,
         method: 'DELETE'
       }),
-      invalidatesTags: ['getCategory']
+      invalidatesTags: ['getCategory', 'getItems']
     })
   })
 });

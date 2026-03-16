@@ -138,7 +138,15 @@ export function DataTable<TData extends adds, TValue, TNames>({
   const router = useRouter();
   return (
     <Card>
-      <CardHeader></CardHeader>
+      {type === 'InventoryHistory' ? (
+        <CardHeader>
+          <p className="font-vazirmatn font-bold text-cardTxt text-[15px]">
+            سجل الفحص
+          </p>
+        </CardHeader>
+      ) : (
+        <CardHeader></CardHeader>
+      )}
       <CardContent>
         <div className="flex flex-col space-y-4">
           <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 ">
