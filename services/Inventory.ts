@@ -24,6 +24,8 @@ export interface GetInventoryRequest {
   sortBy?: string;
   isDescending?: boolean;
   searchQuery?: string;
+  FromDate?: string;
+  ToDate?: string;
 }
 
 export interface GetInventoryByIdRequest {
@@ -41,13 +43,6 @@ export interface UpdateInventoryRequest {
   distribution: string;
 }
 
-export interface GetInventoryDatesRequest {
-  from?: string;
-  to?: string;
-  search?: string;
-  pageNumber?: number;
-  pageSize?: number;
-}
 
 // Response types
 export interface GetInventoryResponse {
@@ -73,22 +68,13 @@ export interface InventoryResponse {
   result: InventoryItem;
 }
 
-export interface InventoryDatesResponse {
-  statusCode: number;
-  isSuccess: boolean;
-  errorMessages: string[];
-  result: {
-    id: string;
-    createdAt: string;
-  }[];
-}
 
 // API endpoints for Inventory
 export const inventoryApi = api.injectEndpoints({
   endpoints: builder => ({
     // GET /api/Inventory - List inventories with pagination, sorting, and search
     getInventory: builder.query<GetInventoryResponse, GetInventoryRequest>({
-      query: ({ pageNumber = 1, pageSize = 10, sortBy, isDescending, searchQuery }) => ({
+      query: ({ pageNumber = 1, pageSize = 10, sortBy, isDescending, searchQuery, FromDate, ToDate }) => ({
         url: '/api/Inventory',
         method: 'GET',
         params: {
@@ -96,7 +82,9 @@ export const inventoryApi = api.injectEndpoints({
           PageSize: pageSize,
           ...(sortBy && { SortBy: sortBy }),
           ...(isDescending !== undefined && { IsDescending: isDescending }),
-          ...(searchQuery && { SearchQuery: searchQuery })
+          ...(searchQuery && { SearchQuery: searchQuery }),
+          ...(FromDate && { FromDate: FromDate }),
+          ...(ToDate && { ToDate: ToDate })
         }
       }),
       providesTags: ['Inventory', 'Stock']
@@ -120,25 +108,9 @@ export const inventoryApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Inventory', 'Stock']
     }),
-
-    // GET /api/Inventory/dates - Get inventory dates
-    getInventoryDates: builder.query<InventoryDatesResponse, GetInventoryDatesRequest>({
-      query: ({ from, to, search, pageNumber, pageSize } = {}) => ({
-        url: '/api/Inventory/dates',
-        method: 'GET',
-        params: {
-          ...(from && { from }),
-          ...(to && { to }),
-          ...(search && { search }),
-          ...(pageNumber && { PageNumber: pageNumber }),
-          ...(pageSize && { PageSize: pageSize })
-        }
-      }),
-      providesTags: ['Inventory', 'Stock']
-    })
   })
 });
 
 // Hooks
-export const { useGetInventoryQuery, useGetInventoryByIdQuery, useUpdateInventoryMutation, useGetInventoryDatesQuery } =
+export const { useGetInventoryQuery, useGetInventoryByIdQuery, useUpdateInventoryMutation } =
   inventoryApi;

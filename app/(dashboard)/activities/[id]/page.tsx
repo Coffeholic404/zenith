@@ -34,7 +34,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   });
 
   const activity = data?.result;
-  console.log(activity);
+  
   const jumpers = activity?.jumpers || [];
   const selectedJumper = selectedJumperIndex !== null ? jumpers[selectedJumperIndex] : null;
 

@@ -6,9 +6,11 @@ import {
     InventoryColumnsNames,
     type InventoryRow
 } from '@/components/pages/Inventory/Inventory-columns';
-import { useGetInventoryQuery, useGetInventoryDatesQuery } from '@/services/Inventory';
+import { useGetInventoryQuery } from '@/services/Inventory';
 import { useGetStudentsQuery } from '@/services/students';
 import { useGetTrainersQuery } from '@/services/employe';
+
+import { format } from 'date-fns';
 
 export default function InventoryPage() {
     // Date filter state
@@ -18,18 +20,12 @@ export default function InventoryPage() {
     const [search, setSearch] = useState("");
     const { data: InventoryData, isLoading } = useGetInventoryQuery({
         pageNumber: Curent,
-        pageSize: 10
+        pageSize: 10,
+        ...(fromDate && { FromDate: format(fromDate, 'yyyy-MM-dd') }),
+        ...(toDate && { ToDate: format(toDate, 'yyyy-MM-dd') })
     });
 
     console.log(`InventoryData length => ${InventoryData?.result?.data?.length}, Total count => ${InventoryData?.result?.totalCount}`)
-
-    // Fetch filtered inventory IDs when dates are selected
-    const { data: inventoryDatesData } = useGetInventoryDatesQuery({
-        ...(fromDate && { from: fromDate.toISOString() }),
-        ...(toDate && { to: toDate.toISOString() }),
-        pageNumber: 1,
-        pageSize: 1000,
-    });
 
     const { data: studentsData } = useGetStudentsQuery({
         pageNumber: 1,
@@ -58,22 +54,7 @@ export default function InventoryPage() {
         return map;
     }, [trainersData]);
 
-    // Set of inventory IDs that match the date filter
-    const filteredIds = useMemo(() => {
-        if (!fromDate && !toDate) return null; // no filter active
-        const ids = new Set<string>();
-        (inventoryDatesData?.result ?? []).forEach((item) => {
-            ids.add(item.id);
-        });
-        return ids;
-    }, [inventoryDatesData, fromDate, toDate]);
     const inventoryData: InventoryRow[] = (InventoryData?.result?.data ?? [])
-        .filter((item) => {
-            if (filteredIds !== null) {
-                return filteredIds.has(item.uniqueID);
-            }
-            return true;
-        })
         .map((item) => ({
             uniqueID: item.uniqueID,
             itemName: item.itemName,
@@ -93,8 +74,14 @@ export default function InventoryPage() {
     const dateFilter: DateFilter = {
         from: fromDate,
         to: toDate,
-        onFromChange: setFromDate,
-        onToChange: setToDate
+        onFromChange: (date) => {
+            setFromDate(date);
+            setCurent(1);
+        },
+        onToChange: (date) => {
+            setToDate(date);
+            setCurent(1);
+        }
     };
 
     return (
