@@ -216,7 +216,7 @@ function EditInventoryHistoryForm({
             packagerId,
             packetCoachId,
             newDate: newDate ? newDate.substring(0, 10) : '',
-            status: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase(),
+            status: status ? status.toLowerCase() : '',
             code: code ?? '',
             generatedCode: generatedCode ?? '',
             distribution: distribution?.toLowerCase() === 'true' ? 'true' : 'false'
