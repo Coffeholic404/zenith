@@ -21,6 +21,7 @@ export default function InventoryPage() {
     const { data: InventoryData, isLoading } = useGetInventoryQuery({
         pageNumber: Curent,
         pageSize: 10,
+        ...(search && { searchQuery: search }),
         ...(fromDate && { FromDate: format(fromDate, 'yyyy-MM-dd') }),
         ...(toDate && { ToDate: format(toDate, 'yyyy-MM-dd') })
     });
@@ -99,6 +100,11 @@ export default function InventoryPage() {
                 type="Inventory"
                 loading={isLoading}
                 dateFilter={dateFilter}
+                searchQuery={search}
+                setSearchQuery={(val) => {
+                    setSearch(val);
+                    setCurent(1);
+                }}
                 setCurent={(value: any) => setCurent(Number(value))}
                 Curent={Curent}
                 totalRecords={InventoryData?.result?.totalCount || 1}

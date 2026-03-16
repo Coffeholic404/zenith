@@ -20,7 +20,8 @@ export default function InventoryPage() {
 
     const { data: InventoryData, isLoading } = useGetStocksQuery({
         pageNumber: Curent,
-        pageSize: 10
+        pageSize: 10,
+        ...(search && { searchQuery: search })
     });
 
     // Fetch filtered stock IDs when dates are selected
@@ -109,6 +110,11 @@ export default function InventoryPage() {
                 type="inventory"
                 loading={isLoading}
                 dateFilter={dateFilter}
+                searchQuery={search}
+                setSearchQuery={(val) => {
+                    setSearch(val);
+                    setCurent(1);
+                }}
                 setCurent={(value: any) => setCurent(Number(value))}
                 Curent={Curent}
                 totalRecords={InventoryData?.result?.totalCount || 1}

@@ -71,6 +71,8 @@ interface DataTableProps<TData, TValue, TNames> {
   setCurent?: (value: any) => void;
   Curent?: number;
   totalRecords?: number;
+  searchQuery?: string;
+  setSearchQuery?: (value: string) => void;
 }
 type adds = planes | NominatedParty | subscriptionsColumns | EvaluationRow | CoursesType | Item | category | unit | inventory | InventoryRow | InventoryHistoryRow;
 export function DataTable<TData extends adds, TValue, TNames>({
@@ -84,7 +86,9 @@ export function DataTable<TData extends adds, TValue, TNames>({
   dateFilter,
   setCurent,
   Curent,
-  totalRecords
+  totalRecords,
+  searchQuery,
+  setSearchQuery
 }: DataTableProps<TData, TValue, TNames>) {
   const { data: session } = useSession();
   const userRole = session?.user?.role;
@@ -148,10 +152,18 @@ export function DataTable<TData extends adds, TValue, TNames>({
                 <Input
                   id="search"
                   placeholder="بحث ..."
-                  value={(table.getAllColumns().find(col => col.id !== 'sequence' && col.id !== 'actions' && col.getCanFilter())?.getFilterValue() as string) ?? ''}
+                  value={
+                    setSearchQuery !== undefined
+                      ? searchQuery ?? ''
+                      : (table.getAllColumns().find(col => col.id !== 'sequence' && col.id !== 'actions' && col.getCanFilter())?.getFilterValue() as string) ?? ''
+                  }
                   onChange={event => {
-                    const col = table.getAllColumns().find(col => col.id !== 'sequence' && col.id !== 'actions' && col.getCanFilter());
-                    col?.setFilterValue(event.target.value);
+                    if (setSearchQuery !== undefined) {
+                      setSearchQuery(event.target.value);
+                    } else {
+                      const col = table.getAllColumns().find(col => col.id !== 'sequence' && col.id !== 'actions' && col.getCanFilter());
+                      col?.setFilterValue(event.target.value);
+                    }
                   }}
                   className=" bg-searchBg rounded-xl block w-full p-4 ps-10 min-w-[21rem] font-vazirmatn placeholder:text-placeholderClr placeholder:text-base placeholder:font-normal focus-visible:ring-1 focus-visible:ring-searchBg focus-visible:ring-offset-2"
                 />
