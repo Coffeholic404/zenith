@@ -112,9 +112,10 @@ export const unitColumns: ColumnDef<unit>[] = [
             title: `تم حذف ${row.original.unitName}`
           });
           setShowDeleteDialog(false);
-        } catch (error) {
+        } catch (error: any) {
           toast({
             title: `حدث خطأ أثناء حذف ${row.original.unitName}`,
+            description: error?.data?.errorMessages?.[0] || 'حدث خطأ غير متوقع',
             variant: 'destructive'
           });
         }
